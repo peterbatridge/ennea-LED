@@ -11,11 +11,11 @@ CTA_LOCK = threading.Semaphore(1)
 mm_bound_timer = False
 chi_bound_timer = False
 currentWeather = None
-# import board
-# import adafruit_dotstar as dotstar
+import board
+import adafruit_dotstar as dotstar
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
-# strips = dotstar.DotStar(board.SCK, board.MOSI, 436, brightness=0.2)
+strips = dotstar.DotStar(board.SCK, board.MOSI, 436, brightness=0.2)
 
 # https://openweathermap.org/weather-conditions
 
@@ -185,11 +185,21 @@ schedule.every(10).seconds.do(run_threaded, getTrains)
 schedule.every(10).minutes.do(run_threaded, getCurrentWeather)
 # getModeFromWeather(currentWeather[0], currentWeather[1])
 
+def rainbow_cycle(pos):
+    i = pos % 32
+    strips[0:436] = [(0,0,0)] * 436
+    strips[i] = wheel(pos % 384)
+    
+
+
 try:
+    i = 0
     while True:
         schedule.run_pending()
-
+        rainbow_cycle(i)
+        i = (i + 1) % 1024
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
+    strips.deinit()
 except Exception as e:
     print("Error:", e)
