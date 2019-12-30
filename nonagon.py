@@ -3,21 +3,25 @@ import random
 import requests
 import json
 import credentials
+import threading
+from datetime import datetime, timedelta
+import schedule
+CTA_DATETIME = '%Y-%m-%dT%H:%M:%S'
+CTA_LOCK = threading.Semaphore(1)
+mm_bound_timer = False
+chi_bound_timer = False
+currentWeather = None
 # import board
 # import adafruit_dotstar as dotstar
 
-# Using a DotStar Digital LED Strip with 30 LEDs connected to hardware SPI
-#dots = dotstar.DotStar(board.SCK, board.MOSI, 144, brightness=0.2)
-
-# Using a DotStar Digital LED Strip with 30 LEDs connected to digital pins
-#dots = dotstar.DotStar(board.D3, board.D2, 144, brightness=0.2)
+# Using hardware SPI. 436 = 12*31 leds + 2*32 leds
+# strips = dotstar.DotStar(board.SCK, board.MOSI, 436, brightness=0.2)
 
 # https://openweathermap.org/weather-conditions
 
 current_weather_base = "http://api.openweathermap.org/data/2.5/weather?q=Chicago,us&APPID="
 
-cta_train_line_base = "http://lapi.transitchicago.com/api/1.0/ttpositions.aspx?rt=brn&outputType=JSON&key="
-
+cta_train_line_base = "http://lapi.transitchicago.com/api/1.0/ttpositions.aspx?rt=brn,p&outputType=JSON&key="
 
 def wheel(num):
     r =0
@@ -39,11 +43,12 @@ def wheel(num):
     return (r,g,b)
         
 def getCurrentWeather():
+    global currentWeather
     responseRaw = requests.get(current_weather_base+credentials.owm_api_key)
     response = json.loads(responseRaw.content)
     weatherCode = response['weather'][0]['id']
     temp = response['main']['temp']
-    return weatherCode, temp
+    currentWeather = weatherCode, temp
     
 def temperatureKToColor(tempK):
     temp = tempK * 1.8 - 459.67
@@ -110,21 +115,61 @@ def getModeFromWeather(code, temp):
         # Error? Unknown weather.
         pass
 
+def startTrainMode(direction):
+    # Put into train mode
+    print("Train probably fading in")
+def stopTrainMode(direction):
+    # Take out of train mode
+    print("Train probably fading out")
+def stopTrainTimer(direction):
+    # Unlock train timer
+    global chi_bound_timer, mm_bound_timer
+    with CTA_LOCK:
+        if direction == "chi":
+            chi_bound_timer = False
+        elif direction == "mm":
+            mm_bound_timer = False
+def startTrainTimerWithLock(lock, direction, timeDiff, timeToArrival):
+    global chi_bound_timer, mm_bound_timer
+    startTrainModeTime = timeDiff - timeToArrival
+    print("Lock Acquired", lock)
+    if not(lock) and timeDiff > timeToArrival and timeDiff > 60.0:
+        print(timeDiff)
+        if direction == "chi":
+            chi_bound_timer = True
+        elif direction == "mm":
+            mm_bound_timer = True
+        threading.Timer(startTrainModeTime, startTrainMode, args=[direction]).start()
+        threading.Timer(startTrainModeTime+30, stopTrainMode, args=[direction]).start()
+        threading.Timer(startTrainModeTime+90, stopTrainTimer, args=[direction]).start()
 #Train Timings
 #29:20 at chicago -> 29:59 probably audible -> 30:20 probably fading -> 31:25 stopped at merch Mart  => About a minute and a half before arrival at merch mart
-#43:20 at merch mart -> 43:30 stopped -> 44: 00 leaving -> 45:00 probably audible -> 45:20 right nextdoor -> 45:40 at Chicago => About 40 seconds until arrival at merch mart
-def getTrain():
-    data = ''''''
-    responseRaw = requests.post(cta_train_line_base + credentials.cta_api_key, data=data)
-    response = json.loads(responseRaw.content)
-    print(response)
-    for train in response['ctatt']['route'][0]['train']:
-        #trDr = 1 for northbound and 5 for southbound
-        if (train['trDr'] == '5' and train['nextStaNm']=="Merchandise Mart"):
-            print("On the way to merch mart!")
-            #time_to_arrival_at_merchmart = train['arrT'] - train['prdt'] 
-        if (train['trDr'] == '1' and train['nextStaNm']=="Chicago"):
-            print("On the way to Chicago!")
+#43:20 at merch mart -> 43:30 stopped -> 44: 00 leaving -> 45:00 probably audible -> 45:20 right nextdoor -> 45:40 at Chicago => About 40 seconds until arrival at chicago
+# trDr = 1 for northbound and 5 for southbound
+def getTrains():
+    global mm_bound_timer, chi_bound_timer
+    try:
+        responseRaw = requests.post(cta_train_line_base + credentials.cta_api_key, data='''''', timeout=3)
+        response = json.loads(responseRaw.content)
+        print("Received API Response...")
+        for train in response['ctatt']['route'][0]['train']:
+            arrivalTime = datetime.strptime(train['arrT'], CTA_DATETIME)
+            generatedTime = datetime.strptime(train['prdt'], CTA_DATETIME)
+            timeDiff = (arrivalTime - generatedTime).total_seconds()
+            # Train arriving at Merch Mart from Chicago
+            if (train['trDr'] == '5' and train['nextStaNm']=="Merchandise Mart"):
+                print("On the way to merch mart!")
+                with CTA_LOCK:
+                    startTrainTimerWithLock(mm_bound_timer, "mm", timeDiff, 90)
+            # Train arriving at Chicago from Merch Mart
+            if (train['trDr'] == '1' and train['nextStaNm']=="Chicago"):
+                print("On the way to Chicago!")
+                with CTA_LOCK:
+                    startTrainTimerWithLock(chi_bound_timer, "chi", timeDiff, 20)
+    except ReadTimeoutError as e:
+        print("API Failure:", e)
+    except Exception as e:
+        print("Failure:", e)
 
 # n_dots = len(dots)
 # i = 0
@@ -132,8 +177,19 @@ def getTrain():
 #     dots.fill(wheel(i))
 #     i = (i+20) % 384
 
-# currentWeather = getCurrentWeather()
+def run_threaded(func):
+    threading.Thread(target=func).start()
+
+currentWeather = getCurrentWeather()
+schedule.every(10).seconds.do(run_threaded, getTrains)
+schedule.every(10).minutes.do(run_threaded, getCurrentWeather)
 # getModeFromWeather(currentWeather[0], currentWeather[1])
-while True:
-    getTrain()
-    time.sleep(10)
+
+try:
+    while True:
+        schedule.run_pending()
+
+except KeyboardInterrupt:
+    print("Exiting due to keyboard interrupt.")
+except Exception as e:
+    print("Error:", e)
