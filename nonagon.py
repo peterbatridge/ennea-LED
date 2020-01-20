@@ -32,30 +32,14 @@ WHITE = (255, 255, 255)
 BLANK = (0, 0, 0)
 colors = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN,  BLUE, PURPLE, MAGENTA]
 # https://openweathermap.org/weather-conditions
-
 current_weather_base = "http://api.openweathermap.org/data/2.5/weather?q=Chicago,us&APPID="
 
 cta_train_line_base = "http://lapi.transitchicago.com/api/1.0/ttpositions.aspx?rt=brn,p&outputType=JSON&key="
 
-def wheel(num):
-    r =0
-    g =0
-    b = 0
-    c = int(num/128)
-    if c == 0:
-        r = 127 - (num%128)
-        g = num % 128
-        b = 0
-    elif c == 1:
-        g = 127 - (num%128)
-        b = num % 128
-        r = 0
-    else:
-        b = 127 - (num%128)
-        r = num % 128
-        g = 0
-    return (r,g,b)
-        
+###
+# Weather Functions
+###
+
 def getCurrentWeather():
     global currentWeather
     responseRaw = requests.get(current_weather_base+credentials.owm_api_key)
@@ -129,6 +113,10 @@ def getModeFromWeather(code, temp):
         # Error? Unknown weather.
         pass
 
+###
+# Train Functions
+###
+
 def startTrainMode(direction):
     # Put into train mode
     print("Train probably fading in")
@@ -185,12 +173,6 @@ def getTrains():
     except Exception as e:
         print("Failure:", e)
 
-# n_dots = len(dots)
-# i = 0
-# while True:
-#     dots.fill(wheel(i))
-#     i = (i+20) % 384
-
 def run_threaded(func):
     threading.Thread(target=func).start()
 
@@ -199,13 +181,59 @@ def run_threaded(func):
 #schedule.every(10).minutes.do(run_threaded, getCurrentWeather)
 # getModeFromWeather(currentWeather[0], currentWeather[1])
 
-def color_fill(color, wait):
-    strips.fill(color)
-    strips.show()
-    time.sleep(wait)
- 
+
+###
+# Helper Functions
+###
+
 def blankStrip():
     strips[0:434] = [BLANK]*434
+ 
+def setNonagonColor(n, color):
+    strips[n*31:n*31+31] = [color]*31
+
+def setPatternOnEachNonagon(pattern):
+    for n in range(0,14):
+        strips[n*31:(n*31)+31] = pattern
+
+def setSide(n, side, color):
+    nonagonStart = n*31
+    sideStart = int(math.ceil(side*3.647))
+    if sideStart+4 > 31:
+        strips[nonagonStart+sideStart] = color
+        strips[nonagonStart:nonagonStart+3] = [color] * 3
+    else:
+        strips[nonagonStart+sideStart:nonagonStart+sideStart+4] = [RED]*4
+
+def setPositionOnSide(n, side, pos, color):
+    nonagonStart = n*31
+    sideStart= int(math.ceil(side*3.647))
+    positionWithinNonagon = (sideStart+pos) % 31
+    strips[nonagonStart+positionWithinNonagon] = color
+
+def wheel(num):
+    r =0
+    g =0
+    b = 0
+    c = int(num/128)
+    if c == 0:
+        r = 127 - (num%128)
+        g = num % 128
+        b = 0
+    elif c == 1:
+        g = 127 - (num%128)
+        b = num % 128
+        r = 0
+    else:
+        b = 127 - (num%128)
+        r = num % 128
+        g = 0
+    return (r,g,b)
+
+###
+# Pattern Functions
+###
+
 def slice_alternating(wait):
     strips[::2] = [RED] * ((num_pixels // 2)+1)
     strips.show()
@@ -260,107 +288,74 @@ def slice_rainbow(wait):
     time.sleep(wait)
  
  
-def rainbow_cycle(wait):
+def rainbowCycle(wait):
     for j in range(384):
         for i in range(num_pixels):
             rc_index = (i * 384 // num_pixels) + j
             strips[i] = wheel(rc_index % 384)
         strips.show()
-        #time.sleep(wait) 
+        time.sleep(wait) 
 def bounce():
+    pattern = [BLANK] * 31
     for frame in range(0,60):
         for i in range(num_pixels//3):
             if frame > 30:
                 frame = 29 - (frame % 31)
             if frame == i: # or frame+15 == i or frame-15==i:
-                strips[i] = RED
+                pattern[i] = RED
                 #strips[(i+31)%61] = PURPLE
                 #strips[(i+62)%93] = PURPLE
             else:
-                strips[i] = BLUE           
+                pattern[i] = BLUE           
                 #strips[i+31] = BLUE
                 #strips[i+62] = BLUE
-        strips[31:62] = strips[0:31]
-        strips[62:93] = strips[0:31]
-        strips[93:124] = strips[0:31]
-        strips[124:155]= strips[0:31]
-        strips[155:186] = strips[0:31]
-        strips[186:217] = strips[0:31]
-        strips[217:248] = strips[0:31]
-        strips[248:279] = strips[0:31]
-        strips[279:310] = strips[0:31]
-        strips[310:341] = strips[0:31]
-        strips[341:372] = strips[0:31]
-        strips[372:403] = strips[0:31]
-        strips[403:434] = strips[0:31]
+        setPatternOnEachNonagon(pattern)
         strips.show()
 
 
-def random_color():
+def randomColor():
     return colors[randrange(9)]
-def random_solid_colors():
-        strips[0:31] = [random_color()]*31
-        strips[31:62] = [random_color()]*31
-        strips[62:93] =  [random_color()]*31
-
-        strips[93:124] =  [random_color()]*31
-        strips[124:155]=  [random_color()]*31
-
-        strips[155:186] = [random_color()]*31
-
-        strips[186:217] = [random_color()]*31
-
-        strips[217:248] = [random_color()]*31
-
-        strips[248:279] = [random_color()]*31
-
-        strips[279:310] = [random_color()]*31
-
-        strips[310:341] = [random_color()]*31
-
-        strips[341:372] = [random_color()]*31
-
-        strips[372:403] = [random_color()]*31
-
-        strips[403:434] = [random_color()]*31
-
+def solidRandomColors(wait=0.2):
+    for n in range(0,14):
+        strips[0:31] = [randomColor()]*31
+        strips[31:62] = [randomColor()]*31
+        strips[62:93] =  [randomColor()]*31
+        strips[93:124] =  [randomColor()]*31
+        strips[124:155]=  [randomColor()]*31
+        strips[155:186] = [randomColor()]*31
+        strips[186:217] = [randomColor()]*31
+        strips[217:248] = [randomColor()]*31
+        strips[248:279] = [randomColor()]*31
+        strips[279:310] = [randomColor()]*31
+        strips[310:341] = [randomColor()]*31
+        strips[341:372] = [randomColor()]*31
+        strips[372:403] = [randomColor()]*31
+        strips[403:434] = [randomColor()]*31
         strips.show() 
-        time.sleep(0.2)
-def solid_color_cycle():
-    for i in range(0,14):
-        strips[0:31]    = [colors[i % 9]]*31
-        strips[31:62]   = [colors[(i+1)%9]]*31
-        strips[62:93]  =  [colors[(i+2)%9]]*31
-        strips[93:124] =  [colors[(i+3)%9]]*31
-        strips[124:155] = [colors[(i+4)%9]]*31
-        strips[155:186] = [colors[(i+5)%9]]*31
-        strips[186:217] = [colors[(i+6)%9]]*31
-        strips[217:248] = [colors[(i+7)%9]]*31
-        strips[248:279] = [colors[(i+8)%9]]*31
-        strips[279:310] = [colors[(i)%9]]*31
-        strips[310:341] = [colors[(i+1)%9]]*31
-        strips[341:372] = [colors[(i+2)%9]]*31
-        strips[372:403] = [colors[(i+3)%9]]*31
-        strips[403:434] = [colors[(i+4)%9]]*31
+        time.sleep(wait)
 
+def solidColorCycle(wait=0.2):
+    for n in range(0,14):
+        setNonagonColor(n, colors[n%9])
         strips.show() 
-        time.sleep(0.2)
-def solid_color_every_other():
+        time.sleep(wait)
+
+def solidRandomColorEveryOther(wait=1):
     for i in range(0,2):
-        strips[0:434] =[(0,0,0)]*434
+        blankStrip()
         for q in range(0,14, 2):
-            strips[(q+i)*31:(q+i+1)*31] = [random_color()]*31
+            strips[(q+i)*31:(q+i+1)*31] = [randomColor()]*31
         strips.show()
-        time.sleep(1)
+        time.sleep(wait)
 
-def five_random_solid_colors():
-    strips[0:434] = [(0,0,0)] *434
+def fiveSolidRandomColors(wait=1):
+    blankStrip()
     for i in range(0,5):
         x = randrange(0,14)
-        strips[x*31:(x+1)*31] = [random_color()]*31
+        setNonagonColor(x, randomColor())
     strips.show()
-    time.sleep(1)
-def pinwheel(sleep):
+    time.sleep(wait)
+def pinwheel(wait):
     for i in range(0,434):
         strips[0:434] = [(0,0,0)] * 434
         for q in range(0,62):
@@ -368,7 +363,8 @@ def pinwheel(sleep):
             strips[(i+(7*q)+1)%434] = wheel(i+15)
             strips[(i+(7*q)+2)%434] = wheel(i+30)
         strips.show()
-        time.sleep(sleep)
+        time.sleep(wait)
+
 def trail(length):
     for i in range(0,434):
         strips[0:434] = [(0,0,0)] *434
@@ -376,38 +372,12 @@ def trail(length):
             strips[(i+l)% 434] = wheel((i+l)%434)
         strips.show()
 
-def rain():
-    rain_color = RED
-    path1 = [(0,0,0)]*434
-    for i in range(0,238):
-        path1[0:434] = [(0,0,0)] * 434
-        path1[i] = rain_color
-        path1[(i+1)%238]
-        path1[(i+2)%238]
-        path1[(i+3)%238]
 
-        strips[0:16]    = path1[0:16]
-        strips[31:47]   = path1[18:34]
-        strips[62:78]   = path1[36:52]
-        strips[93:109]  = path1[54:70]
-        strips[124:140] = path1[72:88]
-        strips[155:171] = path1[90:106]
-        strips[186:202] = path1[108:124]
-        #strips[217:]
-        strips.show()
-def setNonagonColor(n, color):
-    strips[n*31:n*31+31] = [color]*31
-
-
-color_seq = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
-
-color_seq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
-horizontalRows = [[0],[1,13],[2,12],[3,11],[4,10],[5,9],[6,8],[7]]
-def groupCycleThroughSequence(group, color_seq, wait):
-    length = len(color_seq)
+def groupCycleThroughSequence(group, colorSeq, wait):
+    length = len(colorSeq)
     for i in range(0,length):
         for q, row in enumerate(group):
-            color = color_seq[(i+q)%length]
+            color = colorSeq[(i+q)%length]
             for nonagon in row:
                 setNonagonColor(nonagon, color)
         strips.show()
@@ -418,45 +388,76 @@ def stepBetweenColors(startColor, endColor, stepCount, currentStep):
     g = ((endColor[1]-startColor[1]) * currentStep /stepCount)+startColor[1]
     b = ((endColor[2]-startColor[2]) * currentStep /stepCount)+startColor[2]
     return (int(r),int(g),int(b))
-def groupCycleThroughSequenceFade(groups, color_seq, hang_frames, fade_frames, wait=0):
-    length = len(color_seq)
+    
+def groupCycleThroughSequenceFade(groups, colorSeq, hang_frames, fade_frames, wait=0):
+    length = len(colorSeq)
     for i in range(0, length):
         for f in range(0, hang_frames+fade_frames):
             for q, group in enumerate(groups):
                 if f < hang_frames:
-                    color = color_seq[(i+q)%length]
+                    color = colorSeq[(i+q)%length]
                 else:
                     fade_frame = f - hang_frames
-                    start_color = color_seq[(i+q)%length]     
-                    end_color = color_seq[(i+q+1)%length]
+                    start_color = colorSeq[(i+q)%length]     
+                    end_color = colorSeq[(i+q+1)%length]
                     color = stepBetweenColors(start_color, end_color, fade_frames, fade_frame)
                 for nonagon in group:
                     setNonagonColor(nonagon, color)
             strips.show()
             time.sleep(wait)
                
-nonagonsWithLightsStartingBottomCenter = [0,2,4,6,8,10,12]
-nonagonsWIthLightsStartingBottomLeft = [1,3,5,7,9,11,13]
-def fillNonagonSide(n, side, color):
-    nonagonStart = n*31
-    sideStart = int(math.ceil(side*3.647))
-    sideEnd = (sideStart+4)%31
-    if sideStart+4 > 31:
-        strips[nonagonStart+sideStart] = color
-        strips[nonagonStart:nonagonStart+3] = [color] * 3
-    else:
-        strips[nonagonStart+sideStart:nonagonStart+sideStart+4] = [RED]*4
+def sidesWithSequences(sidesWithSequences, hangFrame, wait_between_nonagons=0):
+    lastNonagon = -1
+    for sequence in sidesWithSequences:
+        for i, pos in enumerate(sequence[2]):
+            for h in range(0, hangFrame):
+                blankStrip()
+                setPositionOnSide(sequence[0], sequence[1], pos, sequence[3][i])
+                if lastNonagon!=sequence[0]:
+                    if lastNonagon!=-1:
+                        time.sleep(0)
+                    lastNonagon=sequence[0]
+                strips.show()
+            
+def cycleThroughSides(wait=0.5):
+    for s in range(0,9):
+        blankStrip()
+        for n in range(0,14):
+            setSide(n, s, RED)
+            strips.show()
+            time.sleep(wait)
 
-def setLightOnSide(n, side, pos, color):
-    nonagonStart = n*31
-    sideStart= int(math.ceil(side*3.647))
-    positionWithinNonagon = (sideStart+pos) % 31
-    strips[nonagonStart+positionWithinNonagon] = color
 
+###
+# Groups Of Nonagons
+###
+columnsRightToLeft = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
+columnsLeftToRight = columnsRightToLeft[::-1]
+rowsTopToBottom = [[0],[1,13],[2,12],[3,11],[4,10],[5,9],[6,8],[7]]
+rowsBottomToTop = rowsTopToBottom[::-1]
+bottomLeftToTopRightDiagonal = [[0,1],[2,3,13],[4,11,12],[5,10],[6,9],[7,8]]
+topRightToBottomLeft = bottomLeftToTopRightDiagonal[::-1]
+bottomRightToTopLeftDiagonal = [[0,13],[1,12],[2,11],[3,9,10],[4,5,8],[6,7]]
+topLeftToBottomRightDiagonal = bottomRightToTopLeftDiagonal[::-1]
+
+megagroup = rowsTopToBottom + topRightToBottomLeft +columnsRightToLeft + bottomRightToTopLeftDiagonal + rowsBottomToTop +bottomLeftToTopRightDiagonal + columnsLeftToRight +topLeftToBottomRightDiagonal
+
+###
+# Color Sequences
+###
+redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
+colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 redFour = [CYAN,CYAN, BLUE, BLUE]
 
+###
+# Pixel Sequences on Sides
+###
 HtL = [3,2,1,0]
 LtH = [0,1,2,3]
+
+###
+# Side Animations
+###
 sideList  = [
             (7,4, HtL, redFour),
             (7,3, HtL, redFour),
@@ -476,35 +477,6 @@ sideList  = [
             (0,2, HtL, redFour),
             (0,1, HtL, redFour)
             ]
-def sidesWithSequences(sidesWithSequences, hangFrame, wait_between_nonagons=0):
-    lastNonagon = -1
-    for sequence in sidesWithSequences:
-        for i, pos in enumerate(sequence[2]):
-            for h in range(0, hangFrame):
-                blankStrip()
-                setLightOnSide(sequence[0], sequence[1], pos, sequence[3][i])
-                if lastNonagon!=sequence[0]:
-                    if lastNonagon!=-1:
-                        time.sleep(0)
-                    lastNonagon=sequence[0]
-                strips.show()
-columnsRightToLeft = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
-columnsLeftToRight = [[8,9,12,13],[7,10,11,0],[1,2,5,6],[3,4]]
-def columnsCycleThroughSequence(color_seq, wait):
-    setCycleThroughSequence(columnsLeftToRight, color_seq, wait)
- 
-def rowCycleThroughSequence(color_seq, wait):
-    setCycleThroughSequence(horizontalRows, color_seq, wait)
-def cycleThroughSides():
-    for s in range(0,9):
-        strips[0:434] = [(0,0,0)] *434
-        for n in range(0,14):
-            fillNonagonSide(n, s, RED)
-        strips.show()
-        time.sleep(0.5)
-
-
-
 
 try:        
     i = 0
@@ -512,19 +484,21 @@ try:
     while True:
         #path() 
         #pinwheel(0)
-        #columnsCycleThroughSequence(color_seq)
-        #rowCycleThroughSequence(color_seq, 0.3)
+        #columnsCycleThroughSequence(colorSeq)
+        #rowCycleThroughSequence(colorSeq, 0.3)
         
-        #setCycleThroughSequenceFade(horizontalRows, color_seq, 10, 10, 0) 
+        groupCycleThroughSequenceFade(megagroup, redToBlueSeq8, 10, 10, 0) 
         #cycleThroughSides()
-        sidesWithSequences(sideList, 2, 0)
+        #sidesWithSequences(sideList, 2, 0)
         
         #trail(217)
         # Increase or decrease this to speed up or slow down the animation.
         #slice_alternating(0.1)
      
         #rain()
-        #color_fill(WHITE, 0.5)
+        #setStripColor
+    
+        #(WHITE, 0.5)
      
         # Increase or decrease this to speed up or slow down the animation.
         #slice_rainbow(0.1)
@@ -532,17 +506,21 @@ try:
         #time.sleep(0.5)
      
         # Increase this number to slow down the rainbow animation.
-       # rainbow_cycle(0)
+       # rainbowCycle
+       #(0)
         #bounce()
-        #random_solid_colors()
-        #solid_color_cycle()
+        #s
+        #()
+        #solidColorCycle
+        #()
         #single_snake()
-        #solid_color_every_other()
+        #solidRandomColorEveryOther()
 #        rain()
 
 #five_random_solid_colors()
             #schedule.run_pending()
-            #rainbow_cycle(i)
+            #rainbowCycle
+            #(i)
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
