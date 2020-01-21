@@ -526,7 +526,6 @@ def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, 
                 })
     animateNonagonGroups(animation, hangFrames, fadeFrames)
     
-
 def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFrames):
     shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
 
@@ -624,7 +623,9 @@ try:
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         
-        animateNonagonGroups(TeganTest, 10, 10)
+        #animateNonagonGroups(TeganTest, 10, 10)
+        shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, 
+[RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE],10,10)
         #shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
         #cycleThroughColorSequenceWithNonagonTriangles([RED, BLUE, ORANGE, GREEN], 10 ,10)
         #colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
