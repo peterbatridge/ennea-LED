@@ -442,27 +442,6 @@ def cycleThroughSides(wait=0.5):
             strips.show()
             time.sleep(wait)
 
-def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames):
-    animation = []
-    for i in range(0, len(sequence)):
-        animation.append({
-            'groups': groups,
-            'colors': shiftRight(sequence, i)
-            })
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
-
-def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames):
-    animation = []
-    for groupList in setOfGroups:
-        for i in range(0, len(sequence)):
-            animation.append({
-                'groups': groupList,
-                'colors': shiftRight(sequence, i)
-                })
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
-    
-def everyOtherNonagonAnimation(sequence, hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
 ###
 # Groups Of Nonagons
 ###
@@ -497,6 +476,8 @@ eightDirectionGroups = [
 redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
 colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 redFour = [CYAN,CYAN, BLUE, BLUE]
+
+
 ###
 # Animations 
 ###
@@ -518,45 +499,27 @@ def colorSwapAnimation(groups, colorOne, colorTwo, colorBetween, hangFrames, fad
         })
     animateNonagonGroups(animation, hangFrames,fadeFrames)
 
+def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames):
+    animation = []
+    for i in range(0, len(sequence)):
+        animation.append({
+            'groups': groups,
+            'colors': shiftRight(sequence, i)
+            })
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
 
-LineSwap = [
-    {
-        'groups': rowsTopToBottom,
-        'colors': [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLUE]
-    },
-    {
-        'groups': rowsTopToBottom,
-        'colors': [RED, RED, BLANK, BLANK, BLANK, BLANK, BLUE, BLUE]
-    },    
-    {
-        'groups': rowsTopToBottom,
-        'colors': [RED, RED, RED, BLANK, BLANK, BLUE, BLUE, BLUE]
-    },   
-    {
-        'groups': rowsTopToBottom,
-        'colors': [RED, RED, RED, RED, BLUE, BLUE, BLUE, BLUE]
-    },    
-    {
-        'groups': rowsTopToBottom,
-        'colors': [BLUE, BLUE, BLUE, BLUE, RED, RED, RED, RED]
-    },
-    {
-        'groups': rowsTopToBottom,
-        'colors': [BLUE, BLUE, BLUE, BLANK, BLANK, RED, RED, RED]
-    },    
-    {
-        'groups': rowsTopToBottom,
-        'colors': [BLUE, BLUE, BLANK, BLANK, BLANK, BLANK, RED, RED]
-    },    
-    {
-        'groups': rowsTopToBottom,
-        'colors': [BLUE, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, RED]
-    },    
-    {
-        'groups': rowsTopToBottom,
-        'colors': [BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK]
-    }
-]
+def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames):
+    animation = []
+    for groupList in setOfGroups:
+        for i in range(0, len(sequence)):
+            animation.append({
+                'groups': groupList,
+                'colors': shiftRight(sequence, i)
+                })
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
+    
+def everyOtherNonagonAnimation(sequence, hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
 
 ###
 # Pixel Sequences on Sides
@@ -599,6 +562,7 @@ try:
         #groupAnimateFade(animationFrames, 10, 10, 0)
         #shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
         colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
+        colorSwapAnimation(bottomLeftToTopRightDiagonal, RED, BLUE, PURPLE, 10, 10)
         #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
         #cycleThroughSides()
         #sidesWithSequences(sideList, 2, 0)
