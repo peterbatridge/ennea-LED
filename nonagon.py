@@ -422,7 +422,7 @@ def getLastFrameSideColors(animation):
             print("lastFrameColors",lastFrameColors)
             print("g",g)
             print("frameColors", frame['colors'])
-            lastFrameColors[side[0]][side[1]] = frame['colors'][g]
+            lastFrameColors[side[1]][side[0]] = frame['colors'][g]
     return lastFrameColors
 
 def animateNonagonGroups(animation, hangFrames, fadeFrames):
