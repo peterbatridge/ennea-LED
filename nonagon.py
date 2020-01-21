@@ -501,6 +501,24 @@ redFour = [CYAN,CYAN, BLUE, BLUE]
 # Animations 
 ###
 
+def colorSwapAnimation(groups, colorOne, colorTwo, colorBetween, hangFrames, fadeFrames):
+    lengthOfGroup = len(groups)
+    animation = []
+    for i in range(1, lengthOfGroup/2):
+        colorList = [colorOne]*i +[colorBetween]*(lengthOfGroup-(2*i)) + [colorTwo]*i
+        animation.append({
+            'groups': groups,
+            'colors': colorList
+        })
+    for i in range(lengthOfGroup/2, 0):
+        colorList =  [colorTwo]*i+[colorBetween]*(lengthOfGroup-(2*i)) + [colorOne]*i
+        animation.append({
+            'groups': groups,
+            'colors': colorList
+        })
+    animateNonagonGroups(animation, hangFrames,fadeFrames)
+
+
 LineSwap = [
     {
         'groups': rowsTopToBottom,
@@ -580,7 +598,7 @@ try:
         
         #groupAnimateFade(animationFrames, 10, 10, 0)
         #shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
-        animateNonagonGroups(LineSwap, 10,10)
+        colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
         #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
         #cycleThroughSides()
         #sidesWithSequences(sideList, 2, 0)
