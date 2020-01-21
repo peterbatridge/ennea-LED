@@ -405,6 +405,35 @@ def groupCycleThroughSequenceFade(groups, colorSeq, hang_frames, fade_frames, wa
                     setNonagonColor(nonagon, color)
             strips.show()
             time.sleep(wait)
+ 
+def getNonagonColorFromFrame(frame, n):
+    for g, group in enumerate(frame['groups']):
+        for nonagon in group:
+            if n == nonagon:
+                return frame['colors'][g]
+
+def getLastFrameColors(animation):
+    lastFrameColors = [0]*14
+    frame = animation[len(animation)-1]
+    for g, group in enumerate(frame['groups']):
+        for nonagon in group:
+            lastFrameColors[nonagon] = frame['colors'][g]
+    return lastFrameColors
+def groupAnimateFade(animation, hang_frames, fade_frames, wait=0):
+    lastFrameColors = getLastFrameColors(animation)
+    for n, frame in enumerate(animation):
+        for f in range(0, hang_frames+fade_frames):
+            for g, group in enumerate(frame['groups']):
+                color = frame['colors'][g]
+                for nonagon in group:
+                    if f < fade_frames:
+                        endColor = lastFrameColors[nonagon]
+                        stepColor = stepBetweenColors(endColor, color, fade_frames, f)
+                        setNonagonColor(nonagon, stepColor)
+                    else:
+                        lastFrameColors[nonagon] = color
+                        setNonagonColor(nonagon, color)
+            strips.show()
                
 def sidesWithSequences(sidesWithSequences, hangFrame, wait_between_nonagons=0):
     lastNonagon = -1
@@ -426,10 +455,9 @@ def cycleThroughSides(wait=0.5):
             setSide(n, s, RED)
             strips.show()
             time.sleep(wait)
-
-
+ 
 ###
-# Groups Of Nonagons
+#Groups Of Nonagons
 ###
 columnsRightToLeft = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
 columnsLeftToRight = columnsRightToLeft[::-1]
@@ -440,12 +468,10 @@ topRightToBottomLeft = bottomLeftToTopRightDiagonal[::-1]
 bottomRightToTopLeftDiagonal = [[0,13],[1,12],[2,11],[3,9,10],[4,5,8],[6,7]]
 topLeftToBottomRightDiagonal = bottomRightToTopLeftDiagonal[::-1]
 
-megagroup = rowsTopToBottom + topRightToBottomLeft +columnsRightToLeft + bottomRightToTopLeftDiagonal + rowsBottomToTop +bottomLeftToTopRightDiagonal + columnsLeftToRight +topLeftToBottomRightDiagonal
-
 ###
 # Color Sequences
 ###
-redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
+redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA, GREEN]
 colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 redFour = [CYAN,CYAN, BLUE, BLUE]
 
@@ -458,6 +484,56 @@ LtH = [0,1,2,3]
 ###
 # Side Animations
 ###
+
+def shiftLeft(colors, step):
+    if step == 0:
+        return colors
+    return colors[step:] + colors[:step]
+
+def shiftColorSequenceOverNonagonGroups(groups, sequence):
+    animation = []
+    for i in range(0, len(sequence)):
+        animation.append({
+            'groups': groups,
+            'colors': shiftLeft(sequence, i)
+            })
+    groupAnimateFade(animation, 10, 10, 0)
+
+animationFrames = [
+        {
+            'groups': rowsTopToBottom,
+            'colors': redToBlueSeq8
+        },
+        {
+            'groups':rowsTopToBottom,
+            'colors': shiftLeft(redToBlueSeq8,1)
+        },
+        {
+            'groups': rowsTopToBottom,
+            'colors': shiftLeft(redToBlueSeq8,2)
+        },
+        {
+            'groups':rowsTopToBottom,
+            'colors': shiftLeft(redToBlueSeq8,3)
+        },
+        {
+            'groups': rowsTopToBottom,
+            'colors': shiftLeft(redToBlueSeq8,4)
+        },
+        {
+            'groups':rowsTopToBottom,
+            'colors': shiftLeft(redToBlueSeq8,5)
+        },
+        {
+            'groups': rowsTopToBottom,
+            'colors': shiftLeft(redToBlueSeq8,6)
+        },
+        {
+            'groups':rowsTopToBottom,
+            'colors': shiftLeft(redToBlueSeq8,7)
+        }
+        ]
+
 sideList  = [
             (7,4, HtL, redFour),
             (7,3, HtL, redFour),
@@ -487,7 +563,9 @@ try:
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         
-        groupCycleThroughSequenceFade(megagroup, redToBlueSeq8, 10, 10, 0) 
+        #groupAnimateFade(animationFrames, 10, 10, 0)
+        shiftColorSequenceOverNonagonGroups(rowsTopToBottom, redToBlueSeq8)
+        #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
         #cycleThroughSides()
         #sidesWithSequences(sideList, 2, 0)
         
