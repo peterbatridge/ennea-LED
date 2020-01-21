@@ -450,7 +450,7 @@ def animateSideGroups(animation, hangFrames, fadeFrames):
     for n, frame in enumerate(animation):
         for f in range(0, hangFrames+fadeFrames):
             blankStrip()
-            for g, group in enumerate(frame['groups']):
+            for g, group in enumerate(frame['sides']):
                 color = frame['colors'][g]
                 for side in group:
                     if f < fadeFrames:
