@@ -611,9 +611,9 @@ sideList  = [
             ]
 
 def generateSidesListFromNonagonAndSides(nonagon, sides):
-    sidesList = [[]]
+    sidesList = []
     for side in sides:
-        sidesList[0].append((nonagon, side))
+        sidesList.append((nonagon, side))
     return sidesList
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
@@ -659,84 +659,84 @@ def sidesFilledFromDirection(nonagon, step, direction):
 
 sidesAnimation = [
 {
-    'sides': sidesFilledFromDirection(7,0,'top'),
+    'sides': [sidesFilledFromDirection(7,0,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,1,'top'),
+    'sides': [sidesFilledFromDirection(7,1,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,2,'top'),
+    'sides': [sidesFilledFromDirection(7,2,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,3,'top')+
+    'sides': [sidesFilledFromDirection(7,3,'top')+
     sidesFilledFromDirection(6,0,'top')+
-    sidesFilledFromDirection(8,0,'top'),
+    sidesFilledFromDirection(8,0,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,4,'top')+
+    'sides': [sidesFilledFromDirection(7,4,'top')+
     sidesFilledFromDirection(6,1,'top')+
-    sidesFilledFromDirection(8,1,'top'),
+    sidesFilledFromDirection(8,1,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,4,'top')+
+    'sides': [sidesFilledFromDirection(7,4,'top')+
     sidesFilledFromDirection(6,2,'top')+
-    sidesFilledFromDirection(8,2,'top'),
+    sidesFilledFromDirection(8,2,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,4,'top')+
+    'sides': [sidesFilledFromDirection(7,4,'top')+
     sidesFilledFromDirection(6,3,'top')+
-    sidesFilledFromDirection(8,3,'top'),
+    sidesFilledFromDirection(8,3,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,4,'top')+
+    'sides': [sidesFilledFromDirection(7,4,'top')+
     sidesFilledFromDirection(6,4,'top')+
-    sidesFilledFromDirection(8,4,'top'),
+    sidesFilledFromDirection(8,4,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,3,'bot')+
+    'sides': [sidesFilledFromDirection(7,3,'bot')+
     sidesFilledFromDirection(6,4,'top')+
     sidesFilledFromDirection(8,4,'top')+
     sidesFilledFromDirection(5,0,'top')+
-    sidesFilledFromDirection(9,0,'top'),
+    sidesFilledFromDirection(9,0,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,2,'bot')+
+    'sides': [sidesFilledFromDirection(7,2,'bot')+
     sidesFilledFromDirection(6,4,'top')+
     sidesFilledFromDirection(8,4,'top')+
     sidesFilledFromDirection(5,1,'top')+
-    sidesFilledFromDirection(9,1,'top'),
+    sidesFilledFromDirection(9,1,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,1,'bot')+
+    'sides': [sidesFilledFromDirection(7,1,'bot')+
     sidesFilledFromDirection(6,4,'top')+
     sidesFilledFromDirection(8,4,'top')+
     sidesFilledFromDirection(5,2,'top')+
-    sidesFilledFromDirection(9,2,'top'),
+    sidesFilledFromDirection(9,2,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(7,0,'bot')+
+    'sides': [sidesFilledFromDirection(7,0,'bot')+
     sidesFilledFromDirection(6,4,'top')+
     sidesFilledFromDirection(8,4,'top')+
     sidesFilledFromDirection(5,3,'top')+
-    sidesFilledFromDirection(9,3,'top'),
+    sidesFilledFromDirection(9,3,'top')],
     'colors': [RED]
 },
 {
-    'sides': sidesFilledFromDirection(6,4,'top')+
+    'sides': [sidesFilledFromDirection(6,4,'top')+
     sidesFilledFromDirection(8,4,'top')+
     sidesFilledFromDirection(5,4,'top')+
-    sidesFilledFromDirection(9,4,'top'),
+    sidesFilledFromDirection(9,4,'top')],
     'colors': [RED]
 },
 ]
