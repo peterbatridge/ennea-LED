@@ -36,6 +36,7 @@ current_weather_base = "http://api.openweathermap.org/data/2.5/weather?q=Chicago
 
 cta_train_line_base = "http://lapi.transitchicago.com/api/1.0/ttpositions.aspx?rt=brn,p&outputType=JSON&key="
 lastFrameNonagonColors = []
+lastFrameSideColors = []
 
 ###
 # Weather Functions
@@ -409,11 +410,23 @@ def getLastFrameColors(animation):
             lastFrameColors[nonagon] = frame['colors'][g]
     return lastFrameColors
 
+def getLastFrameSideColors(animation):
+    global lastFrameSideColors
+    if lastFrameSideColors!=[]:
+        return lastFrameSideColors
+    lastFrameColors = [[0]*9]*14
+    frame = animation[len(animation)-1]
+    for g, group in enumerate(frame['sides']):
+        for side in group:
+            lastFrameColors[side[0]][side[1]] = frame['colors'][g]
+    return lastFrameColors
+
 def animateNonagonGroups(animation, hangFrames, fadeFrames):
     global lastFrameNonagonColors
     lastFrameColors = getLastFrameColors(animation)
     for n, frame in enumerate(animation):
         for f in range(0, hangFrames+fadeFrames):
+            blankStrip()
             for g, group in enumerate(frame['groups']):
                 color = frame['colors'][g]
                 for nonagon in group:
@@ -426,6 +439,25 @@ def animateNonagonGroups(animation, hangFrames, fadeFrames):
                         setNonagonColor(nonagon, color)
             strips.show()
     lastFrameNonagonColors = lastFrameColors
+
+def animateSideGroups(animation, hangFrames, fadeFrames):
+    global lastFrameSideColors
+    lastFrameColors = getLastFrameSideColors(animation)
+    for n, frame in enumerate(animation):
+        for f in range(0, hangFrames+fadeFrames):
+            blankStrip()
+            for g, group in enumerate(frame['groups']):
+                color = frame['colors'][g]
+                for side in group:
+                    if f < fadeFrames:
+                        startColor = lastFrameColors[side[0]][side[1]]
+                        stepColor = stepBetweenColors(startColor, color, fadeFrames, f)
+                        setSide(side[0], side[1], stepColor)
+                    else:
+                        lastFrameColors[side[0]][side[1]] = color
+                        setSide(side[0], side[1], color)
+            strips.show()
+    lastFrameSideColors = lastFrameColors
                
 def sidesWithSequences(sidesWithSequences, hangFrame, wait_between_nonagons=0):
     lastNonagon = -1
@@ -491,7 +523,7 @@ eightDirectionGroups = [
 redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
 colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 redFour = [CYAN,CYAN, BLUE, BLUE]
-threeCoolColors = [BLUE, CYAN, PURPLE]
+fourColdColors = [BLUE, PURPLE, BLUE, CYAN]
 sixteenColdToWarmColors = [BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, MAGENTA, RED, RED, RED, RED, RED, RED, RED, MAGENTA]
 TeganSequence = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE]
 
@@ -574,6 +606,137 @@ sideList  = [
             (0,1, HtL, redFour)
             ]
 
+def generateSidesListFromNonagonAndSides(nonagon, sides):
+    sidesList = [[]]
+    for side in sides:
+        sidesList[0].append((nonagon, side))
+    return sidesList
+# Steps from 0 through 4
+def sidesFilledFromDirection(nonagon, step, direction):
+    evenNonagonSidesFilledFromTop = {
+        0: [5,4],
+        1: [6,5,4,3],
+        2: [7,6,5,4,3,2],
+        3: [8,7,6,5,4,3,2,1],
+        4: [8,7,6,5,4,3,2,1,0]
+    }
+    oddNonagonSidesFilledFromTop = {
+        0: [4],
+        1: [5,4,3],
+        2: [6,5,4,3,2],
+        3: [7,6,5,4,3,2,1],
+        4: [8,7,6,5,4,3,2,1,0]
+    }
+    evenNonagonSidesFilledFromBottom = {
+        0: [0],
+        1: [8,0,1],
+        2: [7,8,0,1,2],
+        3: [6,7,8,0,1,2,3],
+        4: [5,6,7,8,0,1,2,3,4]
+    }
+    oddNonagonSidesFilledFromBottom = {
+        0: [8,0],
+        1: [7,8,0,1],
+        2: [6,7,8,0,1,2],
+        3: [5,6,7,8,0,1,2,3],
+        4: [5,6,7,8,0,1,2,3,4]
+    }
+    if (nonagon % 2 == 0):
+        if direction == 'top':
+            return generateSidesListFromNonagonAndSides(nonagon, evenNonagonSidesFilledFromTop[step])
+        else:
+            return generateSidesListFromNonagonAndSides(nonagon, evenNonagonSidesFilledFromBottom[step])
+    else:
+        if direction == 'top':
+            return generateSidesListFromNonagonAndSides(nonagon, oddNonagonSidesFilledFromTop[step])
+        else:
+            return generateSidesListFromNonagonAndSides(nonagon, oddNonagonSidesFilledFromBottom[step])
+            
+
+sidesAnimation = [
+{
+    'sides': sidesFilledFromDirection(7,0,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,1,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,2,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,3,'top')+
+    sidesFilledFromDirection(6,0,'top')+
+    sidesFilledFromDirection(8,0,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,4,'top')+
+    sidesFilledFromDirection(6,1,'top')+
+    sidesFilledFromDirection(8,1,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,4,'top')+
+    sidesFilledFromDirection(6,2,'top')+
+    sidesFilledFromDirection(8,2,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,4,'top')+
+    sidesFilledFromDirection(6,3,'top')+
+    sidesFilledFromDirection(8,3,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,4,'top')+
+    sidesFilledFromDirection(6,4,'top')+
+    sidesFilledFromDirection(8,4,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,3,'bot')+
+    sidesFilledFromDirection(6,4,'top')+
+    sidesFilledFromDirection(8,4,'top')+
+    sidesFilledFromDirection(5,0,'top')+
+    sidesFilledFromDirection(9,0,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,2,'bot')+
+    sidesFilledFromDirection(6,4,'top')+
+    sidesFilledFromDirection(8,4,'top')+
+    sidesFilledFromDirection(5,1,'top')+
+    sidesFilledFromDirection(9,1,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,1,'bot')+
+    sidesFilledFromDirection(6,4,'top')+
+    sidesFilledFromDirection(8,4,'top')+
+    sidesFilledFromDirection(5,2,'top')+
+    sidesFilledFromDirection(9,2,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(7,0,'bot')+
+    sidesFilledFromDirection(6,4,'top')+
+    sidesFilledFromDirection(8,4,'top')+
+    sidesFilledFromDirection(5,3,'top')+
+    sidesFilledFromDirection(9,3,'top'),
+    'colors': [RED]
+},
+{
+    'sides': sidesFilledFromDirection(6,4,'top')+
+    sidesFilledFromDirection(8,4,'top')+
+    sidesFilledFromDirection(5,4,'top')+
+    sidesFilledFromDirection(9,4,'top'),
+    'colors': [RED]
+},
+]
+
 try:        
     i = 0
     while True:
@@ -581,7 +744,11 @@ try:
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
-        cycleThroughColorSequenceWithEveryNonagon(threeCoolColors, 10, 10)
+        cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+        cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+        cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+        cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+        shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 5, 5)
         shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 5, 5)
         #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
