@@ -583,7 +583,7 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         cycleThroughColorSequenceWithEveryNonagon(threeCoolColors, 10, 10)
         shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 5, 5)
-        rain()
+        #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
         
         
