@@ -403,7 +403,7 @@ def getLastFrameColors(animation):
     global lastFrameNonagonColors
     if lastFrameNonagonColors!=[]:
         return lastFrameNonagonColors
-    lastFrameColors = [0]*14
+    lastFrameColors = [BLANK]*14
     frame = animation[len(animation)-1]
     for g, group in enumerate(frame['groups']):
         for nonagon in group:
@@ -414,7 +414,7 @@ def getLastFrameSideColors(animation):
     global lastFrameSideColors
     if lastFrameSideColors!=[]:
         return lastFrameSideColors
-    lastFrameColors = [[0]*9 for i in range(14)]
+    lastFrameColors = [[BLANK]*9 for i in range(14)]
     frame = animation[len(animation)-1]
     for g, group in enumerate(frame['sides']):
         for side in group:
