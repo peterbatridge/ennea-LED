@@ -16,7 +16,7 @@ import adafruit_dotstar as dotstar
 from random import randrange
 import math
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
-num_pixels = 465
+num_pixels = 434
 strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
 
 RED = (255, 0, 0)
@@ -192,7 +192,12 @@ def blankStrip():
 def setNonagonColor(n, color):
     strips[n*31:n*31+31] = [color]*31
 
-def setPatternOnEachNonagon(pattern):
+def shiftLeft(colors, step):
+    if step == 0:
+        return colors
+    return colors[step:] + colors[:step]
+
+def setPatternOnEveryNonagon(pattern):
     for n in range(0,14):
         strips[n*31:(n*31)+31] = pattern
 
@@ -295,21 +300,21 @@ def rainbowCycle(wait):
             strips[i] = wheel(rc_index % 384)
         strips.show()
         time.sleep(wait) 
-def bounce():
+def bounce(background, foreground):
     pattern = [BLANK] * 31
     for frame in range(0,60):
         for i in range(num_pixels//3):
             if frame > 30:
                 frame = 29 - (frame % 31)
             if frame == i: # or frame+15 == i or frame-15==i:
-                pattern[i] = RED
+                pattern[i] = foreground
                 #strips[(i+31)%61] = PURPLE
                 #strips[(i+62)%93] = PURPLE
             else:
-                pattern[i] = BLUE           
+                pattern[i] = background           
                 #strips[i+31] = BLUE
                 #strips[i+62] = BLUE
-        setPatternOnEachNonagon(pattern)
+        setPatternOnEveryNonagon(pattern)
         strips.show()
 
 
@@ -388,29 +393,6 @@ def stepBetweenColors(startColor, endColor, stepCount, currentStep):
     g = ((endColor[1]-startColor[1]) * currentStep /stepCount)+startColor[1]
     b = ((endColor[2]-startColor[2]) * currentStep /stepCount)+startColor[2]
     return (int(r),int(g),int(b))
-    
-def groupCycleThroughSequenceFade(groups, colorSeq, hang_frames, fade_frames, wait=0):
-    length = len(colorSeq)
-    for i in range(0, length):
-        for f in range(0, hang_frames+fade_frames):
-            for q, group in enumerate(groups):
-                if f < hang_frames:
-                    color = colorSeq[(i+q)%length]
-                else:
-                    fade_frame = f - hang_frames
-                    start_color = colorSeq[(i+q)%length]     
-                    end_color = colorSeq[(i+q+1)%length]
-                    color = stepBetweenColors(start_color, end_color, fade_frames, fade_frame)
-                for nonagon in group:
-                    setNonagonColor(nonagon, color)
-            strips.show()
-            time.sleep(wait)
- 
-def getNonagonColorFromFrame(frame, n):
-    for g, group in enumerate(frame['groups']):
-        for nonagon in group:
-            if n == nonagon:
-                return frame['colors'][g]
 
 def getLastFrameColors(animation):
     lastFrameColors = [0]*14
@@ -419,16 +401,17 @@ def getLastFrameColors(animation):
         for nonagon in group:
             lastFrameColors[nonagon] = frame['colors'][g]
     return lastFrameColors
-def groupAnimateFade(animation, hang_frames, fade_frames, wait=0):
+
+def animateNonagonGroups(animation, hangFrames, fadeFrames):
     lastFrameColors = getLastFrameColors(animation)
     for n, frame in enumerate(animation):
-        for f in range(0, hang_frames+fade_frames):
+        for f in range(0, hangFrames+fadeFrames):
             for g, group in enumerate(frame['groups']):
                 color = frame['colors'][g]
                 for nonagon in group:
-                    if f < fade_frames:
-                        endColor = lastFrameColors[nonagon]
-                        stepColor = stepBetweenColors(endColor, color, fade_frames, f)
+                    if f < fadeFrames:
+                        startColor = lastFrameColors[nonagon]
+                        stepColor = stepBetweenColors(startColor, color, fadeFrames, f)
                         setNonagonColor(nonagon, stepColor)
                     else:
                         lastFrameColors[nonagon] = color
@@ -455,12 +438,24 @@ def cycleThroughSides(wait=0.5):
             setSide(n, s, RED)
             strips.show()
             time.sleep(wait)
- 
+
+def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames):
+    animation = []
+    for i in range(0, len(sequence)):
+        animation.append({
+            'groups': groups,
+            'colors': shiftLeft(sequence, i)
+            })
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
+
+def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames):
+    for groupList in setOfGroups:
+        shiftColorSequenceOverNonagonGroups(groupList, sequence, hangFrames, fadeFrames)
 ###
-#Groups Of Nonagons
+# Groups Of Nonagons
 ###
-columnsRightToLeft = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
-columnsLeftToRight = columnsRightToLeft[::-1]
+columnsLeftToRight = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
+columnsRightToLeft= columnsLeftToRight[::-1]
 rowsTopToBottom = [[0],[1,13],[2,12],[3,11],[4,10],[5,9],[6,8],[7]]
 rowsBottomToTop = rowsTopToBottom[::-1]
 bottomLeftToTopRightDiagonal = [[0,1],[2,3,13],[4,11,12],[5,10],[6,9],[7,8]]
@@ -469,9 +464,23 @@ bottomRightToTopLeftDiagonal = [[0,13],[1,12],[2,11],[3,9,10],[4,5,8],[6,7]]
 topLeftToBottomRightDiagonal = bottomRightToTopLeftDiagonal[::-1]
 
 ###
+# Sets of Groups of Nonagons
+###
+eightDirectionGroups = [
+    rowsTopToBottom,
+    topLeftToBottomRightDiagonal,
+    columnsLeftToRight,
+    bottomLeftToTopRightDiagonal,
+    rowsBottomToTop,
+    bottomRightToTopLeftDiagonal,
+    columnsRightToLeft,
+    topRightToBottomLeft
+]
+
+###
 # Color Sequences
 ###
-redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA, GREEN]
+redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
 colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 redFour = [CYAN,CYAN, BLUE, BLUE]
 
@@ -485,54 +494,7 @@ LtH = [0,1,2,3]
 # Side Animations
 ###
 
-def shiftLeft(colors, step):
-    if step == 0:
-        return colors
-    return colors[step:] + colors[:step]
 
-def shiftColorSequenceOverNonagonGroups(groups, sequence):
-    animation = []
-    for i in range(0, len(sequence)):
-        animation.append({
-            'groups': groups,
-            'colors': shiftLeft(sequence, i)
-            })
-    groupAnimateFade(animation, 10, 10, 0)
-
-animationFrames = [
-        {
-            'groups': rowsTopToBottom,
-            'colors': redToBlueSeq8
-        },
-        {
-            'groups':rowsTopToBottom,
-            'colors': shiftLeft(redToBlueSeq8,1)
-        },
-        {
-            'groups': rowsTopToBottom,
-            'colors': shiftLeft(redToBlueSeq8,2)
-        },
-        {
-            'groups':rowsTopToBottom,
-            'colors': shiftLeft(redToBlueSeq8,3)
-        },
-        {
-            'groups': rowsTopToBottom,
-            'colors': shiftLeft(redToBlueSeq8,4)
-        },
-        {
-            'groups':rowsTopToBottom,
-            'colors': shiftLeft(redToBlueSeq8,5)
-        },
-        {
-            'groups': rowsTopToBottom,
-            'colors': shiftLeft(redToBlueSeq8,6)
-        },
-        {
-            'groups':rowsTopToBottom,
-            'colors': shiftLeft(redToBlueSeq8,7)
-        }
-        ]
 
 sideList  = [
             (7,4, HtL, redFour),
@@ -564,7 +526,7 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         
         #groupAnimateFade(animationFrames, 10, 10, 0)
-        shiftColorSequenceOverNonagonGroups(rowsTopToBottom, redToBlueSeq8)
+        shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
         #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
         #cycleThroughSides()
         #sidesWithSequences(sideList, 2, 0)
