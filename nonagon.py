@@ -418,10 +418,6 @@ def getLastFrameSideColors(animation):
     frame = animation[len(animation)-1]
     for g, group in enumerate(frame['sides']):
         for side in group:
-            print("side:",side)
-            print("lastFrameColors",lastFrameColors)
-            print("g",g)
-            print("frameColors", frame['colors'])
             lastFrameColors[side[0]][side[1]] = frame['colors'][g]
     return lastFrameColors
 
@@ -429,7 +425,7 @@ def animateNonagonGroups(animation, hangFrames, fadeFrames):
     global lastFrameNonagonColors
     lastFrameColors = getLastFrameColors(animation)
     for n, frame in enumerate(animation):
-        for f in range(0, hangFrames+fadeFrames):
+        for f in range(hangFrames+fadeFrames):
             blankStrip()
             for g, group in enumerate(frame['groups']):
                 color = frame['colors'][g]
@@ -448,7 +444,7 @@ def animateSideGroups(animation, hangFrames, fadeFrames):
     global lastFrameSideColors
     lastFrameColors = getLastFrameSideColors(animation)
     for n, frame in enumerate(animation):
-        for f in range(0, hangFrames+fadeFrames):
+        for f in range(hangFrames+fadeFrames):
             blankStrip()
             for g, group in enumerate(frame['sides']):
                 color = frame['colors'][g]
@@ -754,7 +750,7 @@ try:
         # cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
         # shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 1)
         # shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 1)
-        animateSideGroups(sidesAnimation, 10,10)
+        animateSideGroups(sidesAnimation, 1,1)
         #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
         
