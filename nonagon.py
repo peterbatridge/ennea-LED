@@ -451,6 +451,7 @@ def cycleThroughSides(wait=0.5):
 ###
 # Groups Of Nonagons
 ###
+everyNonagon = [[0,1,2,3,4,5,6,7,8,9,10,11,12,13]]
 columnsLeftToRight = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
 columnsRightToLeft= columnsLeftToRight[::-1]
 rowsBottomToTop = [[0],[1,13],[2,12],[3,11],[4,10],[5,9],[6,8],[7]]
@@ -482,6 +483,7 @@ eightDirectionGroups = [
 redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
 colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 redFour = [CYAN,CYAN, BLUE, BLUE]
+threeCoolColors = [BLUE, CYAN, PURPLE]
 
 
 ###
@@ -503,7 +505,7 @@ def colorSwapAnimation(groups, colorOne, colorTwo, colorBetween, hangFrames, fad
             'groups': groups,
             'colors': colorList
         })
-    return animateNonagonGroups(animation, hangFrames,fadeFrames)
+    animateNonagonGroups(animation, hangFrames,fadeFrames)
 
 def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames):
     animation = []
@@ -512,7 +514,7 @@ def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames
             'groups': groups,
             'colors': shiftRight(sequence, i)
             })
-    return animateNonagonGroups(animation, hangFrames, fadeFrames)
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
 
 def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames):
     animation = []
@@ -522,10 +524,68 @@ def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, 
                 'groups': groupList,
                 'colors': shiftRight(sequence, i)
                 })
-    return animateNonagonGroups(animation, hangFrames, fadeFrames)
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
     
-def everyOtherNonagonAnimation(sequence, hangFrames, fadeFrames):
-    return shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
+
+def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
+
+def randomColorTriangles(hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(triangles,[randomColor(), randomColor()], hangFrames, fadeFrames)
+
+def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
+
+TeganTest = [
+    {
+        'groups': bottomLeftToTopRightDiagonal,
+        'colors': [RED,BLANK,BLANK,BLANK,BLANK,BLANK]
+    },
+    {
+        'groups': bottomLeftToTopRightDiagonal,
+        'colors': [ORANGE,RED,BLANK,BLANK,BLANK,BLANK]
+    },    
+    {
+        'groups': bottomLeftToTopRightDiagonal,
+        'colors': [YELLOW,ORANGE,RED,BLANK,BLANK,BLANK]
+    },   
+    {
+        'groups': bottomLeftToTopRightDiagonal,
+        'colors': [GREEN,YELLOW,ORANGE,RED,BLANK,BLANK]
+    },    
+    {
+        'groups': bottomLeftToTopRightDiagonal,
+        'colors': [BLUE,GREEN,YELLOW,ORANGE,RED,BLANK]
+    },
+    {
+        'groups': bottomLeftToTopRightDiagonal,
+        'colors': [PURPLE,BLUE,GREEN,YELLOW,ORANGE,RED]
+    },    
+    {
+        'groups': bottomLeftToTopRightDiagonal,
+        'colors': [BLANK,PURPLE,BLUE,GREEN,YELLOW,ORANGE]
+    },    
+    {
+        'groups': bottomLeftToTopRightDiagonal,
+        'colors': [BLANK, BLANK,PURPLE,BLUE,GREEN,YELLOW]
+    },    
+    {
+        'groups':bottomLeftToTopRightDiagonal,
+        'colors': [BLANK, BLANK, BLANK,PURPLE,BLUE,GREEN]
+    },
+    {
+        'groups':bottomLeftToTopRightDiagonal,
+        'colors': [BLANK, BLANK, BLANK, BLANK,PURPLE,BLUE]
+    },
+    {
+        'groups':bottomLeftToTopRightDiagonal,
+        'colors': [BLANK, BLANK, BLANK, BLANK, BLANK,PURPLE]
+    },
+    {
+        'groups':bottomLeftToTopRightDiagonal,
+        'colors': [BLANK, BLANK, BLANK, BLANK, BLANK, BLANK]
+    },
+]
 
 ###
 # Pixel Sequences on Sides
@@ -564,10 +624,11 @@ try:
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         
-        #groupAnimateFade(animationFrames, 10, 10, 0)
+        animateNonagonGroups(TeganTest, 10, 10)
         #shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
-        lastFrameColors = everyOtherNonagonAnimation([RED, BLUE, ORANGE, GREEN], 10 ,10)
-        colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
+        #cycleThroughColorSequenceWithNonagonTriangles([RED, BLUE, ORANGE, GREEN], 10 ,10)
+        #colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
+
         #colorSwapAnimation(bottomLeftToTopRightDiagonal, RED, BLUE, PURPLE, 10, 10)
         #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
         #cycleThroughSides()
@@ -597,12 +658,12 @@ try:
         #()
         #single_snake()
         #solidRandomColorEveryOther()
-#        rain()
+    #rain()
 
-#five_random_solid_colors()
-            #schedule.run_pending()
-            #rainbowCycle
-            #(i)
+    #five_random_solid_colors()
+                #schedule.run_pending()
+                #rainbowCycle
+                #(i)
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
