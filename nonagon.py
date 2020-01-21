@@ -877,15 +877,169 @@ sidesAnimation = [
     'colors': [RED]
 },
 {
-    'sides': [sidesFilledFromDirection(3,3,'bot')+
-    sidesFilledFromDirection(1,3,'bot')+
+    'sides': [
     sidesFilledFromDirection(3,4,'top')+
     sidesFilledFromDirection(11,4,'top')+
-    sidesFilledFromDirection(2,0,'top')+
-    sidesFilledFromDirection(12,0,'top')
+    sidesFilledFromDirection(2,3,'top')+
+    sidesFilledFromDirection(12,3,'top')
     ],
     'colors': [RED]
 },
+{
+    'sides': [sidesFilledFromDirection(3,3,'bot')+
+    sidesFilledFromDirection(11,3,'bot')+
+    sidesFilledFromDirection(2,4,'top')+
+    sidesFilledFromDirection(12,4,'top')+
+    sidesFilledFromDirection(1,0,'top')+
+    sidesFilledFromDirection(13,0,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [sidesFilledFromDirection(3,2,'bot')+
+    sidesFilledFromDirection(11,2,'bot')+
+    sidesFilledFromDirection(2,4,'top')+
+    sidesFilledFromDirection(12,4,'top')+
+    sidesFilledFromDirection(1,1,'top')+
+    sidesFilledFromDirection(13,1,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [sidesFilledFromDirection(3,1,'bot')+
+    sidesFilledFromDirection(11,1,'bot')+
+    sidesFilledFromDirection(2,4,'top')+
+    sidesFilledFromDirection(12,4,'top')+
+    sidesFilledFromDirection(1,2,'top')+
+    sidesFilledFromDirection(13,2,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [sidesFilledFromDirection(3,0,'bot')+
+    sidesFilledFromDirection(11,0,'bot')+
+    sidesFilledFromDirection(2,4,'top')+
+    sidesFilledFromDirection(12,4,'top')+
+    sidesFilledFromDirection(1,3,'top')+
+    sidesFilledFromDirection(13,3,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(2,4,'top')+
+    sidesFilledFromDirection(12,4,'top')+
+    sidesFilledFromDirection(1,4,'top')+
+    sidesFilledFromDirection(13,4,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [sidesFilledFromDirection(2,3,'bot')+
+    sidesFilledFromDirection(12,3,'bot')+
+    sidesFilledFromDirection(1,4,'top')+
+    sidesFilledFromDirection(13,4,'top')+
+    sidesFilledFromDirection(0,0,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [sidesFilledFromDirection(2,2,'bot')+
+    sidesFilledFromDirection(12,2,'bot')+
+    sidesFilledFromDirection(1,4,'top')+
+    sidesFilledFromDirection(13,4,'top')+
+    sidesFilledFromDirection(0,1,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [sidesFilledFromDirection(2,1,'bot')+
+    sidesFilledFromDirection(12,1,'bot')+
+    sidesFilledFromDirection(1,4,'top')+
+    sidesFilledFromDirection(13,4,'top')+
+    sidesFilledFromDirection(0,2,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [sidesFilledFromDirection(2,0,'bot')+
+    sidesFilledFromDirection(12,0,'bot')+
+    sidesFilledFromDirection(1,4,'top')+
+    sidesFilledFromDirection(13,4,'top')+
+    sidesFilledFromDirection(0,2,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(1,4,'top')+
+    sidesFilledFromDirection(13,4,'top')+
+    sidesFilledFromDirection(0,3,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(1,3,'bot')+
+    sidesFilledFromDirection(13,3,'bot')+
+    sidesFilledFromDirection(0,4,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(1,2,'bot')+
+    sidesFilledFromDirection(13,2,'bot')+
+    sidesFilledFromDirection(0,4,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(1,1,'bot')+
+    sidesFilledFromDirection(13,1,'bot')+
+    sidesFilledFromDirection(0,4,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(1,0,'bot')+
+    sidesFilledFromDirection(13,0,'bot')+
+    sidesFilledFromDirection(0,4,'top')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(0,4,'bot')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(0,3,'bot')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(0,2,'bot')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(0,1,'bot')
+    ],
+    'colors': [RED]
+},
+{
+    'sides': [
+    sidesFilledFromDirection(0,0,'bot')
+    ],
+    'colors': [RED]
+}
 ]
 
 try:        
