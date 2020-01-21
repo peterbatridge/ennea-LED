@@ -193,9 +193,12 @@ def setNonagonColor(n, color):
     strips[n*31:n*31+31] = [color]*31
 
 def shiftLeft(colors, step):
-    if step == 0:
-        return colors
+    step = step % len(colors)
     return colors[step:] + colors[:step]
+
+def shiftRight(colors, step):
+    step = step % len(colors)
+    return colors[-step:] + colors[:-step]
 
 def setPatternOnEveryNonagon(pattern):
     for n in range(0,14):
@@ -444,7 +447,7 @@ def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames
     for i in range(0, len(sequence)):
         animation.append({
             'groups': groups,
-            'colors': shiftLeft(sequence, i)
+            'colors': shiftRight(sequence, i)
             })
     animateNonagonGroups(animation, hangFrames, fadeFrames)
 
@@ -457,16 +460,17 @@ def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, 
         for i in range(0, len(sequence)):
             animation.append({
                 'groups': groupList,
-                'colors': shiftLeft(sequence, i)
+                'colors': shiftRight(sequence, i)
                 })
     animateNonagonGroups(animation, hangFrames, fadeFrames)
+    
 ###
 # Groups Of Nonagons
 ###
 columnsLeftToRight = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
 columnsRightToLeft= columnsLeftToRight[::-1]
-rowsTopToBottom = [[0],[1,13],[2,12],[3,11],[4,10],[5,9],[6,8],[7]]
-rowsBottomToTop = rowsTopToBottom[::-1]
+rowsBottomToTop = [[0],[1,13],[2,12],[3,11],[4,10],[5,9],[6,8],[7]]
+rowsTopToBottom = rowsBottomToTop[::-1]
 bottomLeftToTopRightDiagonal = [[0,1],[2,3,13],[4,11,12],[5,10],[6,9],[7,8]]
 topRightToBottomLeft = bottomLeftToTopRightDiagonal[::-1]
 bottomRightToTopLeftDiagonal = [[0,13],[1,12],[2,11],[3,9,10],[4,5,8],[6,7]]
