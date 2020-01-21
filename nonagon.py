@@ -452,14 +452,21 @@ def cycleThroughSides(wait=0.5):
 # Groups Of Nonagons
 ###
 everyNonagon = [[0,1,2,3,4,5,6,7,8,9,10,11,12,13]]
+
 columnsLeftToRight = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
 columnsRightToLeft= columnsLeftToRight[::-1]
 rowsBottomToTop = [[0],[1,13],[2,12],[3,11],[4,10],[5,9],[6,8],[7]]
 rowsTopToBottom = rowsBottomToTop[::-1]
+
 bottomLeftToTopRightDiagonal = [[0,1],[2,3,13],[4,11,12],[5,10],[6,9],[7,8]]
-topRightToBottomLeft = bottomLeftToTopRightDiagonal[::-1]
+bottomLeftToTopRightSharpDiagonal = [[1,3],[0,2,4],[5,11,13],[6,10,12],[7,9],[8]]
+topRightToBottomLeftDiagonal = bottomLeftToTopRightDiagonal[::-1]
+topRightToBottomLeftSharpDiagonal = bottomLeftToTopRightSharpDiagonal[::-1]
+
 bottomRightToTopLeftDiagonal = [[0,13],[1,12],[2,11],[3,9,10],[4,5,8],[6,7]]
+bottomRightToTopLeftSharpDiagonal = [[13],[0,12],[1,11,9],[2,10,8],[3,5,7],[4,6]]
 topLeftToBottomRightDiagonal = bottomRightToTopLeftDiagonal[::-1]
+topLeftToBottomRightSharpDiagonal = bottomRightToTopLeftSharpDiagonal[::-1]
 
 triangles = [[0,2,4,6,8,10,12], [1,3,5,7,9,11,13]]
 
@@ -474,7 +481,8 @@ eightDirectionGroups = [
     rowsBottomToTop,
     bottomRightToTopLeftDiagonal,
     columnsRightToLeft,
-    topRightToBottomLeft
+    topRightToBottomLeftDiagonal
+
 ]
 
 ###
@@ -484,6 +492,8 @@ redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
 colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 redFour = [CYAN,CYAN, BLUE, BLUE]
 threeCoolColors = [BLUE, CYAN, PURPLE]
+sixteenColdToWarmColors = [BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, MAGENTA, RED, RED, RED, RED, RED, RED, RED, MAGENTA]
+TeganSequence = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE]
 
 
 ###
@@ -535,57 +545,6 @@ def randomColorTriangles(hangFrames, fadeFrames):
 def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
     shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
 
-TeganTest = [
-    {
-        'groups': bottomLeftToTopRightDiagonal,
-        'colors': [RED,BLANK,BLANK,BLANK,BLANK,BLANK]
-    },
-    {
-        'groups': bottomLeftToTopRightDiagonal,
-        'colors': [ORANGE,RED,BLANK,BLANK,BLANK,BLANK]
-    },    
-    {
-        'groups': bottomLeftToTopRightDiagonal,
-        'colors': [YELLOW,ORANGE,RED,BLANK,BLANK,BLANK]
-    },   
-    {
-        'groups': bottomLeftToTopRightDiagonal,
-        'colors': [GREEN,YELLOW,ORANGE,RED,BLANK,BLANK]
-    },    
-    {
-        'groups': bottomLeftToTopRightDiagonal,
-        'colors': [BLUE,GREEN,YELLOW,ORANGE,RED,BLANK]
-    },
-    {
-        'groups': bottomLeftToTopRightDiagonal,
-        'colors': [PURPLE,BLUE,GREEN,YELLOW,ORANGE,RED]
-    },    
-    {
-        'groups': bottomLeftToTopRightDiagonal,
-        'colors': [BLANK,PURPLE,BLUE,GREEN,YELLOW,ORANGE]
-    },    
-    {
-        'groups': bottomLeftToTopRightDiagonal,
-        'colors': [BLANK, BLANK,PURPLE,BLUE,GREEN,YELLOW]
-    },    
-    {
-        'groups':bottomLeftToTopRightDiagonal,
-        'colors': [BLANK, BLANK, BLANK,PURPLE,BLUE,GREEN]
-    },
-    {
-        'groups':bottomLeftToTopRightDiagonal,
-        'colors': [BLANK, BLANK, BLANK, BLANK,PURPLE,BLUE]
-    },
-    {
-        'groups':bottomLeftToTopRightDiagonal,
-        'colors': [BLANK, BLANK, BLANK, BLANK, BLANK,PURPLE]
-    },
-    {
-        'groups':bottomLeftToTopRightDiagonal,
-        'colors': [BLANK, BLANK, BLANK, BLANK, BLANK, BLANK]
-    },
-]
-
 ###
 # Pixel Sequences on Sides
 ###
@@ -622,10 +581,10 @@ try:
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
-        
-        animateNonagonGroups(TeganTest, 10, 10)
-        
-        shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE], 10, 10)
+        cycleThroughColorSequenceWithEveryNonagon(threeCoolColors, 10, 10)
+        shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 5, 5)
+        rain()
+        #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
         
         
         #shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
