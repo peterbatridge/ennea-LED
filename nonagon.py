@@ -576,6 +576,18 @@ def randomColorTriangles(hangFrames, fadeFrames):
 
 def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
     shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
+    
+def exMachinaMode():
+    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 1)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 1)
+    animateSideGroups(sidesAnimation, 1,1)
+    animateSideGroups(sidesAnimation, 1,1)
+    animateSideGroups(sidesAnimation, 1,1)
+    animateSideGroups(sidesAnimation, 1,1)
 
 ###
 # Pixel Sequences on Sides
@@ -1049,13 +1061,8 @@ try:
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
-        # cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-        # cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-        # cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-        # cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-        # shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 1)
-        # shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 1)
-        animateSideGroups(sidesAnimation, 1,1)
+        exMachinaMode()
+
         #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
         
