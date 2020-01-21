@@ -35,6 +35,7 @@ colors = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN,  BLUE, PURPLE, MAGENTA]
 current_weather_base = "http://api.openweathermap.org/data/2.5/weather?q=Chicago,us&APPID="
 
 cta_train_line_base = "http://lapi.transitchicago.com/api/1.0/ttpositions.aspx?rt=brn,p&outputType=JSON&key="
+lastFrameNonagonColors = []
 
 ###
 # Weather Functions
@@ -398,6 +399,9 @@ def stepBetweenColors(startColor, endColor, stepCount, currentStep):
     return (int(r),int(g),int(b))
 
 def getLastFrameColors(animation):
+    global lastFrameNonagonColors
+    if lastFrameNonagonColors!=[]:
+        return lastFrameNonagonColors
     lastFrameColors = [0]*14
     frame = animation[len(animation)-1]
     for g, group in enumerate(frame['groups']):
@@ -406,6 +410,7 @@ def getLastFrameColors(animation):
     return lastFrameColors
 
 def animateNonagonGroups(animation, hangFrames, fadeFrames):
+    global lastFrameNonagonColors
     lastFrameColors = getLastFrameColors(animation)
     for n, frame in enumerate(animation):
         for f in range(0, hangFrames+fadeFrames):
@@ -420,6 +425,7 @@ def animateNonagonGroups(animation, hangFrames, fadeFrames):
                         lastFrameColors[nonagon] = color
                         setNonagonColor(nonagon, color)
             strips.show()
+    lastFrameNonagonColors = lastFrameColors
                
 def sidesWithSequences(sidesWithSequences, hangFrame, wait_between_nonagons=0):
     lastNonagon = -1
@@ -497,7 +503,7 @@ def colorSwapAnimation(groups, colorOne, colorTwo, colorBetween, hangFrames, fad
             'groups': groups,
             'colors': colorList
         })
-    animateNonagonGroups(animation, hangFrames,fadeFrames)
+    return animateNonagonGroups(animation, hangFrames,fadeFrames)
 
 def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames):
     animation = []
@@ -506,7 +512,7 @@ def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames
             'groups': groups,
             'colors': shiftRight(sequence, i)
             })
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
+    return animateNonagonGroups(animation, hangFrames, fadeFrames)
 
 def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames):
     animation = []
@@ -516,10 +522,10 @@ def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, 
                 'groups': groupList,
                 'colors': shiftRight(sequence, i)
                 })
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
+    return animateNonagonGroups(animation, hangFrames, fadeFrames)
     
 def everyOtherNonagonAnimation(sequence, hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
+    return shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
 
 ###
 # Pixel Sequences on Sides
@@ -552,7 +558,6 @@ sideList  = [
 
 try:        
     i = 0
-
     while True:
         #path() 
         #pinwheel(0)
@@ -561,8 +566,9 @@ try:
         
         #groupAnimateFade(animationFrames, 10, 10, 0)
         #shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
+        lastFrameColors = everyOtherNonagonAnimation([RED, BLUE, ORANGE, GREEN], 10 ,10)
         colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
-        colorSwapAnimation(bottomLeftToTopRightDiagonal, RED, BLUE, PURPLE, 10, 10)
+        #colorSwapAnimation(bottomLeftToTopRightDiagonal, RED, BLUE, PURPLE, 10, 10)
         #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
         #cycleThroughSides()
         #sidesWithSequences(sideList, 2, 0)
