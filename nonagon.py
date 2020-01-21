@@ -504,7 +504,7 @@ redFour = [CYAN,CYAN, BLUE, BLUE]
 def colorSwapAnimation(groups, colorOne, colorTwo, colorBetween, hangFrames, fadeFrames):
     lengthOfGroup = len(groups)
     animation = []
-    for i in range(1, int(lengthOfGroup/2)):
+    for i in range(1, int(lengthOfGroup/2)+1):
         colorList = [colorOne]*i +[colorBetween]*(lengthOfGroup-(2*i)) + [colorTwo]*i
         animation.append({
             'groups': groups,
