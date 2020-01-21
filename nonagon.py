@@ -418,6 +418,10 @@ def getLastFrameSideColors(animation):
     frame = animation[len(animation)-1]
     for g, group in enumerate(frame['sides']):
         for side in group:
+            print("side:",side)
+            print("lastFrameColors",lastFrameColors)
+            print("g",g)
+            print("frameColors", frame['colors'])
             lastFrameColors[side[0]][side[1]] = frame['colors'][g]
     return lastFrameColors
 
