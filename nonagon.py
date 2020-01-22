@@ -587,6 +587,26 @@ def exMachinaMode():
     animateSideGroups(sidesAnimation, 1,1)
     animateSideGroups(sidesAnimation, 1,1)
 
+def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
+    animation = []
+    for g, groups in enumerate(nonagonGroups):
+            for i in range(width):
+                sides = []
+                if i <= 4:
+                    for n in groups:
+                        sides.append(sidesFilledFromDirection(n, i, 'top'))
+                elif i>=5 and i < width-4:
+                    for n in nonagonGroups[i+1]:
+                        sides.append(sidesFilledFromDirection(n, i, 'top'))
+                else:
+                    for n in groups:
+                        sides.append(sidesFilledFromDirection, width-i, 'bot')
+
+                animation.append({
+                    'sides': sides,
+                    'colors': seqeuence
+                    })
+    animateSideGroups(animation, hangFrames, fadeFrames)
 ###
 # Pixel Sequences on Sides
 ###
@@ -1059,7 +1079,8 @@ try:
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
-        exMachinaMode()
+        #exMachinaMode()
+        fillSidesAnimation(rowsTopToBottom, [RED], 12, 1, 1)
 
         #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
