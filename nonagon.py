@@ -625,51 +625,33 @@ def fillListFromStartAndStep(start, step):
         if itOne!=itTwo:
             fillList.append(itTwo)
     return fillList
-
-oddStartPosition = {
-    'top':      [4],
-    'topLeft':  [5],
-    'left':     [6],
-    'botLeft':  [7,8],
-    'bot':      [8,0],
-    'botRight': [0,1],
-    'right':    [2],
-    'topRight': [3],
-}
-evenStartPosition = {
-    'top':      [4,5],
-    'topLeft':  [6,5],
-    'left':     [7],
-    'botLeft':  [8],
-    'bot':      [0],
-    'botRight': [1],
-    'right':    [2],
-    'topRight': [4,3],
-}
+    
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
+    oddStartPosition = {
+        'top':      [4],
+        'topLeft':  [5],
+        'left':     [6],
+        'botLeft':  [7,8],
+        'bot':      [8,0],
+        'botRight': [0,1],
+        'right':    [2],
+        'topRight': [3],
+    }
+    evenStartPosition = {
+        'top':      [4,5],
+        'topLeft':  [6,5],
+        'left':     [7],
+        'botLeft':  [8],
+        'bot':      [0],
+        'botRight': [1],
+        'right':    [2],
+        'topRight': [4,3],
+    }
     if (nonagon % 2 == 0):
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStartPosition[direction],step))
     else:
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStartPosition[direction],step))
-
-# Steps from 0 through 4
-def sidesTracedFromDirection(nonagon, step, direction):
-    if (nonagon % 2 == 0):
-        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStartPosition[direction],step))
-    else:
-        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStartPosition[direction],step))
-
-def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames):
-    animation = []
-    for g, group in enumerate(nonagonGroups):
-        for s in range(0, 5):
-            sides = []
-            for n in group:
-                sides.append(sidesFilledFromDirection(n, s, direction))
-            animation.append({
-                'sides': sides,
-                'colors': sequence[g]})     
 
             
 def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames):
