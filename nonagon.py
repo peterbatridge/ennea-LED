@@ -600,58 +600,44 @@ def fillListFromStartAndStep(start, step):
     if len(start)>1:
         itTwo = start[1]
     for i in range(0,step):
-        itOne = (itOne+step)%9
+        itOne = (itOne+1)%9
         fillList.append(itOne)
-        itTwo = (itTwo-step)
+        itTwo = (itTwo-1)
         if itTwo<0:
-            itTwo = 8+itTwo
+            itTwo = 9+itTwo
         if itOne!=itTwo:
             fillList.append(itTwo)
     return fillList
     
-
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
-    evenNonagonSidesFilledFromTop = {
-        0: [5,4],
-        1: [6,5,4,3],
-        2: [7,6,5,4,3,2],
-        3: [8,7,6,5,4,3,2,1],
-        4: [8,7,6,5,4,3,2,1,0]
+    oddStartPosition = {
+        'top':      [4],
+        'topLeft':  [5],
+        'left':     [6],
+        'botLeft':  [7,8],
+        'bot':      [8,0],
+        'botRight': [0,1],
+        'right':    [2],
+        'topRight': [3],
     }
-    oddNonagonSidesFilledFromTop = {
-        0: [4],
-        1: [5,4,3],
-        2: [6,5,4,3,2],
-        3: [7,6,5,4,3,2,1],
-        4: [8,7,6,5,4,3,2,1,0]
-    }
-    evenNonagonSidesFilledFromBottom = {
-        0: [0],
-        1: [8,0,1],
-        2: [7,8,0,1,2],
-        3: [6,7,8,0,1,2,3],
-        4: [5,6,7,8,0,1,2,3,4]
-    }
-    oddNonagonSidesFilledFromBottom = {
-        0: [8,0],
-        1: [7,8,0,1],
-        2: [6,7,8,0,1,2],
-        3: [5,6,7,8,0,1,2,3],
-        4: [5,6,7,8,0,1,2,3,4]
+    evenStartPosition = {
+        'top':      [4,5],
+        'topLeft':  [6,5],
+        'left':     [7],
+        'botLeft':  [8],
+        'bot':      [0],
+        'botRight': [1],
+        'right':    [2],
+        'topRight': [4,3],
     }
     if (nonagon % 2 == 0):
-        if direction == 'top':
-            return generateSidesListFromNonagonAndSides(nonagon, evenNonagonSidesFilledFromTop[step])
-        else:
-            return generateSidesListFromNonagonAndSides(nonagon, evenNonagonSidesFilledFromBottom[step])
+        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStartPosition[direction],step))
     else:
-        if direction == 'top':
-            return generateSidesListFromNonagonAndSides(nonagon, oddNonagonSidesFilledFromTop[step])
-        else:
-            return generateSidesListFromNonagonAndSides(nonagon, oddNonagonSidesFilledFromBottom[step])
+        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStartPosition[direction],step))
+
             
-def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
+def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames):
     if width<5:
         width = 5
     animation = []
@@ -661,7 +647,8 @@ def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
     startIter = 0
     endIter = 1
     for i in range(numBuckets*width):
-        sides = [[]]
+        sides = []
+        colors = []
         if filled <= width and endIter < numBuckets:
             if buckets[startIter] < 4:
                 buckets[startIter] = buckets[startIter]+1
@@ -685,15 +672,17 @@ def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
                     endIter = endIter + 1
         for b in range(0, numBuckets):
             if buckets[b]!=-1:
-                direction = 'top'
+                sides.append([])
+                colors.append(seqeuence[b])
+                direction = fillSide
                 if b == startIter and endIter>1:
-                    direction = 'bot'
+                    direction = drainSide
                 for n in nonagonGroups[b]:
-                    sides[0] = sides[0] + sidesFilledFromDirection(n, buckets[b], direction)
+                    sides[len(sides)-1] = sides[len(sides)-1] + sidesFilledFromDirection(n, buckets[b], direction)
 
         animation.append({
         'sides': sides,
-        'colors': seqeuence
+        'colors': colors
         })  
 
     animateSideGroups(animation, hangFrames, fadeFrames)
@@ -735,10 +724,11 @@ try:
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
-        fillSidesAnimation(rowsTopToBottom, [MAGENTA], 10, 1, 1)
-        fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
-        fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
-        fillSidesAnimation(columnsLeftToRight, [MAGENTA], 10, 1, 1)
+
+        fillSidesAnimation(rowsTopToBottom, [MAGENTA]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+        # fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
+        # fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
+        # fillSidesAnimation(columnsLeftToRight, [MAGENTA], 10, 1, 1)
         #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
         
