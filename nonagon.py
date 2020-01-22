@@ -642,7 +642,7 @@ def sidesFilledFromDirection(nonagon, step, direction):
     }
     if (nonagon % 2 == 0):
         if direction == 'top':
-            return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep([5,4],step))
+            return generateSidesListFromNonagonAndSides(nonagon, evenNonagonSidesFilledFromTop[step])
         else:
             return generateSidesListFromNonagonAndSides(nonagon, evenNonagonSidesFilledFromBottom[step])
     else:
