@@ -595,6 +595,21 @@ def generateSidesListFromNonagonAndSides(nonagon, sides):
         sidesList.append((nonagon, side))
     return sidesList
 
+def singleLineFromStartAndStep(start, step):
+    fillList = []
+    itOne = start[0]
+    itTwo = start[0]
+    if len(start)>1:
+        itTwo = start[1]
+    itOne = (itOne+step)%9
+    fillList.append(itOne)
+    itTwo = (itTwo-step)
+    if itTwo<0:
+        itTwo = 9+itTwo
+    if itOne!=itTwo:
+        fillList.append(itTwo)
+    return fillList
+
 def fillListFromStartAndStep(start, step):
     fillList = start
     itOne = start[0]
@@ -610,35 +625,52 @@ def fillListFromStartAndStep(start, step):
         if itOne!=itTwo:
             fillList.append(itTwo)
     return fillList
-    
+
+oddStartPosition = {
+    'top':      [4],
+    'topLeft':  [5],
+    'left':     [6],
+    'botLeft':  [7,8],
+    'bot':      [8,0],
+    'botRight': [0,1],
+    'right':    [2],
+    'topRight': [3],
+}
+evenStartPosition = {
+    'top':      [4,5],
+    'topLeft':  [6,5],
+    'left':     [7],
+    'botLeft':  [8],
+    'bot':      [0],
+    'botRight': [1],
+    'right':    [2],
+    'topRight': [4,3],
+}
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
-    oddStartPosition = {
-        'top':      [4],
-        'topLeft':  [5],
-        'left':     [6],
-        'botLeft':  [7,8],
-        'bot':      [8,0],
-        'botRight': [0,1],
-        'right':    [2],
-        'topRight': [3],
-    }
-    evenStartPosition = {
-        'top':      [4,5],
-        'topLeft':  [6,5],
-        'left':     [7],
-        'botLeft':  [8],
-        'bot':      [0],
-        'botRight': [1],
-        'right':    [2],
-        'topRight': [4,3],
-    }
     if (nonagon % 2 == 0):
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStartPosition[direction],step))
     else:
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStartPosition[direction],step))
 
-            
+# Steps from 0 through 4
+def sidesTracedFromDirection(nonagon, step, direction):
+    if (nonagon % 2 == 0):
+        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStartPosition[direction],step))
+    else:
+        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStartPosition[direction],step))
+
+def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames):
+    animation = []
+    for g, group in enumerate(nonagonGroups):
+        for s in range(0, 5):
+            sides = []
+            for n in group:
+                sides.append(sidesFilledFromDirection(n, s, direction))
+            animation.append({
+                'sides': sides,
+                'colors': sequence[g]})     
+
 def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames):
     if width<5:
         width = 5
@@ -651,7 +683,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
     for i in range(numBuckets*width):
         sides = []
         colors = []
-        if filled <= width and endIter < numBuckets:
+        if filled < width and endIter < numBuckets:
             if buckets[startIter] < 4:
                 buckets[startIter] = buckets[startIter]+1
                 filled = filled+1
@@ -727,10 +759,11 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
 
-        #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
+        fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
+        traceSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 1, 0)
 
-        fillSidesAnimation(triangles, redAndBlue, 'topRight', 'botLeft', 50, 1, 0)
-        fillSidesAnimation(triangles[::-1], redAndBlue, 'botLeft', 'topRight', 50, 1, 0)
+        # fillSidesAnimation(triangles, redAndBlue, 'topRight', 'botLeft', 10, 1, 0)
+        # fillSidesAnimation(triangles[::-1], redAndBlue, 'botLeft', 'topRight', 10, 1, 0)
 
         # fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
