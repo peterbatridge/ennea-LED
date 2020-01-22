@@ -729,8 +729,8 @@ try:
 
         #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
 
-        fillSidesAnimation(triangles, redAndBlue, 'top', 'botLeft', 10, 1, 0)
-        fillSidesAnimation(triangles[::-1], redAndBlue, 'top', 'botLeft', 10, 1, 0)
+        fillSidesAnimation(triangles, redAndBlue, 'topRight', 'botLeft', 50, 1, 0)
+        fillSidesAnimation(triangles[::-1], redAndBlue, 'botLeft', 'topRight', 50, 1, 0)
 
         # fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
