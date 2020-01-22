@@ -421,12 +421,12 @@ def getLastFrameSideColors(animation):
             lastFrameColors[side[0]][side[1]] = frame['colors'][g]
     return lastFrameColors
 
-def animateNonagonGroups(animation, hangFrames, fadeFrames):
+def animateNonagonGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK):
     global lastFrameNonagonColors
     lastFrameColors = getLastFrameColors(animation)
     for n, frame in enumerate(animation):
         for f in range(hangFrames+fadeFrames):
-            blankStrip()
+            strips[0:434] = backgroundColor
             for g, group in enumerate(frame['groups']):
                 color = frame['colors'][g]
                 for nonagon in group:
@@ -440,12 +440,12 @@ def animateNonagonGroups(animation, hangFrames, fadeFrames):
             strips.show()
     lastFrameNonagonColors = lastFrameColors
 
-def animateSideGroups(animation, hangFrames, fadeFrames):
+def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK):
     global lastFrameSideColors
     lastFrameColors = getLastFrameSideColors(animation)
     for n, frame in enumerate(animation):
         for f in range(hangFrames+fadeFrames):
-            blankStrip()
+            strips[0:434] = backgroundColor
             for g, group in enumerate(frame['sides']):
                 color = frame['colors'][g]
                 for side in group:
@@ -682,10 +682,13 @@ def sidesTracedFromDirection(nonagon, step, direction):
 def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames):
     animation = []
     for g, group in enumerate(nonagonGroups):
+
         for s in range(0, 5):
             sides = [[]]
             for n in group:
-                sides[0] = sides[0] + sidesFilledFromDirection(n, s, direction)
+                sides[0] = sides[0] + sidesTracedFromDirection(n, s, direction)
+            time.sleep(0.5)
+            print(sides)
             animation.append({
                 'sides': sides,
                 'colors': sequence[g]})     
