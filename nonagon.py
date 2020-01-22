@@ -679,6 +679,16 @@ def sidesTracedFromDirection(nonagon, step, direction):
     else:
         return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStartPosition[direction],step))
 
+def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames):
+    animation = []
+    for g, group in enumerate(nonagonGroups):
+        for s in range(0, 5):
+            sides = []
+            for n in group:
+                sides.append(sidesFilledFromDirection(n, s, direction))
+            animation.append({
+                'sides': sides,
+                'colors': sequence[g]})     
             
 def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames):
     if width<5:
@@ -767,9 +777,10 @@ try:
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
+        traceSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 1, 0)
 
-        fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
-
+        #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
+        
         # fillSidesAnimation(triangles, redAndBlue, 'topRight', 'botLeft', 1, 1, 0)
         # fillSidesAnimation(triangles[::-1], redAndBlue, 'botLeft', 'topRight', 1, 1, 0)
 
