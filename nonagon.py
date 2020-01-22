@@ -529,32 +529,6 @@ sixteenColdToWarmColors = [BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, MAGENTA, RE
 TeganSequence = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE]
 ROYGCBPG = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE, MAGENTA]
 
-
-
-###
-# Starting Positions
-###
-oddStartPosition = {
-    'top':      [4],
-    'topLeft':  [5],
-    'left':     [6],
-    'botLeft':  [7,8],
-    'bot':      [8,0],
-    'botRight': [0,1],
-    'right':    [2],
-    'topRight': [3],
-}
-evenStartPosition = {
-    'top':      [4,5],
-    'topLeft':  [6,5],
-    'left':     [7],
-    'botLeft':  [8],
-    'bot':      [0],
-    'botRight': [1],
-    'right':    [2],
-    'topRight': [4,3],
-}
-
 ###
 # Animations 
 ###
@@ -653,7 +627,26 @@ def fillListFromStartAndStep(start, step):
     
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
-    global evenStartPosition, oddStartPosition
+    oddStartPosition = {
+        'top':      [4],
+        'topLeft':  [5],
+        'left':     [6],
+        'botLeft':  [7,8],
+        'bot':      [8,0],
+        'botRight': [0,1],
+        'right':    [2],
+        'topRight': [3],
+    }
+    evenStartPosition = {
+        'top':      [4,5],
+        'topLeft':  [6,5],
+        'left':     [7],
+        'botLeft':  [8],
+        'bot':      [0],
+        'botRight': [1],
+        'right':    [2],
+        'topRight': [4,3],
+    }
     if (nonagon % 2 == 0):
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStartPosition[direction],step))
     else:
@@ -661,7 +654,26 @@ def sidesFilledFromDirection(nonagon, step, direction):
 
 # Steps from 0 through 4
 def sidesTracedFromDirection(nonagon, step, direction):
-    global evenStartPosition, oddStartPosition
+    oddStartPosition = {
+        'top':      [4],
+        'topLeft':  [5],
+        'left':     [6],
+        'botLeft':  [7,8],
+        'bot':      [8,0],
+        'botRight': [0,1],
+        'right':    [2],
+        'topRight': [3],
+    }
+    evenStartPosition = {
+        'top':      [4,5],
+        'topLeft':  [6,5],
+        'left':     [7],
+        'botLeft':  [8],
+        'bot':      [0],
+        'botRight': [1],
+        'right':    [2],
+        'topRight': [4,3],
+    }
     if (nonagon % 2 == 0):
         return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStartPosition[direction],step))
     else:
