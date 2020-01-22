@@ -760,7 +760,7 @@ try:
         #exMachinaMode()
 
         fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
-        traceSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 1, 0)
+        #traceSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 1, 0)
 
         # fillSidesAnimation(triangles, redAndBlue, 'topRight', 'botLeft', 10, 1, 0)
         # fillSidesAnimation(triangles[::-1], redAndBlue, 'botLeft', 'topRight', 10, 1, 0)
