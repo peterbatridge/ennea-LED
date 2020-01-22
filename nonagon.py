@@ -592,6 +592,24 @@ def generateSidesListFromNonagonAndSides(nonagon, sides):
     for side in sides:
         sidesList.append((nonagon, side))
     return sidesList
+
+def fillListFromStartAndStep(start, step):
+    fillList = start
+    itOne = start[0]
+    itTwo = start[0]
+    if len(start)>1:
+        itTwo = start[1]
+    for i in range(0,step):
+        itOne = (itOne+step)%9
+        fillList.append(itOne)
+        itTwo = (itTwo-step)
+        if itTwo<0:
+            itTwo = 8+itTwo
+        if itOne!=itTwo:
+            fillList.append(itTwo)
+    return fillList
+    
+
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
     evenNonagonSidesFilledFromTop = {
@@ -624,7 +642,7 @@ def sidesFilledFromDirection(nonagon, step, direction):
     }
     if (nonagon % 2 == 0):
         if direction == 'top':
-            return generateSidesListFromNonagonAndSides(nonagon, evenNonagonSidesFilledFromTop[step])
+            return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep([5,4],step))
         else:
             return generateSidesListFromNonagonAndSides(nonagon, evenNonagonSidesFilledFromBottom[step])
     else:
