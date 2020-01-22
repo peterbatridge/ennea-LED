@@ -530,6 +530,31 @@ TeganSequence = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GR
 ROYGCBPG = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE, MAGENTA]
 
 
+
+###
+# Starting Positions
+###
+oddStartPosition = {
+    'top':      [4],
+    'topLeft':  [5],
+    'left':     [6],
+    'botLeft':  [7,8],
+    'bot':      [8,0],
+    'botRight': [0,1],
+    'right':    [2],
+    'topRight': [3],
+}
+evenStartPosition = {
+    'top':      [4,5],
+    'topLeft':  [6,5],
+    'left':     [7],
+    'botLeft':  [8],
+    'bot':      [0],
+    'botRight': [1],
+    'right':    [2],
+    'topRight': [4,3],
+}
+
 ###
 # Animations 
 ###
@@ -628,30 +653,19 @@ def fillListFromStartAndStep(start, step):
     
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
-    oddStartPosition = {
-        'top':      [4],
-        'topLeft':  [5],
-        'left':     [6],
-        'botLeft':  [7,8],
-        'bot':      [8,0],
-        'botRight': [0,1],
-        'right':    [2],
-        'topRight': [3],
-    }
-    evenStartPosition = {
-        'top':      [4,5],
-        'topLeft':  [6,5],
-        'left':     [7],
-        'botLeft':  [8],
-        'bot':      [0],
-        'botRight': [1],
-        'right':    [2],
-        'topRight': [4,3],
-    }
+    global evenStartPosition, oddStartPosition
     if (nonagon % 2 == 0):
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStartPosition[direction],step))
     else:
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStartPosition[direction],step))
+
+# Steps from 0 through 4
+def sidesTracedFromDirection(nonagon, step, direction):
+    global evenStartPosition, oddStartPosition
+    if (nonagon % 2 == 0):
+        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStartPosition[direction],step))
+    else:
+        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStartPosition[direction],step))
 
             
 def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames):
