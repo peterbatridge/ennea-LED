@@ -726,7 +726,7 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
 
-        fillSidesAnimation(topLeftToBottomRightSharpDiagonal, ROYGCBPG, 'topLeft', 'botLeft', 10, 2, 0)
+        fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'right', 10, 1, 0)
         # fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(columnsLeftToRight, [MAGENTA], 10, 1, 1)
