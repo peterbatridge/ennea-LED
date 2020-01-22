@@ -634,6 +634,8 @@ def sidesFilledFromDirection(nonagon, step, direction):
             return generateSidesListFromNonagonAndSides(nonagon, oddNonagonSidesFilledFromBottom[step])
             
 def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
+    if width<5:
+        width = 5
     animation = []
     numBuckets = len(nonagonGroups)
     buckets = [-1]*numBuckets
@@ -666,7 +668,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
         for b in range(0, numBuckets):
             if buckets[b]!=-1:
                 direction = 'top'
-                if b == startIter and b!=0:
+                if b == startIter and endIter>1:
                     direction = 'bot'
                 for n in nonagonGroups[b]:
                     sides[0] = sides[0] + sidesFilledFromDirection(n, buckets[b], direction)
@@ -1105,7 +1107,7 @@ try:
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
-        fillSidesAnimation(rowsTopToBottom, [RED], 12, 1, 1)
+        fillSidesAnimation(rowsTopToBottom, [MAGENTA], 5, 1, 1)
         #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
         
