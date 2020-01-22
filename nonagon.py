@@ -188,8 +188,8 @@ def run_threaded(func):
 # Helper Functions
 ###
 
-def blankStrip():
-    strips[0:434] = [BLANK]*434
+def blankStrip(background = BLANK):
+    strips[0:434] = [background]*434
  
 def setNonagonColor(n, color):
     strips[n*31:n*31+31] = [color]*31
@@ -426,7 +426,7 @@ def animateNonagonGroups(animation, hangFrames, fadeFrames, backgroundColor = BL
     lastFrameColors = getLastFrameColors(animation)
     for n, frame in enumerate(animation):
         for f in range(hangFrames+fadeFrames):
-            strips[0:434] = backgroundColor
+            blankStrip(backgroundColor)
             for g, group in enumerate(frame['groups']):
                 color = frame['colors'][g]
                 for nonagon in group:
@@ -445,7 +445,7 @@ def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK
     lastFrameColors = getLastFrameSideColors(animation)
     for n, frame in enumerate(animation):
         for f in range(hangFrames+fadeFrames):
-            strips[0:434] = backgroundColor
+            blankStrip(backgroundColor)
             for g, group in enumerate(frame['sides']):
                 color = frame['colors'][g]
                 for side in group:
