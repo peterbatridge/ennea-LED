@@ -213,7 +213,7 @@ def setSide(n, side, color):
         strips[nonagonStart+sideStart] = color
         strips[nonagonStart:nonagonStart+3] = [color] * 3
     else:
-        strips[nonagonStart+sideStart:nonagonStart+sideStart+4] = [RED]*4
+        strips[nonagonStart+sideStart:nonagonStart+sideStart+4] = [color]*4
 
 def setPositionOnSide(n, side, pos, color):
     nonagonStart = n*31
@@ -1107,7 +1107,7 @@ try:
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
-        fillSidesAnimation(rowsTopToBottom, [MAGENTA], 5, 1, 1)
+        fillSidesAnimation(rowsTopToBottom, [MAGENTA], 10, 1, 1)
         #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
         
