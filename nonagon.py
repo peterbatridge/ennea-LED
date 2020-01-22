@@ -607,6 +607,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
                     'sides': sides,
                     'colors': seqeuence
                     })
+    print(animation)
     animateSideGroups(animation, hangFrames, fadeFrames)
 ###
 # Pixel Sequences on Sides
