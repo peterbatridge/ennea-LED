@@ -11,13 +11,13 @@ CTA_LOCK = threading.Semaphore(1)
 mm_bound_timer = False
 chi_bound_timer = False
 currentWeather = None
-#import board
+import board
 import adafruit_dotstar as dotstar
 from random import randrange
 import math
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
-#strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
+strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
 
 RED = (255, 0, 0)
 YELLOW = (255, 150, 0)
@@ -641,7 +641,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
     startIter = 0
     endIter = 1
     for i in range(numBuckets*width):
-        sides = []
+        sides = [[]]
         if filled <= width and endIter < numBuckets:
             if buckets[startIter] < 4:
                 buckets[startIter] = buckets[startIter]+1
@@ -669,7 +669,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
                 if b == startIter and b!=0:
                     direction = 'bot'
                 for n in nonagonGroups[b]:
-                    sides = sides + sidesFilledFromDirection(n, buckets[b], direction)
+                    sides[0] = sides[0] + sidesFilledFromDirection(n, buckets[b], direction)
 
         animation.append({
         'sides': sides,
