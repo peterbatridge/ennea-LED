@@ -520,6 +520,7 @@ eightDirectionGroups = [
 ###
 # Color Sequences
 ###
+redAndBlue = [RED,BLUE]
 redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
 colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 redFour = [CYAN,CYAN, BLUE, BLUE]
@@ -726,7 +727,11 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
 
-        fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'top', 10, 1, 0)
+        #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
+
+        fillSidesAnimation(triangles, redAndBlue, 'top', 'botLeft', 10, 1, 0)
+        fillSidesAnimation(triangles[::-1], redAndBlue, 'top', 'botLeft', 10, 1, 0)
+
         # fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(columnsLeftToRight, [MAGENTA], 10, 1, 1)
