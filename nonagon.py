@@ -526,6 +526,7 @@ redFour = [CYAN,CYAN, BLUE, BLUE]
 fourColdColors = [BLUE, PURPLE, BLUE, CYAN]
 sixteenColdToWarmColors = [BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, MAGENTA, RED, RED, RED, RED, RED, RED, RED, MAGENTA]
 TeganSequence = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE]
+ROYGCBPG = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE, MAGENTA]
 
 
 ###
@@ -725,7 +726,7 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
 
-        fillSidesAnimation(topLeftToBottomRightSharpDiagonal, TeganSequence, 'topLeft', 'botRight', 10, 1, 1)
+        fillSidesAnimation(topLeftToBottomRightSharpDiagonal, ROYGCBPG, 'topLeft', 'botRight', 10, 1, 1)
         # fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(columnsLeftToRight, [MAGENTA], 10, 1, 1)
