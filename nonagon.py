@@ -601,7 +601,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
                             sides.append(sidesFilledFromDirection(n, 4, 'top'))
                 else:
                     for n in groups:
-                        sides.append(sidesFilledFromDirection(n, width-i, 'bot')
+                        sides.append(sidesFilledFromDirection(n, width-i, 'bot'))
 
                 animation.append({
                     'sides': sides,
