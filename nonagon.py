@@ -651,7 +651,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
     for i in range(numBuckets*width):
         sides = []
         colors = []
-        if filled <= width and endIter < numBuckets:
+        if filled < width and endIter < numBuckets:
             if buckets[startIter] < 4:
                 buckets[startIter] = buckets[startIter]+1
                 filled = filled+1
