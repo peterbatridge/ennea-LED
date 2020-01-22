@@ -11,13 +11,13 @@ CTA_LOCK = threading.Semaphore(1)
 mm_bound_timer = False
 chi_bound_timer = False
 currentWeather = None
-import board
+#import board
 import adafruit_dotstar as dotstar
 from random import randrange
 import math
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
-strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
+#strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
 
 RED = (255, 0, 0)
 YELLOW = (255, 150, 0)
@@ -587,57 +587,6 @@ def exMachinaMode():
     animateSideGroups(sidesAnimation, 1,1)
     animateSideGroups(sidesAnimation, 1,1)
 
-def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
-    animation = []
-    for g, groups in enumerate(nonagonGroups):
-            for i in range(width):
-                sides = []
-                if i <= 4:
-                    for n in groups:
-                        sides.append(sidesFilledFromDirection(n, i, 'top'))
-                elif i>=5 and i < width-4:
-                    if i+1 < len(nonagonGroups)-1:
-                        for n in nonagonGroups[i+1]:
-                            sides.append(sidesFilledFromDirection(n, 4, 'top'))
-                else:
-                    for n in groups:
-                        sides.append(sidesFilledFromDirection(n, width-i, 'bot'))
-
-                animation.append({
-                    'sides': sides,
-                    'colors': seqeuence
-                    })
-    print(animation)
-    animateSideGroups(animation, hangFrames, fadeFrames)
-###
-# Pixel Sequences on Sides
-###
-HtL = [3,2,1,0]
-LtH = [0,1,2,3]
-
-###
-# Side Animations
-###
-sideList  = [
-            (7,4, HtL, redFour),
-            (7,3, HtL, redFour),
-            (7,2, HtL, redFour),
-            (8,7, LtH, redFour),
-            (8,8, LtH, redFour),
-            (9,5,  LtH, redFour),
-            (9,6,  LtH, redFour),
-            (10,2, HtL, redFour),
-            (10,1, HtL, redFour),
-            (11,3, HtL, redFour),
-            (11,2, HtL, redFour),
-            (12,7, LtH, redFour),
-            (12,8, LtH, redFour),
-            (13,5, LtH, redFour),
-            (13,6, LtH, redFour),
-            (0,2, HtL, redFour),
-            (0,1, HtL, redFour)
-            ]
-
 def generateSidesListFromNonagonAndSides(nonagon, sides):
     sidesList = []
     for side in sides:
@@ -684,6 +633,80 @@ def sidesFilledFromDirection(nonagon, step, direction):
         else:
             return generateSidesListFromNonagonAndSides(nonagon, oddNonagonSidesFilledFromBottom[step])
             
+def fillSidesAnimation(nonagonGroups, seqeuence, width, hangFrames, fadeFrames):
+    animation = []
+    numBuckets = len(nonagonGroups)
+    buckets = [-1]*numBuckets
+    filled = 0
+    startIter = 0
+    endIter = 1
+    for i in range(numBuckets*width):
+        sides = []
+        if filled <= width and endIter < numBuckets:
+            if buckets[startIter] < 4:
+                buckets[startIter] = buckets[startIter]+1
+                filled = filled+1
+            else:
+                buckets[endIter] = buckets[endIter] + 1
+                filled = filled+1
+                if buckets[endIter] == 4:
+                    endIter = endIter + 1
+        # Remove a unit from the start bucket and add one to the end
+        elif startIter < numBuckets:
+            buckets[startIter] = buckets[startIter] - 1
+            if buckets[startIter]<0:
+                startIter = startIter+1
+                if startIter == numBuckets:
+                    break
+            if endIter < numBuckets:
+                buckets[endIter] = buckets[endIter] + 1
+                filled = filled+1
+                if buckets[endIter] == 4:
+                    endIter = endIter + 1
+        for b in range(0, numBuckets):
+            if buckets[b]!=-1:
+                direction = 'top'
+                if b == startIter and b!=0:
+                    direction = 'bot'
+                for n in nonagonGroups[b]:
+                    sides = sides + sidesFilledFromDirection(n, buckets[b], direction)
+
+        animation.append({
+        'sides': sides,
+        'colors': seqeuence
+        })  
+
+    animateSideGroups(animation, hangFrames, fadeFrames)
+
+###
+# Pixel Sequences on Sides
+###
+HtL = [3,2,1,0]
+LtH = [0,1,2,3]
+
+###
+# Side Animations
+###
+sideList  = [
+            (7,4, HtL, redFour),
+            (7,3, HtL, redFour),
+            (7,2, HtL, redFour),
+            (8,7, LtH, redFour),
+            (8,8, LtH, redFour),
+            (9,5,  LtH, redFour),
+            (9,6,  LtH, redFour),
+            (10,2, HtL, redFour),
+            (10,1, HtL, redFour),
+            (11,3, HtL, redFour),
+            (11,2, HtL, redFour),
+            (12,7, LtH, redFour),
+            (12,8, LtH, redFour),
+            (13,5, LtH, redFour),
+            (13,6, LtH, redFour),
+            (0,2, HtL, redFour),
+            (0,1, HtL, redFour)
+            ]
+
 
 sidesAnimation = [
 {
@@ -1083,7 +1106,6 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
         fillSidesAnimation(rowsTopToBottom, [RED], 12, 1, 1)
-
         #rain()
         #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
         
