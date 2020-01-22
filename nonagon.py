@@ -689,7 +689,8 @@ def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFram
             animation.append({
                 'sides': sides,
                 'colors': sequence[g]})     
-            
+    animateSideGroups(animation, hangFrames, fadeFrames)
+
 def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames):
     if width<5:
         width = 5
