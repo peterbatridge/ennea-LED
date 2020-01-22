@@ -582,10 +582,10 @@ def exMachinaMode():
     cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 3, 2)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 3, 2)
-    animateSideGroups(sidesAnimation, 1,1)
-    animateSideGroups(sidesAnimation, 1,1)
-    animateSideGroups(sidesAnimation, 1,1)
-    animateSideGroups(sidesAnimation, 1,1)
+    fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
 
 def generateSidesListFromNonagonAndSides(nonagon, sides):
     sidesList = []
@@ -725,7 +725,7 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
 
-        fillSidesAnimation(rowsTopToBottom, [MAGENTA]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+        fillSidesAnimation(topLeftToBottomRightSharpDiagonal, TeganSequence, 'topLeft', 'botRight', 10, 1, 1)
         # fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
         # fillSidesAnimation(columnsLeftToRight, [MAGENTA], 10, 1, 1)
