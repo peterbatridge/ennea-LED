@@ -287,15 +287,15 @@ def fillListFromStartAndStep(start, step):
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
     global evenStartPosition, oddStartPosition
-    evenStart = evenStartPosition[direction]
-    oddStart = oddStartPosition[direction]
+    evenStart = [evenStartPosition[direction]]
+    oddStart = [oddStartPosition[direction]]
     print(evenStartPosition, oddStartPosition)
     print(evenStart)
     print(oddStart)
     if (nonagon % 2 == 0):
-        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStart,step))
+        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStart[0],step))
     else:
-        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStart,step))
+        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStart[0],step))
 
 # Steps from 0 through 4
 def sidesTracedFromDirection(nonagon, step, direction):
@@ -542,7 +542,7 @@ oddStartPosition = {
     'bot':      [8,0],
     'botRight': [0,1],
     'right':    [2],
-    'topRight': [3],
+    'topRight': [3]
 }
 evenStartPosition = {
     'top':      [4,5],
@@ -552,7 +552,7 @@ evenStartPosition = {
     'bot':      [0],
     'botRight': [1],
     'right':    [2],
-    'topRight': [4,3],
+    'topRight': [4,3]
 }
 
 ###
