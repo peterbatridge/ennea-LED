@@ -289,6 +289,9 @@ def sidesFilledFromDirection(nonagon, step, direction):
     global evenStartPosition, oddStartPosition
     evenStart = evenStartPosition[direction]
     oddStart = oddStartPosition[direction]
+    print(evenStartPosition, oddStartPosition)
+    print(evenStart)
+    print(oddStart)
     if (nonagon % 2 == 0):
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStart,step))
     else:
@@ -684,10 +687,10 @@ def exMachinaMode():
     cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
-    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
 
 def singleFrameSolidRandomColor():
     animation = [{
@@ -712,6 +715,7 @@ modes = {
     5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10]),
     6: (rainbowCycle, [0]),
     7: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
+    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1])
 
 }
 
