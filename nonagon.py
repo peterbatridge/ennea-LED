@@ -610,8 +610,8 @@ def exMachinaMode():
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
     fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
     fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
-    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
 
 def generateSidesListFromNonagonAndSides(nonagon, sides):
     sidesList = []
@@ -793,6 +793,20 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
 
     animateSideGroups(animation, hangFrames, fadeFrames)
 
+def singleFrameSolidRandomColor():
+    animation = [{
+        'sides': everyNonagon,
+        'colors': [randomColor()]
+    }]
+    animateNonagonGroups(animation, 1, 0)
+
+def singleFrameTrianglesRandomColor():
+    animation = [{
+        'sides': triangles,
+        'colors': [randomColor(), randomColor()]
+    }]
+    animateNonagonGroups(animation, 1, 0)
+
 ###
 # Pixel Sequences on Sides
 ###
@@ -824,12 +838,15 @@ sideList  = [
 from functools import partial
 
 modes = {
-    0: (rainbowCycle, [0]),
-    1: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
+    0: (singleFrameSolidRandomColor, []),
+    1: (singleFrameTrianglesRandomColor, []),
     2: (exMachinaMode, []),
     3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
     4: (colorSwapAnimation, [rowsTopToBottom, RED, GREEN, PURPLE, 10, 10]),
-    5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10])
+    5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10]),
+    6: (rainbowCycle, [0]),
+    7: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
+
 }
 
 try:        
