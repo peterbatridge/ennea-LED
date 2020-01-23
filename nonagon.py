@@ -322,7 +322,7 @@ def sidesTracedFromDirection(nonagon, step, direction, fill=True):
         'topRight': [4,3]
     }
     if (nonagon % 2 == 0):
-            return generateSidesListFromNonagonAndSides(nonagon, func(evenStart[direction],step))
+        return generateSidesListFromNonagonAndSides(nonagon, func(evenStart[direction],step))
     else:
         return generateSidesListFromNonagonAndSides(nonagon, func(oddStart[direction],step))
 
