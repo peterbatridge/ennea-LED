@@ -795,14 +795,14 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
 
 def singleFrameSolidRandomColor():
     animation = [{
-        'sides': everyNonagon,
+        'groups': everyNonagon,
         'colors': [randomColor()]
     }]
     animateNonagonGroups(animation, 1, 0)
 
 def singleFrameTrianglesRandomColor():
     animation = [{
-        'sides': triangles,
+        'groups': triangles,
         'colors': [randomColor(), randomColor()]
     }]
     animateNonagonGroups(animation, 1, 0)
