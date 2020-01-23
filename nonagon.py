@@ -822,14 +822,14 @@ sideList  = [
             (0,1, HtL, redFour)
             ]
 
-modes = {
-    0: rainbowCycle(0),
-    1: traceSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 1, 0),
-    2: exMachinaMode(),
-    3: colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10),
-    4: colorSwapAnimation(rowsTopToBottom, RED, GREEN, PURPLE, 10, 10),
-    5: colorSwapAnimation(rowsTopToBottom, MAGENTA, BLUE, PURPLE, 10, 10)
-}
+# modes = {
+#     0: rainbowCycle(0),
+#     1: traceSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 1, 0),
+#     2: exMachinaMode(),
+#     3: colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10),
+#     4: colorSwapAnimation(rowsTopToBottom, RED, GREEN, PURPLE, 10, 10),
+#     5: colorSwapAnimation(rowsTopToBottom, MAGENTA, BLUE, PURPLE, 10, 10)
+# }
 
 try:        
     i = 0
