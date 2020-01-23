@@ -798,14 +798,14 @@ def singleFrameSolidRandomColor():
         'groups': everyNonagon,
         'colors': [randomColor()]
     }]
-    animateNonagonGroups(animation, 1, 0)
+    animateNonagonGroups(animation, 10, 10)
 
 def singleFrameTrianglesRandomColor():
     animation = [{
         'groups': triangles,
         'colors': [randomColor(), randomColor()]
     }]
-    animateNonagonGroups(animation, 1, 0)
+    animateNonagonGroups(animation, 10, 10)
 
 ###
 # Pixel Sequences on Sides
