@@ -31,8 +31,8 @@ def on_snapshot(doc_snapshot, changes, read_time):
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
-            print(doc.mode)
-            mode = doc.mode
+            print(doc.data().mode)
+            mode = doc.data().mode
 
 # Build document reference for the current state
 doc_ref = db.collection(u'state').document(u'current')
