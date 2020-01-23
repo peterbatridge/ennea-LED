@@ -16,6 +16,7 @@ import board
 import adafruit_dotstar as dotstar
 from random import randrange
 import math
+from functools import partial
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -246,6 +247,66 @@ def setPositionOnSide(n, side, pos, color):
     positionWithinNonagon = (sideStart+pos) % 31
     strips[nonagonStart+positionWithinNonagon] = color
 
+def generateSidesListFromNonagonAndSides(nonagon, sides):
+    sidesList = []
+    for side in sides:
+        sidesList.append((nonagon, side))
+    return sidesList
+
+def singleLineFromStartAndStep(start, step):
+    fillList = []
+    itOne = start[0]
+    itTwo = start[0]
+    if len(start)>1:
+        itTwo = start[1]
+    itOne = (itOne+step)%9
+    fillList.append(itOne)
+    itTwo = (itTwo-step)
+    if itTwo<0:
+        itTwo = 9+itTwo
+    if itOne!=itTwo:
+        fillList.append(itTwo)
+    return fillList
+
+def fillListFromStartAndStep(start, step):
+    fillList = start
+    itOne = start[0]
+    itTwo = start[0]
+    if len(start)>1:
+        itTwo = start[1]
+    for i in range(0,step):
+        itOne = (itOne+1)%9
+        fillList.append(itOne)
+        itTwo = (itTwo-1)
+        if itTwo<0:
+            itTwo = 9+itTwo
+        if itOne!=itTwo:
+            fillList.append(itTwo)
+    return fillList
+
+# Steps from 0 through 4
+def sidesFilledFromDirection(nonagon, step, direction):
+    global evenStartPosition, oddStartPosition
+    evenStart = evenStartPosition[direction]
+    oddStart = oddStartPosition[direction]
+    if (nonagon % 2 == 0):
+        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStart,step))
+    else:
+        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStart,step))
+
+# Steps from 0 through 4
+def sidesTracedFromDirection(nonagon, step, direction):
+    global evenStartPosition, oddStartPosition
+    evenStart = evenStartPosition[direction]
+    oddStart = oddStartPosition[direction]
+    if (nonagon % 2 == 0):
+        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStart,step))
+    else:
+        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStart,step))
+
+def randomColor():
+    return colors[randrange(9)]
+
 def wheel(num):
     r =0
     g =0
@@ -268,60 +329,6 @@ def wheel(num):
 ###
 # Pattern Functions
 ###
-
-def slice_alternating(wait):
-    strips[::2] = [RED] * ((num_pixels // 2)+1)
-    strips.show()
-    time.sleep(wait)
-    strips[1::2] = [ORANGE] * (num_pixels // 2)
-    strips.show()
-    time.sleep(wait)
-    strips[::2] = [YELLOW] * ((num_pixels // 2)+1)
-    strips.show()
-    time.sleep(wait)
-    strips[1::2] = [GREEN] * (num_pixels // 2)
-    strips.show()
-    time.sleep(wait)
-    strips[::2] = [TEAL] * ((num_pixels // 2)+1)
-    strips.show()
-    time.sleep(wait)
-    strips[1::2] = [CYAN] * (num_pixels // 2)
-    strips.show()
-    time.sleep(wait)
-    strips[::2] = [BLUE] * ((num_pixels // 2)+1)
-    strips.show()
-    time.sleep(wait)
-    strips[1::2] = [PURPLE] * (num_pixels // 2)
-    strips.show()
-    time.sleep(wait)
-    strips[::2] = [MAGENTA] * ((num_pixels // 2)+1)
-    strips.show()
-    time.sleep(wait)
-    strips[1::2] = [WHITE] * (num_pixels // 2)
-    strips.show()
-    time.sleep(wait)
- 
- 
-def slice_rainbow(wait):
-    strips[::6] = [RED] * 78 
-    strips.show()
-    time.sleep(wait)
-    strips[1::6] = [ORANGE] *78
-    strips.show()
-    time.sleep(wait)
-    strips[2::6] = [YELLOW] * 78
-    strips.show()
-    time.sleep(wait)
-    strips[3::6] = [GREEN] * 77
-    strips.show()
-    time.sleep(wait)
-    strips[4::6] = [BLUE] * 77
-    strips.show()
-    time.sleep(wait)
-    strips[5::6] = [PURPLE] * 77
-    strips.show()
-    time.sleep(wait)
- 
  
 def rainbowCycle(wait):
     for j in range(768):
@@ -347,9 +354,6 @@ def bounce(background, foreground):
         setPatternOnEveryNonagon(pattern)
         strips.show()
 
-
-def randomColor():
-    return colors[randrange(9)]
 def solidRandomColors(wait=0.2):
     for n in range(0,14):
         strips[0:31] = [randomColor()]*31
@@ -390,6 +394,7 @@ def fiveSolidRandomColors(wait=1):
         setNonagonColor(x, randomColor())
     strips.show()
     time.sleep(wait)
+
 def pinwheel(wait):
     for i in range(0,434):
         strips[0:434] = [(0,0,0)] * 434
@@ -407,6 +412,9 @@ def trail(length):
             strips[(i+l)% 434] = wheel((i+l)%434)
         strips.show()
 
+###
+# Animation Core Functions
+###
 
 def groupCycleThroughSequence(group, colorSeq, wait):
     length = len(colorSeq)
@@ -483,27 +491,6 @@ def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK
                         setSide(side[0], side[1], color)
             strips.show()
     lastFrameSideColors = lastFrameColors
-               
-def sidesWithSequences(sidesWithSequences, hangFrame, wait_between_nonagons=0):
-    lastNonagon = -1
-    for sequence in sidesWithSequences:
-        for i, pos in enumerate(sequence[2]):
-            for h in range(0, hangFrame):
-                blankStrip()
-                setPositionOnSide(sequence[0], sequence[1], pos, sequence[3][i])
-                if lastNonagon!=sequence[0]:
-                    if lastNonagon!=-1:
-                        time.sleep(0)
-                    lastNonagon=sequence[0]
-                strips.show()
-            
-def cycleThroughSides(wait=0.5):
-    for s in range(0,9):
-        blankStrip()
-        for n in range(0,14):
-            setSide(n, s, RED)
-            strips.show()
-            time.sleep(wait)
 
 ###
 # Groups Of Nonagons
@@ -539,8 +526,31 @@ eightDirectionGroups = [
     bottomRightToTopLeftDiagonal,
     columnsRightToLeft,
     topRightToBottomLeftDiagonal
-
 ]
+
+###
+# Nonagon Sides
+###
+oddStartPosition = {
+    'top':      [4],
+    'topLeft':  [5],
+    'left':     [6],
+    'botLeft':  [7,8],
+    'bot':      [8,0],
+    'botRight': [0,1],
+    'right':    [2],
+    'topRight': [3],
+}
+evenStartPosition = {
+    'top':      [4,5],
+    'topLeft':  [6,5],
+    'left':     [7],
+    'botLeft':  [8],
+    'bot':      [0],
+    'botRight': [1],
+    'right':    [2],
+    'topRight': [4,3],
+}
 
 ###
 # Color Sequences
@@ -555,7 +565,7 @@ TeganSequence = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GR
 ROYGCBPG = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE, MAGENTA]
 
 ###
-# Animations 
+# Animation Generators
 ###
 
 def colorSwapAnimation(groups, colorOne, colorTwo, colorBetween, hangFrames, fadeFrames):
@@ -593,142 +603,6 @@ def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, 
                 'colors': shiftRight(sequence, i)
                 })
     animateNonagonGroups(animation, hangFrames, fadeFrames)
-    
-def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
-
-def randomColorTriangles(hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(triangles,[randomColor(), randomColor()], hangFrames, fadeFrames)
-
-def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
-    
-def exMachinaMode():
-    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
-    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
-    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-
-def generateSidesListFromNonagonAndSides(nonagon, sides):
-    sidesList = []
-    for side in sides:
-        sidesList.append((nonagon, side))
-    return sidesList
-
-def singleLineFromStartAndStep(start, step):
-    fillList = []
-    itOne = start[0]
-    itTwo = start[0]
-    if len(start)>1:
-        itTwo = start[1]
-    itOne = (itOne+step)%9
-    fillList.append(itOne)
-    itTwo = (itTwo-step)
-    if itTwo<0:
-        itTwo = 9+itTwo
-    if itOne!=itTwo:
-        fillList.append(itTwo)
-    return fillList
-
-def fillListFromStartAndStep(start, step):
-    fillList = start
-    itOne = start[0]
-    itTwo = start[0]
-    if len(start)>1:
-        itTwo = start[1]
-    for i in range(0,step):
-        itOne = (itOne+1)%9
-        fillList.append(itOne)
-        itTwo = (itTwo-1)
-        if itTwo<0:
-            itTwo = 9+itTwo
-        if itOne!=itTwo:
-            fillList.append(itTwo)
-    return fillList
-    
-
-oddStartPosition = {
-    'top':      [4],
-    'topLeft':  [5],
-    'left':     [6],
-    'botLeft':  [7,8],
-    'bot':      [8,0],
-    'botRight': [0,1],
-    'right':    [2],
-    'topRight': [3],
-}
-evenStartPosition = {
-    'top':      [4,5],
-    'topLeft':  [6,5],
-    'left':     [7],
-    'botLeft':  [8],
-    'bot':      [0],
-    'botRight': [1],
-    'right':    [2],
-    'topRight': [4,3],
-}
-
-# Steps from 0 through 4
-def sidesFilledFromDirection(nonagon, step, direction):
-    oddStartPosition = {
-        'top':      [4],
-        'topLeft':  [5],
-        'left':     [6],
-        'botLeft':  [7,8],
-        'bot':      [8,0],
-        'botRight': [0,1],
-        'right':    [2],
-        'topRight': [3],
-    }
-    evenStartPosition = {
-        'top':      [4,5],
-        'topLeft':  [6,5],
-        'left':     [7],
-        'botLeft':  [8],
-        'bot':      [0],
-        'botRight': [1],
-        'right':    [2],
-        'topRight': [4,3],
-    }
-    oddStart = oddStartPosition
-    evenStart = evenStartPosition
-    if (nonagon % 2 == 0):
-        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStart[direction],step))
-    else:
-        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStart[direction],step))
-
-# Steps from 0 through 4
-def sidesTracedFromDirection(nonagon, step, direction):
-    oddStartPosition = {
-        'top':      [4],
-        'topLeft':  [5],
-        'left':     [6],
-        'botLeft':  [7,8],
-        'bot':      [8,0],
-        'botRight': [0,1],
-        'right':    [2],
-        'topRight': [3],
-    }
-    evenStartPosition = {
-        'top':      [4,5],
-        'topLeft':  [6,5],
-        'left':     [7],
-        'botLeft':  [8],
-        'bot':      [0],
-        'botRight': [1],
-        'right':    [2],
-        'topRight': [4,3],
-    }
-    oddStart = oddStartPosition
-    evenStart = evenStartPosition
-    if (nonagon % 2 == 0):
-        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStart[direction],step))
-    else:
-        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStart[direction],step))
 
 def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames):
     animation = []
@@ -793,6 +667,28 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
 
     animateSideGroups(animation, hangFrames, fadeFrames)
 
+###
+# Modes
+###    
+def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
+
+def randomColorTriangles(hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(triangles,[randomColor(), randomColor()], hangFrames, fadeFrames)
+
+def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
+    
+def exMachinaMode():
+    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+
 def singleFrameSolidRandomColor():
     animation = [{
         'groups': everyNonagon,
@@ -806,36 +702,6 @@ def singleFrameTrianglesRandomColor():
         'colors': [randomColor(), randomColor()]
     }]
     animateNonagonGroups(animation, 10, 10)
-
-###
-# Pixel Sequences on Sides
-###
-HtL = [3,2,1,0]
-LtH = [0,1,2,3]
-
-###
-# Side Animations
-###
-sideList  = [
-            (7,4, HtL, redFour),
-            (7,3, HtL, redFour),
-            (7,2, HtL, redFour),
-            (8,7, LtH, redFour),
-            (8,8, LtH, redFour),
-            (9,5,  LtH, redFour),
-            (9,6,  LtH, redFour),
-            (10,2, HtL, redFour),
-            (10,1, HtL, redFour),
-            (11,3, HtL, redFour),
-            (11,2, HtL, redFour),
-            (12,7, LtH, redFour),
-            (12,8, LtH, redFour),
-            (13,5, LtH, redFour),
-            (13,6, LtH, redFour),
-            (0,2, HtL, redFour),
-            (0,1, HtL, redFour)
-            ]
-from functools import partial
 
 modes = {
     0: (singleFrameSolidRandomColor, []),
