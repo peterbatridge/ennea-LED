@@ -285,19 +285,7 @@ def fillListFromStartAndStep(start, step):
     return fillList
 
 # Steps from 0 through 4
-def sidesFilledFromDirection(nonagon, step, direction):
-    global evenStartPosition, oddStartPosition
-    evenStart = [evenStartPosition[direction]]
-    oddStart = [oddStartPosition[direction]]
-    print(evenStartPosition, oddStartPosition)
-    print(evenStart)
-    print(oddStart)
-    if (nonagon % 2 == 0):
-    else:
-        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStart[0],step))
-
-# Steps from 0 through 4
-def sidesTracedFromDirection(nonagon, step, direction, fill=True):
+def sidesFromDirection(nonagon, step, direction, fill=True):
     func = singleLineFromStartAndStep
     if fill:
         func = fillListFromStartAndStep
@@ -609,7 +597,7 @@ def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFram
         for s in range(0, 5):
             sides = [[]]
             for n in group:
-                sides[0] = sides[0] + sidesTracedFromDirection(n, s, direction)
+                sides[0] = sides[0] + sidesFromDirection(n, s, direction, false)
             animation.append({
                 'sides': sides,
                 'colors': [sequence[g]]})     
@@ -656,7 +644,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
                 if b == startIter and endIter>1:
                     direction = drainSide
                 for n in nonagonGroups[b]:
-                    sides[len(sides)-1] = sides[len(sides)-1] + sidesFilledFromDirection(n, buckets[b], direction)
+                    sides[len(sides)-1] = sides[len(sides)-1] + sidesFromDirection(n, buckets[b], direction)
 
         animation.append({
         'sides': sides,
