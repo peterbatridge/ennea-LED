@@ -293,19 +293,38 @@ def sidesFilledFromDirection(nonagon, step, direction):
     print(evenStart)
     print(oddStart)
     if (nonagon % 2 == 0):
-        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStart[0],step))
     else:
         return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStart[0],step))
 
 # Steps from 0 through 4
-def sidesTracedFromDirection(nonagon, step, direction):
-    global evenStartPosition, oddStartPosition
-    evenStart = evenStartPosition[direction]
-    oddStart = oddStartPosition[direction]
+def sidesTracedFromDirection(nonagon, step, direction, fill=True):
+    func = singleLineFromStartAndStep
+    if fill:
+        func = fillListFromStartAndStep
+    oddStart = {
+        'top':      [4],
+        'topLeft':  [5],
+        'left':     [6],
+        'botLeft':  [7,8],
+        'bot':      [8,0],
+        'botRight': [0,1],
+        'right':    [2],
+        'topRight': [3]
+    }
+    evenStart = {
+        'top':      [4,5],
+        'topLeft':  [6,5],
+        'left':     [7],
+        'botLeft':  [8],
+        'bot':      [0],
+        'botRight': [1],
+        'right':    [2],
+        'topRight': [4,3]
+    }
     if (nonagon % 2 == 0):
-        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStart,step))
+            return generateSidesListFromNonagonAndSides(nonagon, func(evenStart[direction],step))
     else:
-        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStart,step))
+        return generateSidesListFromNonagonAndSides(nonagon, func(oddStart[direction],step))
 
 def randomColor():
     return colors[randrange(9)]
@@ -530,30 +549,6 @@ eightDirectionGroups = [
     columnsRightToLeft,
     topRightToBottomLeftDiagonal
 ]
-
-###
-# Nonagon Sides
-###
-oddStartPosition = {
-    'top':      [4],
-    'topLeft':  [5],
-    'left':     [6],
-    'botLeft':  [7,8],
-    'bot':      [8,0],
-    'botRight': [0,1],
-    'right':    [2],
-    'topRight': [3]
-}
-evenStartPosition = {
-    'top':      [4,5],
-    'topLeft':  [6,5],
-    'left':     [7],
-    'botLeft':  [8],
-    'bot':      [0],
-    'botRight': [1],
-    'right':    [2],
-    'topRight': [4,3]
-}
 
 ###
 # Color Sequences
