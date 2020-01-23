@@ -608,10 +608,10 @@ def exMachinaMode():
     cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 3, 2)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 3, 2)
-    fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
 
 def generateSidesListFromNonagonAndSides(nonagon, sides):
     sidesList = []
