@@ -20,6 +20,12 @@ from functools import partial
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
+import Adafruit_GPIO.SPI as SPI
+import Adafruit_MCP3008
+
+SPI_PORT = 0
+SPI_DEVICE = 0
+mcp = Adafruit_MCP3008.MCP3008(spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE))
 
 # Use a service account
 cred = credentials.Certificate('firestoreNonagon.json')
@@ -701,6 +707,13 @@ modes = {
     8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1])
 
 }
+
+def handleAudio():
+    while True:
+        print(mcp.read_adc(0))
+        time.sleep(0.5)
+
+threading.Thread(target=handleAudio).start()
 
 try:        
     i = 0
