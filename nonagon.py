@@ -834,7 +834,7 @@ modes = {
 try:        
     i = 0
     while True:
-        modes[mode]
+        fillSidesAnimation(rowsTopToBottom, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
         #path() 
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
