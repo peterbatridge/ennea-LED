@@ -821,38 +821,23 @@ sideList  = [
             (0,2, HtL, redFour),
             (0,1, HtL, redFour)
             ]
+from functools import partial
 
 modes = {
-    0: {
-            'function': rainbowCycle,
-            'args': 0
-    },
-    1:  {   'function': traceSidesAnimation,
-            'args': (rowsTopToBottom, ROYGCBPG, 'top', 1, 0)
-    },
-    2: {
-            'function': exMachinaMode,
-            'args': None
-    },
-    3: {
-            'function': colorSwapAnimation,
-            'args':(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
-    },
-    4: {
-            'function': colorSwapAnimation,
-            'args':(rowsTopToBottom, RED, GREEN, ORANGE, 10, 10)
-    },
-    5: {
-            'function': colorSwapAnimation,
-            'args':(rowsTopToBottom, GREEN, BLUE, CYAN, 10, 10)
-    }
+    0: (rainbowCycle, [0]),
+    1: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
+    2: (exMachinaMode, []),
+    3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
+    4: (colorSwapAnimation, [rowsTopToBottom, RED, GREEN, PURPLE, 10, 10]),
+    5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10])
 }
 
 try:        
     i = 0
     while True:
         if mode in modes.keys():
-            modes[mode]['function'](modes[mode]['args'])
+            func, args = modes[mode]
+            func(*args)
         #path() 
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
