@@ -250,18 +250,18 @@ def wheel(num):
     r =0
     g =0
     b = 0
-    c = int(num/128)
+    c = int(num/256)
     if c == 0:
-        r = 127 - (num%128)
-        g = num % 128
+        r = 255 - (num%256)
+        g = num % 256
         b = 0
     elif c == 1:
-        g = 127 - (num%128)
-        b = num % 128
+        g = 255 - (num%256)
+        b = num % 256
         r = 0
     else:
-        b = 127 - (num%128)
-        r = num % 128
+        b = 255 - (num%256)
+        r = num % 256
         g = 0
     return (r,g,b)
 
@@ -324,10 +324,10 @@ def slice_rainbow(wait):
  
  
 def rainbowCycle(wait):
-    for j in range(384):
+    for j in range(768):
         for i in range(num_pixels):
-            rc_index = (i * 384 // num_pixels) + j
-            strips[i] = wheel(rc_index % 384)
+            rc_index = (i * 768 // num_pixels) + j
+            strips[i] = wheel(rc_index % 768)
         strips.show()
         time.sleep(wait) 
 def bounce(background, foreground):
@@ -606,10 +606,10 @@ def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
 def exMachinaMode():
     cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
     cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 3, 2)
-    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 3, 2)
-    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
-    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 10, 1, 1)
     fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
     fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(rowsTopToBottom), 'top', 'bot', 15, 1, 0)
 
