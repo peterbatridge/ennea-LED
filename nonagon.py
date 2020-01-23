@@ -5,7 +5,7 @@ import json
 import credentials
 import threading
 from datetime import datetime, timedelta
-#import schedule
+import schedule
 CTA_DATETIME = '%Y-%m-%dT%H:%M:%S'
 CTA_LOCK = threading.Semaphore(1)
 mm_bound_timer = False
@@ -15,6 +15,16 @@ import board
 import adafruit_dotstar as dotstar
 from random import randrange
 import math
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
+
+# Use a service account
+cred = credentials.Certificate('firestoreNonagon.json')
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
 strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
@@ -690,7 +700,7 @@ def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFram
             animation.append({
                 'sides': sides,
                 'colors': [sequence[g]]})     
-    animateSideGroups(animation, hangFrames, fadeFrames, BLUE)
+    animateSideGroups(animation, hangFrames, fadeFrames)
 
 def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames):
     if width<5:
