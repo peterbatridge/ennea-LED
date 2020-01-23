@@ -11,6 +11,7 @@ CTA_LOCK = threading.Semaphore(1)
 mm_bound_timer = False
 chi_bound_timer = False
 currentWeather = None
+mode = 0
 import board
 import adafruit_dotstar as dotstar
 from random import randrange
@@ -22,14 +23,18 @@ from firebase_admin import firestore
 # Use a service account
 cred = credentials.Certificate('firestoreNonagon.json')
 firebase_admin.initialize_app(cred)
-
 db = firestore.client()
 
 # Create a callback on_snapshot function to capture changes
 def on_snapshot(doc_snapshot, changes, read_time):
+    global mode
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
+        if doc.id == 'current':
+            print(doc.mode)
+            mode = doc.mode
 
+# Build document reference for the current state
 doc_ref = db.collection(u'state').document(u'current')
 
 # Watch the document
@@ -645,59 +650,47 @@ def fillListFromStartAndStep(start, step):
             fillList.append(itTwo)
     return fillList
     
+
+oddStartPosition = {
+    'top':      [4],
+    'topLeft':  [5],
+    'left':     [6],
+    'botLeft':  [7,8],
+    'bot':      [8,0],
+    'botRight': [0,1],
+    'right':    [2],
+    'topRight': [3],
+}
+evenStartPosition = {
+    'top':      [4,5],
+    'topLeft':  [6,5],
+    'left':     [7],
+    'botLeft':  [8],
+    'bot':      [0],
+    'botRight': [1],
+    'right':    [2],
+    'topRight': [4,3],
+}
+
 # Steps from 0 through 4
 def sidesFilledFromDirection(nonagon, step, direction):
-    oddStartPosition = {
-        'top':      [4],
-        'topLeft':  [5],
-        'left':     [6],
-        'botLeft':  [7,8],
-        'bot':      [8,0],
-        'botRight': [0,1],
-        'right':    [2],
-        'topRight': [3],
-    }
-    evenStartPosition = {
-        'top':      [4,5],
-        'topLeft':  [6,5],
-        'left':     [7],
-        'botLeft':  [8],
-        'bot':      [0],
-        'botRight': [1],
-        'right':    [2],
-        'topRight': [4,3],
-    }
+    global oddStartPosition, evenStartPosition
+    oddStart = oddStartPosition
+    evenStart = evenStartPosition
     if (nonagon % 2 == 0):
-        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStartPosition[direction],step))
+        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(evenStart[direction],step))
     else:
-        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStartPosition[direction],step))
+        return generateSidesListFromNonagonAndSides(nonagon, fillListFromStartAndStep(oddStart[direction],step))
 
 # Steps from 0 through 4
 def sidesTracedFromDirection(nonagon, step, direction):
-    oddStartPosition = {
-        'top':      [4],
-        'topLeft':  [5],
-        'left':     [6],
-        'botLeft':  [7,8],
-        'bot':      [8,0],
-        'botRight': [0,1],
-        'right':    [2],
-        'topRight': [3],
-    }
-    evenStartPosition = {
-        'top':      [4,5],
-        'topLeft':  [6,5],
-        'left':     [7],
-        'botLeft':  [8],
-        'bot':      [0],
-        'botRight': [1],
-        'right':    [2],
-        'topRight': [4,3],
-    }
+    global oddStartPosition, evenStartPosition
+    oddStart = oddStartPosition
+    evenStart = evenStartPosition
     if (nonagon % 2 == 0):
-        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStartPosition[direction],step))
+        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(evenStart[direction],step))
     else:
-        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStartPosition[direction],step))
+        return generateSidesListFromNonagonAndSides(nonagon, singleLineFromStartAndStep(oddStart[direction],step))
 
 def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames):
     animation = []
@@ -791,15 +784,24 @@ sideList  = [
             (0,1, HtL, redFour)
             ]
 
+modes = {
+    0: rainbowCycle(0),
+    1: traceSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 1, 0),
+    2: exMachinaMode(),
+    3: colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
+}
+
 try:        
     i = 0
     while True:
+        if mode in modes.keys():
+            modes[mode]
         #path() 
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
-        traceSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 1, 0)
+        
 
         #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
         
@@ -815,7 +817,7 @@ try:
         
         #shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
         #cycleThroughColorSequenceWithNonagonTriangles([RED, BLUE, ORANGE, GREEN], 10 ,10)
-        #colorSwapAnimation(rowsTopToBottom, RED, BLUE, PURPLE, 10, 10)
+        #
 
         #colorSwapAnimation(bottomLeftToTopRightDiagonal, RED, BLUE, PURPLE, 10, 10)
         #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
@@ -837,8 +839,6 @@ try:
         #time.sleep(0.5)
      
         # Increase this number to slow down the rainbow animation.
-       # rainbowCycle
-       #(0)
         #bounce()
         #s
         #()
