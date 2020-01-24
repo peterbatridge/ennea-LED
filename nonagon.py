@@ -727,10 +727,11 @@ def remap_range(value, leftMin, leftMax, rightMin, rightMax):
     return int(rightMin + (valueScaled * rightSpan))
 
 def handleAudio():
-    signalMax = 0
-    signalMin = 1023
+
 
     while True:
+        signalMax = 0
+        signalMin = 1023
         for i in range(0,50):
             sample = mcp.read_adc(0)
             if sample < 1024:
