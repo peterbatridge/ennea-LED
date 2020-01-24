@@ -743,6 +743,7 @@ def handleAudio():
 
     while True:
         n = mcp.read_adc(0)
+        print(n)
         n = abs(n - 512 - dc_offset)  # Center on zero
     
         if n >= noise:  # Remove noise/hum
@@ -804,7 +805,7 @@ def handleAudio():
         # fake rolling average - divide by 64 (2^6)
         max_level_avg = (max_level_avg * 63 + max_level) >> 6
         strips.show()
-        print(n)
+        #print(n)
 threading.Thread(target=handleAudio).start()
 
 try:        
