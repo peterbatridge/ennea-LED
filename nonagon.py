@@ -807,7 +807,7 @@ try:
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
         
-
+        pass
         #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
         
         # fillSidesAnimation(triangles, redAndBlue, 'topRight', 'botLeft', 1, 1, 0)
