@@ -727,29 +727,33 @@ def remap_range(value, leftMin, leftMax, rightMin, rightMax):
     return int(rightMin + (valueScaled * rightSpan))
 
 def handleAudio():
-
+    l = []
 
     while True:
-        signalMax = 0
-        signalMin = 1023
-        for i in range(0,25):
-            sample = mcp.read_adc(0)
-            if sample < 1024:
-                if sample > signalMax:
-                    signalMax = sample
-                elif sample < signalMin:
-                     signalMin = sample
-        peakToPeak = signalMax - signalMin
-        if peakToPeak<0:
-            peakToPeak = 0
-        elif peakToPeak>1023:
-            peakToPeak =1023
-        volts = (peakToPeak *3.3) /1024
-        print(volts)
-        level = remap_range(volts, 0, 3.3, 0, num_pixels-1)
-        blankStrip()
-        strips[0:int(level)] = [RED] * int(level)
-        strips.show()
+        sample = mcp.read_adc(0)
+        l.append(sample)
+        # signalMax = 0
+        # signalMin = 1023
+        # for i in range(0,25):
+        #     sample = mcp.read_adc(0)
+        #     if sample < 1024:
+        #         if sample > signalMax:
+        #             signalMax = sample
+        #         elif sample < signalMin:
+        #              signalMin = sample
+        # peakToPeak = signalMax - signalMin
+        # if peakToPeak<0:
+        #     peakToPeak = 0
+        # elif peakToPeak>1023:
+        #     peakToPeak =1023
+        # volts = (peakToPeak *3.3) /1024
+        # print(volts)
+        # level = remap_range(volts, 0, 3.3, 0, num_pixels-1)
+        # blankStrip()
+        # strips[0:int(level)] = [RED] * int(level)
+        # strips.show()
+        print(l)
+        print('\n')
 threading.Thread(target=handleAudio).start()
 
 try:        
