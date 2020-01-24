@@ -736,8 +736,8 @@ def handleAudio():
             if sample < 1024:
                 if sample > signalMax:
                     signalMax = sample
-                elif sample < signalMix:
-                     signalMix = sample
+                elif sample < signalMax:
+                     signalMax = sample
         peakToPeak = signalMax - signalMin
         volts = (peakToPeak *3.3) /1024
         print(volts)
