@@ -49,7 +49,7 @@ doc_watch = doc_ref.on_snapshot(on_snapshot)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
-strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
+#strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
 
 RED = (255, 0, 0)
 YELLOW = (255, 150, 0)
@@ -765,11 +765,11 @@ def handleAudio():
             peak = height
     
         # Color pixels based on rainbow gradient
-        for i in range(0, num_pixels):
-            if i >= height:
-                strips[i] = [0, 0, 0]
-            else:
-                strips[i] = wheel(remap_range(i, 0, (num_pixels - 1), 30, 150))
+        # for i in range(0, num_pixels):
+        #     if i >= height:
+        #         strips[i] = [0, 0, 0]
+        #     else:
+        #         strips[i] = wheel(remap_range(i, 0, (num_pixels - 1), 30, 150))
         # Save sample for dynamic leveling
         vol[vol_count] = n
     
@@ -802,7 +802,7 @@ def handleAudio():
         min_level_avg = (min_level_avg * 63 + min_level) >> 6
         # fake rolling average - divide by 64 (2^6)
         max_level_avg = (max_level_avg * 63 + max_level) >> 6
-        strips.show()
+        #strips.show()
         #print(n)
 threading.Thread(target=handleAudio).start()
 
