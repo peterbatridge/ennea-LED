@@ -791,7 +791,7 @@ def handleAudio():
         min_level_avg = (min_level_avg * 63 + min_level) >> 6
         # fake rolling average - divide by 64 (2^6)
         max_level_avg = (max_level_avg * 63 + max_level) >> 6
-    
+        strips.show()
         print(n)
 threading.Thread(target=handleAudio).start()
 
