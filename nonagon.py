@@ -768,9 +768,9 @@ def handleAudio():
             if i >= height:
                 strips[i] = [0, 0, 0]
             else:
-                strips[i] = wheel(remap_range(i, 0, (num_pixels - 1), 30, 150))
+                strips[i] = RED
         if peak>0 and peak < num_pixels-1:
-            strips[peak] = wheel(remap_range(peak, 0, (num_pixels - 1), 30, 150))
+            strips[peak] = RED
 
         dot_count = dot_count+1
         if dot_count >= PEAK_FALL:
