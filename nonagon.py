@@ -732,7 +732,7 @@ def handleAudio():
     while True:
         signalMax = 0
         signalMin = 1023
-        for i in range(0,20):
+        for i in range(0,5):
             sample = mcp.read_adc(0)
             if sample < 1024:
                 if sample > signalMax:
@@ -742,9 +742,8 @@ def handleAudio():
         peakToPeak = signalMax - signalMin
         if peakToPeak<0:
             peakToPeak = 0
-        elif peakToPeak>5:
-            peakToPeak =5
-        print(signalMin,signalMax, peakToPeak)
+        elif peakToPeak>1023:
+            peakToPeak =1023
         volts = (peakToPeak *3.3) /1024
         print(volts)
         level = remap_range(volts, 0, 5, 0, num_pixels-1)
