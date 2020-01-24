@@ -737,7 +737,7 @@ def handleAudio():
     lvl = 10  # Current "dampened" audio level
     min_level_avg = 0  # For dynamic adjustment of graph low & high
     max_level_avg = 512
-    PEAK_FALL = 40
+    PEAK_FALL = 1
     # Collection of prior volume samples
     vol = [0] * samples
 
