@@ -732,7 +732,7 @@ def handleAudio():
     while True:
         signalMax = 0
         signalMin = 1023
-        for i in range(0,5):
+        for i in range(0,25):
             sample = mcp.read_adc(0)
             if sample < 1024:
                 if sample > signalMax:
