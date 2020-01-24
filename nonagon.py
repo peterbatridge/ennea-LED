@@ -739,7 +739,7 @@ def handleAudio():
     max_level_avg = 512
     PEAK_FALL = 40
     # Collection of prior volume samples
-    vol = array.array('H', [0] * samples)
+    vol = [0] * samples
 
     while True:
         n = mcp.read_adc(0)
@@ -751,66 +751,11 @@ def handleAudio():
         # "Dampened" reading (else looks twitchy) - divide by 8 (2^3)
         lvl = int(((lvl * 7) + n) / 8)
     
-        # Calculate bar height based on dynamic min/max levels (fixed point):
-        height = top * (lvl - min_level_avg) / (max_level_avg - min_level_avg)
-        # Clip output
-        if height < 0:
-            height = 0
-        elif height > top:
-            height = top
-    
-        # Keep 'peak' dot at top
-        if height > peak:
-            peak = height
-    
-        # Color pixels based on rainbow gradient
-        for i in range(0, num_pixels):
-            if i >= height:
-                strips[i] = [0, 0, 0]
-            else:
-                strips[i] = wheel(remap_range(i, 0, (num_pixels - 1), 30, 150))
-        if peak>0 and peak < num_pixels-1:
-            strips[int(peak)] = wheel(remap_range(peak, 0, (num_pixels - 1), 30, 150))
-
-        dot_count = dot_count+1
-        if dot_count >= PEAK_FALL:
-            if peak > 0:
-                peak = peak -1
-            dot_count = 0
-        # Save sample for dynamic leveling
-        vol[vol_count] = n
-    
-        # Advance/rollover sample counter
-        vol_count += 1
-    
-        if vol_count >= samples:
+        vol[vol_count] = lvl
+        vol_count = vol_count+1
+        if vol_count >=samples:
             vol_count = 0
-    
-        # Get volume range of prior frames
-        min_level = vol[0]
-        max_level = vol[0]
-    
-        for i in range(1, len(vol)):
-            if vol[i] < min_level:
-                min_level = vol[i]
-            elif vol[i] > max_level:
-                max_level = vol[i]
-    
-        # minlvl and maxlvl indicate the volume range over prior frames, used
-        # for vertically scaling the output graph (so it looks interesting
-        # regardless of volume level).  If they're too close together though
-        # (e.g. at very low volume levels) the graph becomes super coarse
-        # and 'jumpy'...so keep some minimum distance between them (this
-        # also lets the graph go to zero when no sound is playing):
-        if (max_level - min_level) < top:
-            max_level = min_level + top
-    
-        # Dampen min/max levels - divide by 64 (2^6)
-        min_level_avg = (min_level_avg * 63 + min_level) >> 6
-        # fake rolling average - divide by 64 (2^6)
-        max_level_avg = (max_level_avg * 63 + max_level) >> 6
-        strips.show()
-        #print(n)
+        print(vol)
 threading.Thread(target=handleAudio).start()
 
 try:        
