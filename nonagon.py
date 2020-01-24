@@ -708,19 +708,99 @@ modes = {
 
 }
 
-def handleAudio():
-    while True:
-        print(mcp.read_adc(0))
-        time.sleep(0.5)
 
+
+import array
+
+def handleAudio():
+    dc_offset = 0  # DC offset in mic signal - if unusure, leave 0
+    noise = 100  # Noise/hum/interference in mic signal
+    samples = 60  # Length of buffer for dynamic level adjustment
+    top = num_pixels + 1  # Allow dot to go slightly off scale
+    
+    peak = 0  # Used for falling dot
+    dot_count = 0  # Frame counter for delaying dot-falling speed
+    vol_count = 0  # Frame counter for storing past volume data
+    
+    lvl = 10  # Current "dampened" audio level
+    min_level_avg = 0  # For dynamic adjustment of graph low & high
+    max_level_avg = 512
+ 
+    # Collection of prior volume samples
+    vol = array.array('H', [0] * samples)
+
+    while True:
+        n = mcp.read_adc(0)
+        n = abs(n - 512 - dc_offset)  # Center on zero
+    
+        if n >= noise:  # Remove noise/hum
+            n = n - noise
+    
+        # "Dampened" reading (else looks twitchy) - divide by 8 (2^3)
+        lvl = int(((lvl * 7) + n) / 8)
+    
+        # Calculate bar height based on dynamic min/max levels (fixed point):
+        height = top * (lvl - min_level_avg) / (max_level_avg - min_level_avg)
+    
+        # Clip output
+        if height < 0:
+            height = 0
+        elif height > top:
+            height = top
+    
+        # Keep 'peak' dot at top
+        if height > peak:
+            peak = height
+    
+            # Color pixels based on rainbow gradient
+        for i in range(0, len(strips)):
+            if i >= height:
+                strips[i] = [0, 0, 0]
+            else:
+                strips[i] = RED
+    
+        # Save sample for dynamic leveling
+        vol[vol_count] = n
+    
+        # Advance/rollover sample counter
+        vol_count += 1
+    
+        if vol_count >= samples:
+            vol_count = 0
+    
+            # Get volume range of prior frames
+        min_level = vol[0]
+        max_level = vol[0]
+    
+        for i in range(1, len(vol)):
+            if vol[i] < min_level:
+                min_level = vol[i]
+            elif vol[i] > max_level:
+                max_level = vol[i]
+    
+        # minlvl and maxlvl indicate the volume range over prior frames, used
+        # for vertically scaling the output graph (so it looks interesting
+        # regardless of volume level).  If they're too close together though
+        # (e.g. at very low volume levels) the graph becomes super coarse
+        # and 'jumpy'...so keep some minimum distance between them (this
+        # also lets the graph go to zero when no sound is playing):
+        if (max_level - min_level) < top:
+            max_level = min_level + top
+    
+        # Dampen min/max levels - divide by 64 (2^6)
+        min_level_avg = (min_level_avg * 63 + min_level) >> 6
+        # fake rolling average - divide by 64 (2^6)
+        max_level_avg = (max_level_avg * 63 + max_level) >> 6
+    
+        print(n)
 threading.Thread(target=handleAudio).start()
 
 try:        
     i = 0
     while True:
-        if mode in modes.keys():
-            func, args = modes[mode]
-            func(*args)
+        # if mode in modes.keys():
+        #     func, args = modes[mode]
+        #     func(*args)
         #path() 
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
