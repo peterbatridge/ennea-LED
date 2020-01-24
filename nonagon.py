@@ -746,7 +746,7 @@ def handleAudio():
             peakToPeak =1023
         volts = (peakToPeak *3.3) /1024
         print(volts)
-        level = remap_range(volts, 0, 5, 0, num_pixels-1)
+        level = remap_range(volts, 0, 3.3, 0, num_pixels-1)
         blankStrip()
         strips[0:int(level)] = [RED] * int(level)
         strips.show()
