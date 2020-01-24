@@ -712,6 +712,18 @@ modes = {
 
 import array
 
+def remap_range(value, leftMin, leftMax, rightMin, rightMax):
+    # this remaps a value from original (left) range to new (right) range
+    # Figure out how 'wide' each range is
+    leftSpan = leftMax - leftMin
+    rightSpan = rightMax - rightMin
+ 
+    # Convert the left range into a 0-1 range (int)
+    valueScaled = int(value - leftMin) / int(leftSpan)
+ 
+    # Convert the 0-1 range into a value in the right range.
+    return int(rightMin + (valueScaled * rightSpan))
+
 def handleAudio():
     dc_offset = 0  # DC offset in mic signal - if unusure, leave 0
     noise = 100  # Noise/hum/interference in mic signal
@@ -757,7 +769,7 @@ def handleAudio():
             if i >= height:
                 strips[i] = [0, 0, 0]
             else:
-                strips[i] = RED
+                strips[i] = wheel(remap_range(i, 0, (num_pixels - 1), 30, 150))
     
         # Save sample for dynamic leveling
         vol[vol_count] = n
