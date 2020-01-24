@@ -743,18 +743,17 @@ def handleAudio():
 
     while True:
         n = mcp.read_adc(0)
-        print(n)
         n = abs(n - 512 - dc_offset)  # Center on zero
     
         if n >= noise:  # Remove noise/hum
             n = n - noise
-    
+
         # "Dampened" reading (else looks twitchy) - divide by 8 (2^3)
         lvl = int(((lvl * 7) + n) / 8)
     
         # Calculate bar height based on dynamic min/max levels (fixed point):
         height = top * (lvl - min_level_avg) / (max_level_avg - min_level_avg)
-    
+        print("height", height)
         # Clip output
         if height < 0:
             height = 0
@@ -765,13 +764,12 @@ def handleAudio():
         if height > peak:
             peak = height
     
-            # Color pixels based on rainbow gradient
-        for i in range(0, len(strips)):
+        # Color pixels based on rainbow gradient
+        for i in range(0, num_pixels):
             if i >= height:
                 strips[i] = [0, 0, 0]
             else:
                 strips[i] = wheel(remap_range(i, 0, (num_pixels - 1), 30, 150))
-    
         # Save sample for dynamic leveling
         vol[vol_count] = n
     
