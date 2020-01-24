@@ -744,6 +744,7 @@ def handleAudio():
     vol = [0] * samples
 
     while True:
+        print(vol)
         n = mcp.read_adc(0)
         n = abs(n - 512 - dc_offset)  # Center on zero
     
@@ -811,8 +812,7 @@ def handleAudio():
         min_level_avg = (min_level_avg * 63 + min_level) >> 6
         # fake rolling average - divide by 64 (2^6)
         max_level_avg = (max_level_avg * 63 + max_level) >> 6
-        strips.show()
-        print(n)
+
 threading.Thread(target=handleAudio).start()
 
 try:        
