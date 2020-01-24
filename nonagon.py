@@ -740,6 +740,10 @@ def handleAudio():
                 elif sample < signalMin:
                      signalMin = sample
         peakToPeak = signalMax - signalMin
+        if peakToPeak<0:
+            peakToPeak = 0
+        elif peakToPeak>5:
+            peakToPeak =5
         volts = (peakToPeak *3.3) /1024
         print(volts)
         level = remap_range(volts, 0, 5, 0, num_pixels-1)
