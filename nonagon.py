@@ -740,10 +740,12 @@ def handleAudio():
                 elif sample < signalMin:
                      signalMin = sample
         peakToPeak = signalMax - signalMin
-        print(signalMin, signalMax)
         volts = (peakToPeak *3.3) /1024
         print(volts)
-
+        level = remap_range(volts, 0, 5, 0, num_pixels-1)
+        blankStrip()
+        strips[0:int(level)] = [RED] * int(level)
+        strips.show()
 threading.Thread(target=handleAudio).start()
 
 try:        
