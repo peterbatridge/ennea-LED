@@ -696,20 +696,6 @@ def singleFrameTrianglesRandomColor():
         'colors': [randomColor(), randomColor()]
     }]
     animateNonagonGroups(animation, 10, 10)
-
-modes = {
-    0: (singleFrameSolidRandomColor, []),
-    1: (singleFrameTrianglesRandomColor, []),
-    2: (exMachinaMode, []),
-    3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
-    4: (colorSwapAnimation, [rowsTopToBottom, RED, GREEN, PURPLE, 10, 10]),
-    5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10]),
-    6: (rainbowCycle, [0]),
-    7: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
-    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
-    9: (handleAudioThreaded, [] )
-}
-
  
 def volumeMeter():
     remap = [50, 10]
@@ -764,6 +750,18 @@ def handleAudio():
 def handleAudioThreaded():
     threading.Thread(target=handleAudio).start()
 
+modes = {
+    0: (singleFrameSolidRandomColor, []),
+    1: (singleFrameTrianglesRandomColor, []),
+    2: (exMachinaMode, []),
+    3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
+    4: (colorSwapAnimation, [rowsTopToBottom, RED, GREEN, PURPLE, 10, 10]),
+    5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10]),
+    6: (rainbowCycle, [0]),
+    7: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
+    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
+    9: (handleAudioThreaded, [] )
+}
 
 try:        
     i = 0
