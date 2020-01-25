@@ -711,10 +711,8 @@ modes = {
 }
 
 
-
-
 def remap_range(value):
-    remap = [[150, 93], [250, 200], [400, 300] [1024, 434]] 
+    remap = [[150, 93], [250, 200], [400, 300], [1024, 434]] 
     for maxes in remap:
         if value <= maxes[0]:
             return (value / maxes[0])* maxes[1]
