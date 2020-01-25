@@ -712,26 +712,13 @@ modes = {
 
 
 
-import array
-
-def remap_range(value, leftMin, leftMax, rightMin, rightMax):
-    # this remaps a value from original (left) range to new (right) range
-    # Figure out how 'wide' each range is
-    leftSpan = leftMax - leftMin
-    rightSpan = rightMax - rightMin
- 
-    # Convert the left range into a 0-1 range (int)
-    valueScaled = int(value - leftMin) / int(leftSpan)
- 
-    # Convert the 0-1 range into a value in the right range.
-    return int(rightMin + (valueScaled * rightSpan))
 
 def remap_range(value):
-    remap = [[150,93],[250,200], [400,300] [1024, 434]] 
-    remapped = 0
+    remap = [[150, 93], [250, 200], [400, 300] [1024, 434]] 
     for maxes in remap:
         if value <= maxes[0]:
             return (value / maxes[0])* maxes[1]
+
 def handleAudio():
 
     hang = 40
