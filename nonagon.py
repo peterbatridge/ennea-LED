@@ -753,7 +753,8 @@ def handleAudio():
         elif hang == 0:
             hang = 40
         blankStrip()
-        strips[0:peak] = [(255,0,0)] * (peak)
+        for i in range(peak):
+            strips[i] = [(255,0,0)]
         strips.show()
         print(peakToPeak)
 threading.Thread(target=handleAudio).start()
