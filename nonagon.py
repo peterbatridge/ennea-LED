@@ -720,7 +720,6 @@ def handleAudio():
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
-        sample = 0 if sample <= noise else sample-noise
         sampleArr[sampleCount] = sample
         sampleCount =(sampleCount+1)%samplesLen
         for i in range(samplesLen):
@@ -730,6 +729,7 @@ def handleAudio():
                 signalMin = sampleArr[i]
         
         peakToPeak = signalMax - signalMin
+        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
         print(peakToPeak)
         if peakToPeak < 0:
             peakToPeak = 0
