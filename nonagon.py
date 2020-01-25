@@ -755,7 +755,7 @@ def handleAudio():
         blankStrip()
         print("peak",peak)
         for i in range(peak):
-            strips[i] = [(255,0,0)]
+            strips[i] = RED
         strips.show()
         print(peakToPeak)
 threading.Thread(target=handleAudio).start()
