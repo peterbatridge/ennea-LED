@@ -709,48 +709,57 @@ def remap_range(value):
                 return int((value / maxes[0])* maxes[1])
 
 def handleAudio():
-    global mode
+    hang = 40
     peak = 0
-    rateOfPeakDescent = 31
-    noise = 15
-    samplesLen = 10
-    sampleArr = [0] * samplesLen
-    sampleCount = 0
-    try:
-        while mode == 9:
-            signalMax = 0
-            signalMin = 1023
-            sample = mcp.read_adc(0)
-            sampleArr[sampleCount] = sample
-            sampleCount =(sampleCount+1)%samplesLen
-            for i in range(samplesLen):
-                if sampleArr[i] > signalMax:
-                    signalMax = sampleArr[i]
-                elif sampleArr[i] < signalMin:
-                    signalMin = sampleArr[i]
-            
-            peakToPeak = signalMax - signalMin
-            #peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
-            print(peakToPeak)
-            if peakToPeak < 0:
-                peakToPeak = 0
-            elif peakToPeak > 1023:
-                peakToPeak = 1023
-            
-            peakToPeak = remap_range(peakToPeak)
-            if (peak>=rateOfPeakDescent):
-                peak = peak - rateOfPeakDescent
-            if peakToPeak > peak:
-                peak = peakToPeak
+    volArr = [0] * 10
+    volCount = 0
+    lvl = 10
+    noise = 50
 
-            blankStrip()
-            for i in range(peak):
-                strips[i] = RED
-            strips.show()
-
-    except KeyboardInterrupt:
-        print("Exiting due to keyboard interrupt.")
-        strips.deinit()
+    volLen = len(volArr)
+    while True:
+        signalMax = 0
+        signalMin = 1023
+        n = mcp.read_adc(0) # 10-bit ADC format
+        #peak = int((n/1024) * 434)
+        #n = 0 if (n<=noise) else (n-noise)
+        #lvl = ((lvl*7)+n) >> 3
+        sample = n
+        volArr[volCount] = sample
+        volCount =(volCount+1)%volLen
+        for i in range(volLen):
+            if volArr[i] > signalMax:
+                signalMax = volArr[i]
+            elif volArr[i] < signalMin:
+                signalMin = volArr[i]
+        
+        peakToPeak = signalMax - signalMin
+        print(peakToPeak)
+        #print(volArr)
+        if peakToPeak < 0:
+            peakToPeak = 0
+        elif peakToPeak > 1023:
+            peakToPeak = 1023
+         
+        peakToPeak = remap_range(peakToPeak)
+        #vol = int(remap_range(peakToPeak))
+        #if avgVol >= peak:
+        #volts = (peakToPeak * 3.3) / 1024
+        if peakToPeak > peak:
+            peak = peakToPeak
+        if hang > 0:
+            if (peak>0):
+                peak = peak - 31
+            hang = hang -1
+        elif hang == 0:
+            hang = 40
+        blankStrip()
+        #print(n)
+        #print("peak",peak)
+        #light = remap_range(peak)
+        for i in range(peak):
+            strips[i] = RED
+        strips.show()
 
 def handleAudioThreaded():
     threading.Thread(target=handleAudio).start()
