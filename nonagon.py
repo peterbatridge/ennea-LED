@@ -30,9 +30,9 @@ CS   = 25
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Use a service account
-#cred = credentials.Certificate('firestoreNonagon.json')
-#firebase_admin.initialize_app(cred)
-#db = firestore.client()
+cred = credentials.Certificate('firestoreNonagon.json')
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # Create a callback on_snapshot function to capture changes
 def on_snapshot(doc_snapshot, changes, read_time):
@@ -44,10 +44,10 @@ def on_snapshot(doc_snapshot, changes, read_time):
             mode = doc.to_dict()['mode']
 
 # Build document reference for the current state
-#doc_ref = db.collection(u'state').document(u'current')
+doc_ref = db.collection(u'state').document(u'current')
 
 # Watch the document
-#doc_watch = doc_ref.on_snapshot(on_snapshot)
+doc_watch = doc_ref.on_snapshot(on_snapshot)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
@@ -214,7 +214,7 @@ def run_threaded(func):
 
 #currentWeather = getCurrentWeather()
 #schedule.every(10).seconds.do(run_threaded, getTrains)
-#schedule.every(10).minutes.do(run_threaded, getCurrentWeather)
+#schedule.every(30).minutes.do(run_threaded, getCurrentWeather)
 # getModeFromWeather(currentWeather[0], currentWeather[1])
 
 
