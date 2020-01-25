@@ -749,7 +749,7 @@ def handleAudio():
         vol = int(remap_range(peakToPeak))
         volArr[volCount] = vol
         volCount = (volCount+1)%volLen
-        avgVol = sum(volArr)/volLen
+        avgVol = int(sum(volArr)/volLen)
         if avgVol >= peak:
             peak = vol
         if hang > 0:
