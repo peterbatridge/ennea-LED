@@ -712,10 +712,13 @@ modes = {
 
 
 def remap_range(value):
-    remap = [[150, 93], [250, 200], [400, 300], [1024, 434]] 
-    for maxes in remap:
+    remap = [[200, 93], [600, 350], [1024, 434]] 
+    for m, maxes in enumerate(remap):
         if value <= maxes[0]:
-            return (value / maxes[0])* maxes[1]
+            if m >0:
+                return (value / (maxes[0]-remap[m-1][1])*maxes[1])+remap[m-1]
+            else:
+                return (value / maxes[0])* maxes[1]
 
 def handleAudio():
 
@@ -745,11 +748,11 @@ def handleAudio():
             peak = vol
         if hang > 0:
             if (peak>0):
-                peak = peak -1
+                peak = peak - 4
             hang = hang -1
         elif hang == 0:
             hang = 40
-        strips[0:31] = [(0,0,0)] * 31
+        strips[0:31] = [(0,0,0)] * 434
         strips[0:peak] = [(255,0,0)] * (peak)
         strips.show()
         print(peakToPeak)
