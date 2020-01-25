@@ -30,9 +30,9 @@ CS   = 25
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Use a service account
-cred = credentials.Certificate('firestoreNonagon.json')
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+#cred = credentials.Certificate('firestoreNonagon.json')
+#firebase_admin.initialize_app(cred)
+#db = firestore.client()
 
 # Create a callback on_snapshot function to capture changes
 def on_snapshot(doc_snapshot, changes, read_time):
@@ -44,10 +44,10 @@ def on_snapshot(doc_snapshot, changes, read_time):
             mode = doc.to_dict()['mode']
 
 # Build document reference for the current state
-doc_ref = db.collection(u'state').document(u'current')
+#doc_ref = db.collection(u'state').document(u'current')
 
 # Watch the document
-doc_watch = doc_ref.on_snapshot(on_snapshot)
+#doc_watch = doc_ref.on_snapshot(on_snapshot)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
@@ -712,7 +712,7 @@ modes = {
 
 
 def remap_range(value):
-    remap = [[400, 93], [800, 350], [1024, 434]] 
+    remap = [[100, 200], [250, 400], [1024, 434]] 
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
             if m >0:
@@ -726,44 +726,54 @@ def handleAudio():
     peak = 0
     volArr = [0] * 10
     volCount = 0
+    lvl = 10
+    noise = 50
+
     volLen = len(volArr)
     while True:
         signalMax = 0
         signalMin = 1023
-        for i in range(0,10):
-            n = mcp.read_adc(0) # 10-bit ADC format
-            sample = n
-            if sample < 1024:
-                if sample > signalMax:
-                    signalMax = sample
-                elif sample < signalMin:
-                    signalMin = sample
+        n = mcp.read_adc(0) # 10-bit ADC format
+        #peak = int((n/1024) * 434)
+        #n = 0 if (n<=noise) else (n-noise)
+        #lvl = ((lvl*7)+n) >> 3
+        sample = n
+        volArr[volCount] = sample
+        volCount =(volCount+1)%volLen
+        for i in range(volLen):
+            if volArr[i] > signalMax:
+                signalMax = volArr[i]
+            elif volArr[i] < signalMin:
+                signalMin = volArr[i]
+        
         peakToPeak = signalMax - signalMin
         print(peakToPeak)
+        #print(volArr)
         if peakToPeak < 0:
             peakToPeak = 0
         elif peakToPeak > 1023:
             peakToPeak = 1023
-            
+         
+        peakToPeak = remap_range(peakToPeak)
+        #vol = int(remap_range(peakToPeak))
+        #if avgVol >= peak:
         #volts = (peakToPeak * 3.3) / 1024
-        vol = int(remap_range(peakToPeak))
-        volArr[volCount] = vol
-        volCount = (volCount+1)%volLen
-        avgVol = int(sum(volArr)/volLen)
-        if avgVol >= peak:
-            peak = vol
+        if peakToPeak > peak:
+            peak = peakToPeak
         if hang > 0:
             if (peak>0):
-                peak = peak - 4
+                peak = peak - 31
             hang = hang -1
         elif hang == 0:
             hang = 40
         blankStrip()
-        print("peak",peak)
-        for i in range(avgVol):
+        #print(n)
+        #print("peak",peak)
+        #light = remap_range(peak)
+        for i in range(peak):
             strips[i] = RED
         strips.show()
-        print(peakToPeak)
+        #print(peakToPeak)
 threading.Thread(target=handleAudio).start()
 
 
@@ -778,7 +788,7 @@ try:
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
-        
+      #  
         pass
         #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
         
@@ -800,7 +810,7 @@ try:
         #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
         #cycleThroughSides()
         #sidesWithSequences(sideList, 2, 0)
-        
+      #  
         #trail(217)
         # Increase or decrease this to speed up or slow down the animation.
         #slice_alternating(0.1)
