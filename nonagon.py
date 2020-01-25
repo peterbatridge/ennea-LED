@@ -706,13 +706,15 @@ modes = {
     5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10]),
     6: (rainbowCycle, [0]),
     7: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
-    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1])
-
+    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
+    9: (handleAudioThreaded, [] )
 }
 
-
+ 
+def volumeMeter():
+    remap = [50, 10]
 def remap_range(value):
-    remap = [[75, 250], [250, 400], [1024, 434]] 
+    remap = [[50,75], [75, 250], [250, 400], [1024, 434]] 
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
             if m >0:
@@ -721,68 +723,54 @@ def remap_range(value):
                 return int((value / maxes[0])* maxes[1])
 
 def handleAudio():
-
-    hang = 40
+    global mode
     peak = 0
-    volArr = [0] * 10
-    volCount = 0
-    lvl = 10
-    noise = 50
-
-    volLen = len(volArr)
-    while True:
+    rateOfPeakDescent = 31
+    noise = 15
+    samplesLen = 60
+    sampleArr = [0] * samplesLen
+    sampleCount = 0
+    while mode == 9:
         signalMax = 0
         signalMin = 1023
-        n = mcp.read_adc(0) # 10-bit ADC format
-        #peak = int((n/1024) * 434)
-        #n = 0 if (n<=noise) else (n-noise)
-        #lvl = ((lvl*7)+n) >> 3
-        sample = n
-        volArr[volCount] = sample
-        volCount =(volCount+1)%volLen
-        for i in range(volLen):
-            if volArr[i] > signalMax:
-                signalMax = volArr[i]
-            elif volArr[i] < signalMin:
-                signalMin = volArr[i]
+        sample = mcp.read_adc(0)
+        sample = 0 if sample <= noise else sample-noise
+        sampleArr[sampleCount] = sample
+        sampleCount =(sampleCount+1)%samplesLen
+        for i in range(samplesLen):
+            if sampleArr[i] > signalMax:
+                signalMax = sampleArr[i]
+            elif sampleArr[i] < signalMin:
+                signalMin = sampleArr[i]
         
         peakToPeak = signalMax - signalMin
         print(peakToPeak)
-        #print(volArr)
         if peakToPeak < 0:
             peakToPeak = 0
         elif peakToPeak > 1023:
             peakToPeak = 1023
          
         peakToPeak = remap_range(peakToPeak)
-        #vol = int(remap_range(peakToPeak))
-        #if avgVol >= peak:
-        #volts = (peakToPeak * 3.3) / 1024
+        if (peak>=rateOfPeakDescent):
+            peak = peak - rateOfPeakDescent
         if peakToPeak > peak:
             peak = peakToPeak
-        if hang > 0:
-            if (peak>0):
-                peak = peak - 31
-            hang = hang -1
-        elif hang == 0:
-            hang = 40
+
         blankStrip()
-        #print(n)
-        #print("peak",peak)
-        #light = remap_range(peak)
         for i in range(peak):
             strips[i] = RED
         strips.show()
-        #print(peakToPeak)
-threading.Thread(target=handleAudio).start()
+
+def handleAudioThreaded():
+    threading.Thread(target=handleAudio).start()
 
 
 try:        
     i = 0
     while True:
-        # if mode in modes.keys():
-        #     func, args = modes[mode]
-        #     func(*args)
+        if mode in modes.keys():
+            func, args = modes[mode]
+            func(*args)
         #path() 
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
