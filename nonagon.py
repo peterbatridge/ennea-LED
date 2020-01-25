@@ -726,32 +726,32 @@ def remap_range(value, leftMin, leftMax, rightMin, rightMax):
     # Convert the 0-1 range into a value in the right range.
     return int(rightMin + (valueScaled * rightSpan))
 
-def handleAudio():
-    while True:
-        signalMax = 0
-        signalMin = 1023
-        for i in range(0,25):
-            sample = mcp.read_adc(0)
-            if sample < 1024:
-                if sample > signalMax:
-                    signalMax = sample
-                elif sample < signalMin:
-                     signalMin = sample
-        peakToPeak = signalMax - signalMin
-        if peakToPeak<0:
-            peakToPeak = 0
-        elif peakToPeak>1023:
-            peakToPeak =1023
-        volts = (peakToPeak *3.3) /1024
-        print(volts)
-threading.Thread(target=handleAudio).start()
+# def handleAudio():
+#     while True:
+#         signalMax = 0
+#         signalMin = 1023
+#         for i in range(0,25):
+#             sample = mcp.read_adc(0)
+#             if sample < 1024:
+#                 if sample > signalMax:
+#                     signalMax = sample
+#                 elif sample < signalMin:
+#                      signalMin = sample
+#         peakToPeak = signalMax - signalMin
+#         if peakToPeak<0:
+#             peakToPeak = 0
+#         elif peakToPeak>1023:
+#             peakToPeak =1023
+#         volts = (peakToPeak *3.3) /1024
+#         print(volts)
+# threading.Thread(target=handleAudio).start()
 
 try:        
     i = 0
     while True:
-        # if mode in modes.keys():
-        #     func, args = modes[mode]
-        #     func(*args)
+        if mode in modes.keys():
+            func, args = modes[mode]
+            func(*args)
         #path() 
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
