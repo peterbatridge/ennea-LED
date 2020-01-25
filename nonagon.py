@@ -761,9 +761,6 @@ def handleAudio():
             strips[i] = RED
         strips.show()
 
-def handleAudioThreaded():
-    threading.Thread(target=handleAudio).start()
-
 modes = {
     0: (singleFrameSolidRandomColor, []),
     1: (singleFrameTrianglesRandomColor, []),
@@ -774,7 +771,7 @@ modes = {
     6: (rainbowCycle, [0]),
     7: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
     8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
-    9: (handleAudioThreaded, [] )
+    9: (handleAudio, [] )
 }
 
 try:        
