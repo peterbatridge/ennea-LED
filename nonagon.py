@@ -724,6 +724,9 @@ def handleAudio():
 
     hang = 40
     peak = 0
+    volArr = [0] * 10
+    volCount = 0
+    volLen = len(volArr)
     while True:
         signalMax = 0
         signalMin = 1023
@@ -744,7 +747,10 @@ def handleAudio():
             
         #volts = (peakToPeak * 3.3) / 1024
         vol = int(remap_range(peakToPeak))
-        if vol >= peak:
+        volArr[volCount] = vol
+        volCount = (volCount+1)%volLen
+        avgVol = sum(volArr)/volLen
+        if avgVol >= peak:
             peak = vol
         if hang > 0:
             if (peak>0):
@@ -754,7 +760,7 @@ def handleAudio():
             hang = 40
         blankStrip()
         print("peak",peak)
-        for i in range(peak):
+        for i in range(avgVol):
             strips[i] = RED
         strips.show()
         print(peakToPeak)
