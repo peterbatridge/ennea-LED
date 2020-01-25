@@ -730,7 +730,7 @@ def handleAudio():
                     signalMin = sampleArr[i]
             
             peakToPeak = signalMax - signalMin
-            #peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
+            peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
             print(peakToPeak)
             if peakToPeak < 0:
                 peakToPeak = 0
