@@ -713,39 +713,44 @@ def handleAudio():
     peak = 0
     rateOfPeakDescent = 31
     noise = 15
-    samplesLen = 60
+    samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
-    while mode == 9:
-        signalMax = 0
-        signalMin = 1023
-        sample = mcp.read_adc(0)
-        sampleArr[sampleCount] = sample
-        sampleCount =(sampleCount+1)%samplesLen
-        for i in range(samplesLen):
-            if sampleArr[i] > signalMax:
-                signalMax = sampleArr[i]
-            elif sampleArr[i] < signalMin:
-                signalMin = sampleArr[i]
-        
-        peakToPeak = signalMax - signalMin
-        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
-        print(peakToPeak)
-        if peakToPeak < 0:
-            peakToPeak = 0
-        elif peakToPeak > 1023:
-            peakToPeak = 1023
-         
-        peakToPeak = remap_range(peakToPeak)
-        if (peak>=rateOfPeakDescent):
-            peak = peak - rateOfPeakDescent
-        if peakToPeak > peak:
-            peak = peakToPeak
+    try:
+        while mode == 9:
+            signalMax = 0
+            signalMin = 1023
+            sample = mcp.read_adc(0)
+            sampleArr[sampleCount] = sample
+            sampleCount =(sampleCount+1)%samplesLen
+            for i in range(samplesLen):
+                if sampleArr[i] > signalMax:
+                    signalMax = sampleArr[i]
+                elif sampleArr[i] < signalMin:
+                    signalMin = sampleArr[i]
+            
+            peakToPeak = signalMax - signalMin
+            #peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
+            print(peakToPeak)
+            if peakToPeak < 0:
+                peakToPeak = 0
+            elif peakToPeak > 1023:
+                peakToPeak = 1023
+            
+            peakToPeak = remap_range(peakToPeak)
+            if (peak>=rateOfPeakDescent):
+                peak = peak - rateOfPeakDescent
+            if peakToPeak > peak:
+                peak = peakToPeak
 
-        blankStrip()
-        for i in range(peak):
-            strips[i] = RED
-        strips.show()
+            blankStrip()
+            for i in range(peak):
+                strips[i] = RED
+            strips.show()
+
+    except KeyboardInterrupt:
+        print("Exiting due to keyboard interrupt.")
+        strips.deinit()
 
 def handleAudioThreaded():
     threading.Thread(target=handleAudio).start()
