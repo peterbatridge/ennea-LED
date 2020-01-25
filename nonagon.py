@@ -752,7 +752,7 @@ def handleAudio():
             hang = hang -1
         elif hang == 0:
             hang = 40
-        strips[0:31] = [(0,0,0)] * 434
+        blankStrip()
         strips[0:peak] = [(255,0,0)] * (peak)
         strips.show()
         print(peakToPeak)
