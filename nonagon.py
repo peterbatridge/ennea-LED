@@ -716,9 +716,9 @@ def remap_range(value):
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
             if m >0:
-                return (value / (maxes[0]-remap[m-1][1])*maxes[1])+remap[m-1]
+                return int((value / (maxes[0]-remap[m-1][1])*maxes[1])+remap[m-1][1])
             else:
-                return (value / maxes[0])* maxes[1]
+                return int((value / maxes[0])* maxes[1])
 
 def handleAudio():
 
