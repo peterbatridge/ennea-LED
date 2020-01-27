@@ -39,7 +39,7 @@ db = firestore.client()
 
 # Create a callback on_snapshot function to capture changes
 def on_snapshot(doc_snapshot, changes, read_time):
-    global state
+    global state, modeChanged
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
