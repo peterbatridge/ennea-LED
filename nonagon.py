@@ -850,6 +850,44 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak):
         functionCalledWithPeak(peak)
     modeChanged = False
 
+
+def handleAudioWithFrequency(remap, rateOfPeakDescent, functionCalledWithPeak):
+    global modeChanged
+    peak = 0
+    noise = 15
+    samplesLen = 60
+    sampleArr = [0] * samplesLen
+    sampleCount = 0
+    while not modeChanged:
+        signalMax = 0
+        signalMin = 1023
+        sample = mcp.read_adc(0)
+        sampleArr[sampleCount] = sample
+        sampleCount =(sampleCount+1)%samplesLen
+        for i in range(samplesLen):
+            if sampleArr[i] > signalMax:
+                signalMax = sampleArr[i]
+            elif sampleArr[i] < signalMin:
+                signalMin = sampleArr[i]
+        print(sampleArr)
+        peakToPeak = signalMax - signalMin
+        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
+        if peakToPeak < 0:
+            peakToPeak = 0
+        elif peakToPeak > 1023:
+            peakToPeak = 1023
+        
+        peakToPeak = remap_range(peakToPeak, remap)
+        if (peak>=rateOfPeakDescent):
+            peak = peak - rateOfPeakDescent
+        elif (peak>0):
+            peak - peak-1
+        if peakToPeak > peak:
+            peak = peakToPeak
+
+        # functionCalledWithPeak(peak)
+    modeChanged = False
+
 # def handleAudioThreaded():
 #     threading.Thread(target=handleAudio).start()
 
@@ -865,7 +903,8 @@ modes = {
     8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
     9: (handleAudio, [individualLeds, 31, fillLedsBasedOnVolume]),
     10: (handleAudio, [verticalSides, 1, volumeMeterSides]),
-    11: (singleFrameSolidRandomColorWaitForSound, [150])
+    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
+    12: (singleFrameSolidRandomColorWaitForSound, [150])
 }
 
 try:        
