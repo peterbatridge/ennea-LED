@@ -472,23 +472,31 @@ def getLastFrameSideColors(animation):
             lastFrameColors[side[0]][side[1]] = frame['colors'][g]
     return lastFrameColors
 
-def animateNonagonGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK):
+def animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames = [], soundThreshold=0,  backgroundColor = BLANK):
     global lastFrameNonagonColors
     lastFrameColors = getLastFrameColors(animation)
     for n, frame in enumerate(animation):
         for f in range(hangFrames+fadeFrames):
             blankStrip(backgroundColor)
-            for g, group in enumerate(frame['groups']):
-                color = frame['colors'][g]
-                for nonagon in group:
-                    if f < fadeFrames:
-                        startColor = lastFrameColors[nonagon]
-                        stepColor = stepBetweenColors(startColor, color, fadeFrames, f)
-                        setNonagonColor(nonagon, stepColor)
-                    else:
+            if soundThreshold > 0 and n in soundFrames and f >= fadeFrames:
+                for g, group in enumerate(frame['groups']):
+                    color = frame['colors'][g]
+                    for nonagon in group:
                         lastFrameColors[nonagon] = color
                         setNonagonColor(nonagon, color)
-            strips.show()
+                waitUntilSoundReachesThreshold(soundThreshold)
+            else:
+                for g, group in enumerate(frame['groups']):
+                    color = frame['colors'][g]
+                    for nonagon in group:
+                        if f < fadeFrames:
+                            startColor = lastFrameColors[nonagon]
+                            stepColor = stepBetweenColors(startColor, color, fadeFrames, f)
+                            setNonagonColor(nonagon, stepColor)
+                        else:
+                            lastFrameColors[nonagon] = color
+                            setNonagonColor(nonagon, color)
+                strips.show()
     lastFrameNonagonColors = lastFrameColors
 
 def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK):
@@ -513,6 +521,7 @@ def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK
 ###
 # Groups Of Nonagons
 ###
+
 everyNonagon = [[0,1,2,3,4,5,6,7,8,9,10,11,12,13]]
 
 columnsLeftToRight = [[3,4],[1,2,5,6],[7,10, 11, 0],[8, 9, 12, 13]]
@@ -532,6 +541,23 @@ topLeftToBottomRightSharpDiagonal = bottomRightToTopLeftSharpDiagonal[::-1]
 
 triangles = [[0,2,4,6,8,10,12], [1,3,5,7,9,11,13]]
 
+groupsOfNonagons = {
+    'everyNonagon' : everyNonagon,
+    'columnsLeftToRight': columnsLeftToRight,
+    'columnsRightToLeft': columnsRightToLeft,
+    'rowsBottomToTop': rowsBottomToTop,
+    'rowsTopToBottom': rowsTopToBottom,
+    'bottomLeftToTopRightDiagonal': bottomLeftToTopRightDiagonal,
+    'bottomLeftToTopRightSharpDiagonal': bottomLeftToTopRightSharpDiagonal,
+    'topRightToBottomLeftDiagonal': topRightToBottomLeftDiagonal,
+    'topRightToBottomLeftSharpDiagonal': topRightToBottomLeftSharpDiagonal,
+    'bottomRightToTopLeftDiagonal':  bottomRightToTopLeftDiagonal,
+    'bottomRightToTopLeftSharpDiagonal': bottomRightToTopLeftSharpDiagonal,
+    'topLeftToBottomRightDiagonal':topLeftToBottomRightDiagonal,
+    'topLeftToBottomRightSharpDiagonal': topLeftToBottomRightSharpDiagonal,
+    'triangles': triangles
+}
+
 ###
 # Sets of Groups of Nonagons
 ###
@@ -546,17 +572,32 @@ eightDirectionGroups = [
     topRightToBottomLeftDiagonal
 ]
 
+setsOfGroupsOfNonagons = {
+    'eightDirectionGroups': eightDirectionGroups
+}
+
 ###
 # Color Sequences
 ###
 redAndBlue = [RED,BLUE]
-redToBlueSeq8 = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
-colorSeq2 = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
-redFour = [CYAN,CYAN, BLUE, BLUE]
-fourColdColors = [BLUE, PURPLE, BLUE, CYAN]
-sixteenColdToWarmColors = [BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, MAGENTA, RED, RED, RED, RED, RED, RED, RED, MAGENTA]
-TeganSequence = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE]
-ROYGCBPG = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE, MAGENTA]
+redToBlueEight = [RED, RED, ORANGE, ORANGE, CYAN, BLUE, MAGENTA, MAGENTA]
+cyanBlueFour = [CYAN,CYAN, BLUE, BLUE]
+coldFour = [BLUE, PURPLE, BLUE, CYAN]
+coldToWarmSixteen = [BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, MAGENTA, RED, RED, RED, RED, RED, RED, RED, MAGENTA]
+rainbowTwelve = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE]
+rainbowNine = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
+rainbowEight = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE, MAGENTA]
+
+colorSequences = {
+    'redAndBlue': redAndBlue,
+    'redToBlueEight': redToBlueEight,
+    'cyanBlueFour': cyanBlueFour,
+    'coldFour': coldFour,
+    'coldToWarmSixteen': coldToWarmSixteen,
+    'rainbowTwelve':rainbowTwelve,
+    'rainbowNine': rainbowNine,
+    'rainbowEight': rainbowEight
+}
 
 ###
 # Animation Generators
@@ -674,10 +715,10 @@ def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
     shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
     
 def exMachinaMode():
-    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-    cycleThroughColorSequenceWithEveryNonagon(fourColdColors, 15, 10)
-    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
-    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, sixteenColdToWarmColors, 1, 5)
+    cycleThroughColorSequenceWithEveryNonagon(coldFour, 15, 10)
+    cycleThroughColorSequenceWithEveryNonagon(coldFour, 15, 10)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
     fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
     fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
     fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
@@ -690,6 +731,13 @@ def singleFrameSolidRandomColor():
     }]
     animateNonagonGroups(animation, 10, 10)
 
+def singleFrameSolidRandomColorWaitForSound(threshold):
+    animation = [{
+        'groups': everyNonagon,
+        'colors': [randomColor()]
+    }]
+    animateNonagonGroups(animation, 10, 10, [0], 50)
+
 def singleFrameTrianglesRandomColor():
     animation = [{
         'groups': triangles,
@@ -699,6 +747,7 @@ def singleFrameTrianglesRandomColor():
  
 def volumeMeter():
     remap = [50, 10]
+    
 def remap_range(value):
     remap = [[50,75], [75, 250], [250, 400], [1024, 434]] 
     for m, maxes in enumerate(remap):
@@ -707,6 +756,39 @@ def remap_range(value):
                 return int((value / (maxes[0])*(maxes[1]-remap[m-1][1]))+remap[m-1][1])
             else:
                 return int((value / maxes[0])* maxes[1])
+
+def waitUntilSoundReachesThreshold(threshold):
+    peak = 0
+    rateOfPeakDescent = 31
+    noise = 15
+    samplesLen = 10
+    sampleArr = [0] * samplesLen
+    sampleCount = 0
+    while peak<threshold:
+        signalMax = 0
+        signalMin = 1023
+        sample = mcp.read_adc(0)
+        sampleArr[sampleCount] = sample
+        sampleCount =(sampleCount+1)%samplesLen
+        for i in range(samplesLen):
+            if sampleArr[i] > signalMax:
+                signalMax = sampleArr[i]
+            elif sampleArr[i] < signalMin:
+                signalMin = sampleArr[i]
+        
+        peakToPeak = signalMax - signalMin
+        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
+        print(peakToPeak)
+        if peakToPeak < 0:
+            peakToPeak = 0
+        elif peakToPeak > 1023:
+            peakToPeak = 1023
+        
+        if (peak>=rateOfPeakDescent):
+            peak = peak - rateOfPeakDescent
+        if peakToPeak > peak:
+            peak = peakToPeak
+
 
 def handleAudio():
     global mode
@@ -763,9 +845,10 @@ modes = {
     4: (colorSwapAnimation, [rowsTopToBottom, RED, GREEN, PURPLE, 10, 10]),
     5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10]),
     6: (rainbowCycle, [0]),
-    7: (traceSidesAnimation, [rowsTopToBottom, ROYGCBPG, 'top', 1, 0]),
+    7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
     8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
-    9: (handleAudio, [] )
+    9: (handleAudio, [] ),
+    10: (singleFrameSolidRandomColorWaitForSound, [50])
 }
 
 try:        
