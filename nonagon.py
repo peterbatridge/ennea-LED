@@ -773,7 +773,7 @@ def waitUntilSoundReachesThreshold(threshold):
             signalMin = 1023
             sample = mcp.read_adc(0)
             sampleArr[sampleCount] = sample
-            if sample+1 == samplesLen:
+            if sampleCount+1 == samplesLen:
                 fullSample = True
             sampleCount =(sampleCount+1)%samplesLen
             for i in range(samplesLen):
