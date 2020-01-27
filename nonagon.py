@@ -759,15 +759,14 @@ def remap_range(value):
 
 def waitUntilSoundReachesThreshold(threshold):
     print("called")
-    peak = 0
-    rateOfPeakDescent = 31
+    peakToPeak = 0
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
     fullSample = False
     try:
-        while peak<threshold or not fullSample:
+        while peakToPeak<threshold or not fullSample:
             signalMax = 0
             signalMin = 1023
             sample = mcp.read_adc(0)
@@ -788,12 +787,7 @@ def waitUntilSoundReachesThreshold(threshold):
             elif peakToPeak > 1023:
                 peakToPeak = 1023
             
-            peakToPeak = remap_range(peakToPeak)
-            if (peak>=rateOfPeakDescent):
-                peak = peak - rateOfPeakDescent
-            if peakToPeak > peak:
-                peak = peakToPeak
-            print(fullSample, threshold, peakToPeak, peak)
+            print(fullSample, threshold, peakToPeak)
     except KeyboardInterrupt:
         print("Exiting due to keyboard interrupt.")
         strips.deinit()
