@@ -11,7 +11,10 @@ CTA_LOCK = threading.Semaphore(1)
 mm_bound_timer = False
 chi_bound_timer = False
 currentWeather = None
-mode = 0
+state = {
+    'mode': 0
+}
+modeChanged = False
 import board
 import adafruit_dotstar as dotstar
 from random import randrange
@@ -36,12 +39,13 @@ db = firestore.client()
 
 # Create a callback on_snapshot function to capture changes
 def on_snapshot(doc_snapshot, changes, read_time):
-    global mode
+    global state
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
-            print(doc.to_dict()['mode'])
-            mode = doc.to_dict()['mode']
+            print(doc.to_dict())
+            state = doc.to_dict()
+            modeChanged = True
 
 # Build document reference for the current state
 doc_ref = db.collection(u'state').document(u'current')
@@ -761,13 +765,14 @@ verticalSides = [[50,25], [75, 30], [250, 35], [1024, 39]]
 verticalNonagons = [[50,4], [75, 5], [250, 6], [1024, 7]] 
 
 def waitUntilSoundReachesThreshold(threshold):
+    global modeChanged
     peakToPeak = 0
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
     fullSample = False
-    while peakToPeak<threshold or not fullSample:
+    while (peakToPeak<threshold or not fullSample) and not modeChanged:
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
@@ -787,7 +792,7 @@ def waitUntilSoundReachesThreshold(threshold):
             peakToPeak = 0
         elif peakToPeak > 1023:
             peakToPeak = 1023
-
+    modeChanged = False
 def fillLedsBasedOnVolume(peak):
     blankStrip()
     for i in range(peak):
@@ -798,22 +803,23 @@ def volumeMeterSides(peak):
     blankStrip()
     
     for i in range(peak):
+        color = 255 - ((i/40) * 255)
         groupNum = i //5
         fill = i % 5
         for nonagon in rowsBottomToTop[groupNum]:
             sides = sidesFromDirection(nonagon, fill, 'bot')
             for side in sides:
-                setSide(nonagon, side[1], RED)
+                setSide(nonagon, side[1], color)
     strips.show()
 
 def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak):
-    global mode
+    global modeChanged
     peak = 0
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
-    while mode == 9:
+    while modeChanged:
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
@@ -842,7 +848,7 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak):
 
         print(peak)
         functionCalledWithPeak(peak)
-
+    modeChanged = False
 
 # def handleAudioThreaded():
 #     threading.Thread(target=handleAudio).start()
@@ -865,8 +871,8 @@ modes = {
 try:        
     i = 0
     while True:
-        if mode in modes.keys():
-            func, args = modes[mode]
+        if state['mode'] in modes.keys():
+            func, args = modes[state['mode']]
             func(*args)
         #path() 
         #pinwheel(0)
