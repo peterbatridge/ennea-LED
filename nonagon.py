@@ -792,10 +792,11 @@ def fillLedsBasedOnVolume(peak):
     blankStrip()
     for i in range(peak):
         strips[i] = RED
+    strips.show()
 
 def volumeMeterSides(peak):
     blankStrip()
-
+    
     for i in range(peak):
         groupNum = i //5
         fill = i % 5
