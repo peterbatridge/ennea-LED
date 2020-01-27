@@ -784,6 +784,7 @@ def waitUntilSoundReachesThreshold(threshold):
         elif peakToPeak > 1023:
             peakToPeak = 1023
         
+        peakToPeak = remap_range(peakToPeak)
         if (peak>=rateOfPeakDescent):
             peak = peak - rateOfPeakDescent
         if peakToPeak > peak:
