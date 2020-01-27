@@ -484,9 +484,7 @@ def animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames = [], so
                     for nonagon in group:
                         lastFrameColors[nonagon] = color
                         setNonagonColor(nonagon, color)
-                print("calling for ", n, f)
                 waitUntilSoundReachesThreshold(soundThreshold)
-                break
             else:
                 for g, group in enumerate(frame['groups']):
                     color = frame['colors'][g]
@@ -762,13 +760,14 @@ def remap_range(value):
 def waitUntilSoundReachesThreshold(threshold):
     print("called")
     peak = 0
+    rateOfPeakDescent = 31
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
     fullSample = False
     try:
-        while peak<threshold or not(fullSample):
+        while peak<threshold or not fullSample:
             signalMax = 0
             signalMin = 1023
             sample = mcp.read_adc(0)
@@ -788,9 +787,13 @@ def waitUntilSoundReachesThreshold(threshold):
                 peakToPeak = 0
             elif peakToPeak > 1023:
                 peakToPeak = 1023
+            
+            peakToPeak = remap_range(peakToPeak)
+            if (peak>=rateOfPeakDescent):
+                peak = peak - rateOfPeakDescent
             if peakToPeak > peak:
                 peak = peakToPeak
-            print(fullSample, threshold, peak)
+            print(fullSample, threshold, peakToPeak, peak)
     except KeyboardInterrupt:
         print("Exiting due to keyboard interrupt.")
         strips.deinit()
