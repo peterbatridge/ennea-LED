@@ -736,7 +736,7 @@ def singleFrameSolidRandomColorWaitForSound(threshold):
         'groups': everyNonagon,
         'colors': [randomColor()]
     }]
-    animateNonagonGroups(animation, 1, 10, [0], 50)
+    animateNonagonGroups(animation, 1, 10, [0], threshold)
 
 def singleFrameTrianglesRandomColor():
     animation = [{
