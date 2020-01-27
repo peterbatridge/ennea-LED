@@ -851,7 +851,7 @@ modes = {
     7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
     8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
     9: (handleAudio, [] ),
-    10: (singleFrameSolidRandomColorWaitForSound, [50])
+    10: (singleFrameSolidRandomColorWaitForSound, [150])
 }
 
 try:        
