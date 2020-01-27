@@ -736,7 +736,7 @@ def singleFrameSolidRandomColorWaitForSound(threshold):
         'groups': everyNonagon,
         'colors': [randomColor()]
     }]
-    animateNonagonGroups(animation, 10, 10, [0], 50)
+    animateNonagonGroups(animation, 1, 10, [0], 50)
 
 def singleFrameTrianglesRandomColor():
     animation = [{
@@ -765,12 +765,15 @@ def waitUntilSoundReachesThreshold(threshold):
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
+    fullSample = False
     try:
-        while peak<threshold:
+        while peak<threshold or not fullSample:
             signalMax = 0
             signalMin = 1023
             sample = mcp.read_adc(0)
             sampleArr[sampleCount] = sample
+            if sample+1 == samplesLen:
+                fullSample = True
             sampleCount =(sampleCount+1)%samplesLen
             for i in range(samplesLen):
                 if sampleArr[i] > signalMax:
