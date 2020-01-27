@@ -819,7 +819,7 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak):
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
-    while modeChanged:
+    while not modeChanged:
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
