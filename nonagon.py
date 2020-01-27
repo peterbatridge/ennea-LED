@@ -764,31 +764,35 @@ def waitUntilSoundReachesThreshold(threshold):
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
-    while peak<threshold:
-        signalMax = 0
-        signalMin = 1023
-        sample = mcp.read_adc(0)
-        sampleArr[sampleCount] = sample
-        sampleCount =(sampleCount+1)%samplesLen
-        for i in range(samplesLen):
-            if sampleArr[i] > signalMax:
-                signalMax = sampleArr[i]
-            elif sampleArr[i] < signalMin:
-                signalMin = sampleArr[i]
-        
-        peakToPeak = signalMax - signalMin
-        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
-        print(peakToPeak)
-        if peakToPeak < 0:
-            peakToPeak = 0
-        elif peakToPeak > 1023:
-            peakToPeak = 1023
-        
-        peakToPeak = remap_range(peakToPeak)
-        if (peak>=rateOfPeakDescent):
-            peak = peak - rateOfPeakDescent
-        if peakToPeak > peak:
-            peak = peakToPeak
+    try:
+        while peak<threshold:
+            signalMax = 0
+            signalMin = 1023
+            sample = mcp.read_adc(0)
+            sampleArr[sampleCount] = sample
+            sampleCount =(sampleCount+1)%samplesLen
+            for i in range(samplesLen):
+                if sampleArr[i] > signalMax:
+                    signalMax = sampleArr[i]
+                elif sampleArr[i] < signalMin:
+                    signalMin = sampleArr[i]
+            
+            peakToPeak = signalMax - signalMin
+            peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
+            print(peakToPeak)
+            if peakToPeak < 0:
+                peakToPeak = 0
+            elif peakToPeak > 1023:
+                peakToPeak = 1023
+            
+            peakToPeak = remap_range(peakToPeak)
+            if (peak>=rateOfPeakDescent):
+                peak = peak - rateOfPeakDescent
+            if peakToPeak > peak:
+                peak = peakToPeak
+    except KeyboardInterrupt:
+        print("Exiting due to keyboard interrupt.")
+        strips.deinit()
 
 
 def handleAudio():
