@@ -758,6 +758,7 @@ def remap_range(value):
                 return int((value / maxes[0])* maxes[1])
 
 def waitUntilSoundReachesThreshold(threshold):
+    print("called")
     peak = 0
     rateOfPeakDescent = 31
     noise = 15
@@ -779,7 +780,7 @@ def waitUntilSoundReachesThreshold(threshold):
             
             peakToPeak = signalMax - signalMin
             peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
-            print(peakToPeak)
+            print(sampleArr, peakToPeak)
             if peakToPeak < 0:
                 peakToPeak = 0
             elif peakToPeak > 1023:
