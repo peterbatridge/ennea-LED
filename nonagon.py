@@ -803,7 +803,7 @@ def volumeMeterSides(peak):
     blankStrip()
     
     for i in range(peak):
-        color = 255 - ((i/40) * 255)
+        color = wheel(255 - int((i/40) * 255))
         groupNum = i //5
         fill = i % 5
         for nonagon in rowsBottomToTop[groupNum]:
