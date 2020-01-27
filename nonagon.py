@@ -756,49 +756,9 @@ def remap_range(value, remap):
 ###
 # Audio Mappings
 ###
-individualLeds = [[50,75], [75, 250], [250, 400], [1024, 434]] 
-verticalSides = [[50,25], [75, 30], [250, 35], [1024, 40]] 
+individualLeds = [[50,75], [75, 250], [250, 400], [1024, 433]] 
+verticalSides = [[50,25], [75, 30], [250, 35], [1024, 39]] 
 verticalNonagons = [[50,4], [75, 5], [250, 6], [1024, 7]] 
-def volumeMeterSides():
-    global mode
-    remap = [[50,25], [75, 30], [250, 35], [1024, 40]] 
-    peak = 0
-    rateOfPeakDescent = 31
-    noise = 15
-    samplesLen = 10
-    sampleArr = [0] * samplesLen
-    sampleCount = 0
-    while mode == 9:
-        signalMax = 0
-        signalMin = 1023
-        sample = mcp.read_adc(0)
-        sampleArr[sampleCount] = sample
-        sampleCount =(sampleCount+1)%samplesLen
-        for i in range(samplesLen):
-            if sampleArr[i] > signalMax:
-                signalMax = sampleArr[i]
-            elif sampleArr[i] < signalMin:
-                signalMin = sampleArr[i]
-        
-        peakToPeak = signalMax - signalMin
-        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
-        if peakToPeak < 0:
-            peakToPeak = 0
-        elif peakToPeak > 1023:
-            peakToPeak = 1023
-        
-        peakToPeak = remap_range(peakToPeak, [])
-        if (peak>=rateOfPeakDescent):
-            peak = peak - rateOfPeakDescent
-        if peakToPeak > peak:
-            peak = peakToPeak
-
-        print(peak)
-        blankStrip()
-        for i in range(peak):
-            strips[i] = RED
-        strips.show()
-    
 
 def waitUntilSoundReachesThreshold(threshold):
     peakToPeak = 0
@@ -832,11 +792,22 @@ def fillLedsBasedOnVolume(peak):
     blankStrip()
     for i in range(peak):
         strips[i] = RED
+
+def volumeMeterSides(peak):
+    blankStrip()
+
+    for i in range(peak):
+        groupNum = i //5
+        fill = i % 5
+        for nonagon in rowsBottomToTop[groupNum]:
+            sides = sidesFromDirection(nonagon, fill, 'bot')
+            for side in sides:
+                setSide(nonagon, side[1], RED)
     strips.show()
-def handleAudio(remap, functionCalledWithPeak):
+
+def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak):
     global mode
     peak = 0
-    rateOfPeakDescent = 31
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
@@ -863,6 +834,8 @@ def handleAudio(remap, functionCalledWithPeak):
         peakToPeak = remap_range(peakToPeak, remap)
         if (peak>=rateOfPeakDescent):
             peak = peak - rateOfPeakDescent
+        elif (peak>0):
+            peak - peak-1
         if peakToPeak > peak:
             peak = peakToPeak
 
@@ -883,8 +856,9 @@ modes = {
     6: (rainbowCycle, [0]),
     7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
     8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
-    9: (handleAudio, [individualLeds, fillLedsBasedOnVolume] ),
-    10: (singleFrameSolidRandomColorWaitForSound, [150])
+    9: (handleAudio, [individualLeds, 31, fillLedsBasedOnVolume]),
+    10: (handleAudio, [verticalSides, 1, volumeMeterSides]),
+    11: (singleFrameSolidRandomColorWaitForSound, [150])
 }
 
 try:        
