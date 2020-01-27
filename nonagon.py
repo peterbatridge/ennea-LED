@@ -868,7 +868,7 @@ def handleAudioWithFrequency(remap, rateOfPeakDescent, functionCalledWithPeak):
         if fullSample:
             N = 60
             Fs = 44100
-            Y_k = np.fft.fft(y)[0:int(N/2)]/N # FFT function from numpy
+            Y_k = np.fft.fft(sampleArr)[0:int(N/2)]/N # FFT function from numpy
             Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
             Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
             f = Fs*np.arange((N/2))/N # frequency vector
