@@ -25,6 +25,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
+import numpy as np 
 
 CLK  = 18
 MISO = 23
@@ -853,37 +854,26 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak):
 
 def handleAudioWithFrequency(remap, rateOfPeakDescent, functionCalledWithPeak):
     global modeChanged
-    peak = 0
-    noise = 15
     samplesLen = 60
-    sampleArr = [0] * samplesLen
+    sampleArr = np.array([0]*samplesLen, dtype=int)
     sampleCount = 0
+    
+    fullSample = False
     while not modeChanged:
-        signalMax = 0
-        signalMin = 1023
         sample = mcp.read_adc(0)
-        sampleArr[sampleCount] = sample
+        np.put(sampleArr, sampleCount, sample)
+        if sampleCount + 1 == samplesLen:
+            fullSample = True
         sampleCount =(sampleCount+1)%samplesLen
-        for i in range(samplesLen):
-            if sampleArr[i] > signalMax:
-                signalMax = sampleArr[i]
-            elif sampleArr[i] < signalMin:
-                signalMin = sampleArr[i]
-        print(sampleArr)
-        peakToPeak = signalMax - signalMin
-        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
-        if peakToPeak < 0:
-            peakToPeak = 0
-        elif peakToPeak > 1023:
-            peakToPeak = 1023
-        
-        peakToPeak = remap_range(peakToPeak, remap)
-        if (peak>=rateOfPeakDescent):
-            peak = peak - rateOfPeakDescent
-        elif (peak>0):
-            peak - peak-1
-        if peakToPeak > peak:
-            peak = peakToPeak
+        if fullSample:
+            N = 60
+            Fs = 44100
+            Y_k = np.fft.fft(y)[0:int(N/2)]/N # FFT function from numpy
+            Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
+            Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
+            f = Fs*np.arange((N/2))/N # frequency vector
+            print('(',Pxx,', ', f ,'),')
+
 
         # functionCalledWithPeak(peak)
     modeChanged = False
