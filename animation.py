@@ -494,6 +494,15 @@ def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames
             })
     animateNonagonGroups(animation, hangFrames, fadeFrames)
 
+def shiftColorSequenceOverNonagonGroupsWithSound(groups, sequence, hangFrames, fadeFrames):
+    animation = []
+    for i in range(0, len(sequence)):
+        animation.append({
+            'groups': groups,
+            'colors': shiftRight(sequence, i)
+            })
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
+
 def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames):
     animation = []
     for groupList in setOfGroups:

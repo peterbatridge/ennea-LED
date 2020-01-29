@@ -15,8 +15,7 @@ cred = credentials.Certificate('firestoreNonagon.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-# Create a callback on_snapshot function to capture changes
-def on_snapshot(doc_snapshot, changes, read_time):
+def onModeSnapshot(doc_snapshot, changes, read_time):
     global state, modeChanged
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
@@ -24,12 +23,22 @@ def on_snapshot(doc_snapshot, changes, read_time):
             print(doc.to_dict())
             state = doc.to_dict()
             modeChanged = True
+def onColorsSnapshot(doc_snapshot, changes, read_time):
+    global colorsDict
+    for doc in doc_snapshot:
+        print(u'Received document snapshot: {}'.format(doc.id))
+        if doc.id == 'current':
+            print(doc.to_dict())
+modeDocRef = db.collection(u'state').document(u'current')
+colorsDocRef = db.collection(u'constants').document(u'colors')
+colorSequencesDocRef = db.collection(u'constants').document(u'colorSequences')
+groupsOfNonagonsDocRef = db.collection(u'constants').document(u'groupsOfNonagons')
+setsOfGroupsOfNonagonsDocRef = db.collection(u'constants').document(u'setsOfGroupsOfNonagons')
+modeDocRef.on_snapshot(onModeSnapshot)
+modeDocRef.on_snapshot(onColorsSnapshot)
 
-# Build document reference for the current state
-doc_ref = db.collection(u'state').document(u'current')
 
-# Watch the document
-doc_watch = doc_ref.on_snapshot(on_snapshot)
+
 
 ###
 # Modes

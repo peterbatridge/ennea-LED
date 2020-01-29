@@ -10,7 +10,19 @@ MAGENTA = (255, 0, 20)
 WHITE = (255, 255, 255)
 BLANK = (0, 0, 0)
 colors = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN,  BLUE, PURPLE, MAGENTA]
-
+colorsDict = {
+    'Red': RED,
+    'Yellow': YELLOW,
+    'Orange': ORANGE,
+    'Green': GREEN,
+    'Teal': TEAL,
+    'Cyan': CYAN,
+    'Blue': BLUE,
+    'Purple': PURPLE,
+    'Magenta': MAGENTA,
+    'White': WHITE,
+    'Blank': BLANK
+}
 ###
 # Groups Of Nonagons
 ###
