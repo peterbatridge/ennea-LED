@@ -19,7 +19,7 @@ class Animation:
 
 state = {
     'mode': [0],
-    'args': "[]"
+    'args': ["[]"]
 }
 modeChanged = False
 
