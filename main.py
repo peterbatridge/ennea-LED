@@ -37,7 +37,7 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
             for c in colorsDict.keys():
                 if c not in docColorsDict.keys():
                     print("add:",c,colorsDict[c])
-                    colorsDocRef.update({c : colorsDict[c]})
+                    colorsDocRef.update({c : str(colorsDict[c])})
         elif doc.id == 'colorSequences':
             print(doc.to_dict())
         elif doc.id == 'groupsOfNonagons':
