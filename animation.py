@@ -218,14 +218,15 @@ def volumeMeterSides(peak):
                 setSide(nonagon, side[1], color)
     strips.show()
 
-def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak):
+def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, frames=6000):
     global modeChanged
     peak = 0
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
-    while not modeChanged:
+    totalFrames = 0
+    while not modeChanged and totalFrames<frames:
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
@@ -253,6 +254,7 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak):
             peak = peakToPeak
 
         print(peak)
+        totalFrames = totalFrames+1
         functionCalledWithPeak(peak)
     modeChanged = False
 
