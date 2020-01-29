@@ -111,12 +111,12 @@ def singleFrameSolidRandomColorWaitForSound(threshold):
     }]
     animateNonagonGroups(animation, 1, 10, [0], threshold)
 
-def singleFrameTrianglesRandomColor(hangFrames, fadeFrames):
+def singleFrameTrianglesRandomColor(hangFrames=10, fadeFrames=10):
     animation = [{
         'groups': triangles,
         'colors': [randomColor(), randomColor()]
     }]
-    animateNonagonGroups(animation, 10, 10)
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
 
 ###
 # Available Functions
