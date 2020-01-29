@@ -66,7 +66,7 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
         elif doc.id == 'audioMappings':
             for c in audioMappings.keys():
                 if c not in docDict.keys():
-                    constantsDocRef.document('colors').update({c : str(audioMappings[c])})
+                    constantsDocRef.document('audioMappings').update({c : str(audioMappings[c])})
             for c in docDict.keys():
                 if c not in audioMappings.keys():
                     audioMappings[c] = ast.literal_eval(docDict[c])
@@ -97,12 +97,12 @@ def exMachinaMode():
     fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
     fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
 
-def singleFrameSolidRandomColor():
+def singleFrameSolidRandomColor(hangFrames=10, fadeFrames=10):
     animation = [{
         'groups': everyNonagon,
         'colors': [randomColor()]
     }]
-    animateNonagonGroups(animation, 10, 10)
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
 
 def singleFrameSolidRandomColorWaitForSound(threshold):
     animation = [{
@@ -111,7 +111,7 @@ def singleFrameSolidRandomColorWaitForSound(threshold):
     }]
     animateNonagonGroups(animation, 1, 10, [0], threshold)
 
-def singleFrameTrianglesRandomColor():
+def singleFrameTrianglesRandomColor(hangFrames, fadeFrames):
     animation = [{
         'groups': triangles,
         'colors': [randomColor(), randomColor()]
