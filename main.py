@@ -25,25 +25,29 @@ def onModeSnapshot(doc_snapshot, changes, read_time):
             modeChanged = True
 
 constantsDocRef = db.collection(u'constants')
-colorsDocRef = db.collection(u'constants').document(u'colors')
 
 def onConstantsSnapshot(doc_snapshot, changes, read_time):
-    global colorsDict
+    global colorsDict, colorSequences, groupsOfNonagons, setsOfGroupsOfNonagons
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
+        docDict = doc.to_dict()
+        print(docDict)
         if doc.id == 'colors':
-            print(doc.to_dict())
-            docColorsDict = doc.to_dict()
             for c in colorsDict.keys():
-                if c not in docColorsDict.keys():
-                    print("add:",c,colorsDict[c])
-                    colorsDocRef.update({c : str(colorsDict[c])})
+                if c not in docDict.keys():
+                    constantsDocRef.document('colors').update({c : str(colorsDict[c])})
         elif doc.id == 'colorSequences':
-            print(doc.to_dict())
+            for c in colorSequences.keys():
+                if c not in docDict.keys():
+                    constantsDocRef.document('colorSequences').update({c : str(colorSequences[c])})        
         elif doc.id == 'groupsOfNonagons':
-            print(doc.to_dict())
+            for c in groupsOfNonagons.keys():
+                if c not in docDict.keys():
+                    constantsDocRef.document('groupsOfNonagons').update({c : str(groupsOfNonagons[c])})
         elif doc.id == 'setsOfGroupsOfNonagons':
-            print(doc.to_dict())
+            for c in setsOfGroupsOfNonagons.keys():
+                if c not in docDict.keys():
+                    constantsDocRef.document('setsOfGroupsOfNonagons').update({c : str(setsOfGroupsOfNonagons[c])})
 
 modeDocRef = db.collection(u'state').document(u'current')
 modeDocRef.on_snapshot(onModeSnapshot)
