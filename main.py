@@ -12,22 +12,6 @@ from animation import *
 import ast
 
 
-###
-# Available Functions
-###
-modes = {
-    0: (singleFrameSolidRandomColor, []),
-    1: (singleFrameTrianglesRandomColor, []),
-    2: (exMachinaMode, []),
-    3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
-    6: (rainbowCycle, [0]),
-    7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
-    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
-    9: (handleAudio, [individualLeds, 31, fillLedsBasedOnVolume]),
-    10: (handleAudio, [verticalSides, 1, volumeMeterSides]),
-    11: (singleFrameSolidRandomColorWaitForSound, [150])
-}
-#    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
 
 # Use a service account
 cred = credentials.Certificate('firestoreNonagon.json')
@@ -133,6 +117,23 @@ def singleFrameTrianglesRandomColor():
         'colors': [randomColor(), randomColor()]
     }]
     animateNonagonGroups(animation, 10, 10)
+
+###
+# Available Functions
+###
+modes = {
+    0: (singleFrameSolidRandomColor, []),
+    1: (singleFrameTrianglesRandomColor, []),
+    2: (exMachinaMode, []),
+    3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
+    6: (rainbowCycle, [0]),
+    7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
+    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
+    9: (handleAudio, [individualLeds, 31, fillLedsBasedOnVolume]),
+    10: (handleAudio, [verticalSides, 1, volumeMeterSides]),
+    11: (singleFrameSolidRandomColorWaitForSound, [150])
+}
+#    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
 
 try:        
     i = 0
