@@ -138,12 +138,12 @@ modes = {
 try:        
     i = 0
     while True:
-        for mode in state['mode']:
+        for m, mode in enumerate(state['mode']):
             # do an args check here
             if mode in modes.keys():
                 func, args = modes[mode]
-                if state['args'] != "":
-                    args = ast.literal_eval(state['args'])
+                if state['args'][m] != "":
+                    args = ast.literal_eval(state['args'][m])
                 func(*args)
         #path() 
         #pinwheel(0)
