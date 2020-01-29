@@ -9,6 +9,7 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 from constants import *
 from animation import *
+import ast
 
 # Use a service account
 cred = credentials.Certificate('firestoreNonagon.json')
@@ -36,6 +37,11 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
             for c in colorsDict.keys():
                 if c not in docDict.keys():
                     constantsDocRef.document('colors').update({c : str(colorsDict[c])})
+            for c in docDict.keys():
+                if c not in colorsDict.keys():
+                    colorsDict[c] = ast.literal_eval(docDict[c])
+                    print("adding", docDict[c])
+            print(colorsDict)
         elif doc.id == 'colorSequences':
             for c in colorSequences.keys():
                 if c not in docDict.keys():
@@ -48,6 +54,9 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
             for c in setsOfGroupsOfNonagons.keys():
                 if c not in docDict.keys():
                     constantsDocRef.document('setsOfGroupsOfNonagons').update({c : str(setsOfGroupsOfNonagons[c])})
+            for c in docDict.keys():
+                if c not in setsOfGroupsOfNonagons.keys():
+                    setsOfGroupsOfNonagons[c] = ast.literal_eval(docDict[c])
 
 modeDocRef = db.collection(u'state').document(u'current')
 modeDocRef.on_snapshot(onModeSnapshot)
