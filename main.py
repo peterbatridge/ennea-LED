@@ -23,22 +23,25 @@ def onModeSnapshot(doc_snapshot, changes, read_time):
             print(doc.to_dict())
             state = doc.to_dict()
             modeChanged = True
-def onColorsSnapshot(doc_snapshot, changes, read_time):
+
+def onConstantsSnapshot(doc_snapshot, changes, read_time):
     global colorsDict
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
-        if doc.id == 'current':
+        if doc.id == 'colors':
             print(doc.to_dict())
+        elif doc.id == 'colorSequences':
+            print(doc.to_dict())
+        elif doc.id == 'groupsOfNonagons':
+            print(doc.to_dict())
+        elif doc.id == 'setsOfGroupsOfNonagons':
+            print(doc.to_dict())
+        print(doc.to_dict())
+
 modeDocRef = db.collection(u'state').document(u'current')
-colorsDocRef = db.collection(u'constants').document(u'colors')
-colorSequencesDocRef = db.collection(u'constants').document(u'colorSequences')
-groupsOfNonagonsDocRef = db.collection(u'constants').document(u'groupsOfNonagons')
-setsOfGroupsOfNonagonsDocRef = db.collection(u'constants').document(u'setsOfGroupsOfNonagons')
+constantsDocRef = db.collection(u'constants')
 modeDocRef.on_snapshot(onModeSnapshot)
-colorsDocRef.on_snapshot(onColorsSnapshot)
-
-
-
+constantsDocRef.on_snapshot(onConstantsSnapshot)
 
 ###
 # Modes
