@@ -18,7 +18,8 @@ class Animation:
 
 
 state = {
-    'mode': 0
+    'mode': [0],
+    'args': "[]"
 }
 modeChanged = False
 
@@ -160,13 +161,6 @@ def wheel(num):
         r = num % 256
         g = 0
     return (r,g,b)
-
-###
-# Audio Mappings
-###
-individualLeds = [[50,75], [75, 250], [250, 400], [1024, 433]] 
-verticalSides = [[50,25], [75, 30], [250, 35], [1024, 39]] 
-verticalNonagons = [[50,4], [75, 5], [250, 6], [1024, 7]] 
 
 def remap_range(value, remap):
     for m, maxes in enumerate(remap):

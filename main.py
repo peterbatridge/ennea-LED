@@ -11,6 +11,24 @@ from constants import *
 from animation import *
 import ast
 
+
+###
+# Available Functions
+###
+modes = {
+    0: (singleFrameSolidRandomColor, []),
+    1: (singleFrameTrianglesRandomColor, []),
+    2: (exMachinaMode, []),
+    3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
+    6: (rainbowCycle, [0]),
+    7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
+    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
+    9: (handleAudio, [individualLeds, 31, fillLedsBasedOnVolume]),
+    10: (handleAudio, [verticalSides, 1, volumeMeterSides]),
+    11: (singleFrameSolidRandomColorWaitForSound, [150])
+}
+#    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
+
 # Use a service account
 cred = credentials.Certificate('firestoreNonagon.json')
 firebase_admin.initialize_app(cred)
@@ -40,16 +58,20 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
             for c in docDict.keys():
                 if c not in colorsDict.keys():
                     colorsDict[c] = ast.literal_eval(docDict[c])
-                    print("adding", docDict[c])
-            print(colorsDict)
         elif doc.id == 'colorSequences':
             for c in colorSequences.keys():
                 if c not in docDict.keys():
-                    constantsDocRef.document('colorSequences').update({c : str(colorSequences[c])})        
+                    constantsDocRef.document('colorSequences').update({c : str(colorSequences[c])})
+            for c in docDict.keys():
+                if c not in colorSequences.keys():
+                    colorSequences[c] = ast.literal_eval(docDict[c])
         elif doc.id == 'groupsOfNonagons':
             for c in groupsOfNonagons.keys():
                 if c not in docDict.keys():
                     constantsDocRef.document('groupsOfNonagons').update({c : str(groupsOfNonagons[c])})
+            for c in docDict.keys():
+                if c not in groupsOfNonagons.keys():
+                    groupsOfNonagons[c] = ast.literal_eval(docDict[c])
         elif doc.id == 'setsOfGroupsOfNonagons':
             for c in setsOfGroupsOfNonagons.keys():
                 if c not in docDict.keys():
@@ -57,6 +79,13 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
             for c in docDict.keys():
                 if c not in setsOfGroupsOfNonagons.keys():
                     setsOfGroupsOfNonagons[c] = ast.literal_eval(docDict[c])
+        elif doc.id == 'audioMappings':
+            for c in audioMappings.keys():
+                if c not in docDict.keys():
+                    constantsDocRef.document('colors').update({c : str(audioMappings[c])})
+            for c in docDict.keys():
+                if c not in audioMappings.keys():
+                    audioMappings[c] = ast.literal_eval(docDict[c])
 
 modeDocRef = db.collection(u'state').document(u'current')
 modeDocRef.on_snapshot(onModeSnapshot)
@@ -105,38 +134,22 @@ def singleFrameTrianglesRandomColor():
     }]
     animateNonagonGroups(animation, 10, 10)
 
-# def handleAudioThreaded():
-#     threading.Thread(target=handleAudio).start()
-
-modes = {
-    0: (singleFrameSolidRandomColor, []),
-    1: (singleFrameTrianglesRandomColor, []),
-    2: (exMachinaMode, []),
-    3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
-    4: (colorSwapAnimation, [rowsTopToBottom, RED, GREEN, PURPLE, 10, 10]),
-    5: (colorSwapAnimation, [rowsTopToBottom, RED, YELLOW, PURPLE, 10, 10]),
-    6: (rainbowCycle, [0]),
-    7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
-    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
-    9: (handleAudio, [individualLeds, 31, fillLedsBasedOnVolume]),
-    10: (handleAudio, [verticalSides, 1, volumeMeterSides]),
-    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
-    12: (singleFrameSolidRandomColorWaitForSound, [150])
-}
-
 try:        
     i = 0
     while True:
-        if state['mode'] in modes.keys():
-            func, args = modes[state['mode']]
-            func(*args)
+        for mode in state['mode']:
+            # do an args check here
+            if mode in modes.keys():
+                func, args = modes[mode]
+                if state['args'] != "":
+                    args = ast.literal_eval(state['args'])
+                func(*args)
         #path() 
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)
         #rowCycleThroughSequence(colorSeq, 0.3)
         #exMachinaMode()
       #  
-        pass
         #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
         
         # fillSidesAnimation(triangles, redAndBlue, 'topRight', 'botLeft', 1, 1, 0)
@@ -189,5 +202,3 @@ try:
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
-#except Exception as e:
-#    print("Error:", e)

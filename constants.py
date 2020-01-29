@@ -103,3 +103,16 @@ colorSequences = {
     'rainbowNine': rainbowNine,
     'rainbowEight': rainbowEight
 }
+
+###
+# Audio Mappings
+###
+individualLeds = [[50,75], [75, 250], [250, 400], [1024, 433]] 
+verticalSides = [[50,25], [75, 30], [250, 35], [1024, 39]] 
+verticalNonagons = [[50,4], [75, 5], [250, 6], [1024, 7]] 
+
+audioMappings = {
+    'individualLeds': individualLeds,
+    'verticalSides': verticalSides,
+    'verticalNonagons': verticalNonagons
+}
