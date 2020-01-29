@@ -35,7 +35,7 @@ colorSequencesDocRef = db.collection(u'constants').document(u'colorSequences')
 groupsOfNonagonsDocRef = db.collection(u'constants').document(u'groupsOfNonagons')
 setsOfGroupsOfNonagonsDocRef = db.collection(u'constants').document(u'setsOfGroupsOfNonagons')
 modeDocRef.on_snapshot(onModeSnapshot)
-modeDocRef.on_snapshot(onColorsSnapshot)
+colorsDocRef.on_snapshot(onColorsSnapshot)
 
 
 
