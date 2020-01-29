@@ -30,13 +30,16 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'colors':
             print(doc.to_dict())
+            docColorsDict = doc.to_dict()
+            for c in colorsDict.keys():
+                if c not in docColorsDict.keys():
+                    print("add:",c,colorsDict[c])
         elif doc.id == 'colorSequences':
             print(doc.to_dict())
         elif doc.id == 'groupsOfNonagons':
             print(doc.to_dict())
         elif doc.id == 'setsOfGroupsOfNonagons':
             print(doc.to_dict())
-        print(doc.to_dict())
 
 modeDocRef = db.collection(u'state').document(u'current')
 constantsDocRef = db.collection(u'constants')
