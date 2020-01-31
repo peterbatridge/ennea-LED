@@ -29,7 +29,7 @@ import ast
 # #    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
 
 modes = {
-    0: {
+    '0': {
         'functionName': 'singleFrameSolidRandomColor',
         'args': {
             'fadeFrames': {
@@ -45,7 +45,7 @@ modes = {
         },
         'notes': "Will make all nonagons show the same random color. Takes no arguments or two arguments"
     },
-    1: {
+    '1': {
         'functionName': 'singleFrameTrianglesRandomColor',
         'args': {
             'fadeFrames': {
