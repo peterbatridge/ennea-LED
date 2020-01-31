@@ -11,7 +11,57 @@ from constants import *
 from animation import *
 import ast
 
+###
+# Available Functions
+###
+# modes = {
+#     0: (singleFrameSolidRandomColor, []),
+#     1: (singleFrameTrianglesRandomColor, []),
+#     2: (exMachinaMode, []),
+#     3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
+#     6: (rainbowCycle, [0]),
+#     7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
+#     8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
+#     9: (handleAudio, [individualLeds, 31, fillLedsBasedOnVolume]),
+#     10: (handleAudio, [verticalSides, 1, volumeMeterSides]),
+#     11: (singleFrameSolidRandomColorWaitForSound, [150])
+# }
+# #    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
 
+modes = {
+    0: {
+        'functionName': singleFrameSolidRandomColor,
+        'args': {
+            'fadeFrames': {
+                'optional': True,
+                'rules': "0-10000",
+                'type': "number"
+            },
+            'hangFrames': {
+                'optional': True,
+                'rules': "0-10000",
+                'type': "number"
+            }
+        },
+        'notes': "Will make all nonagons show the same random color. Takes no arguments or two arguments"
+    },
+    1: {
+        'functionName': singleFrameTrianglesRandomColor,
+        'args': {
+            'fadeFrames': {
+                'optional': True,
+                'rules': "0-10000",
+                'type': "number"
+            },
+            'hangFrames': {
+                'optional': True,
+                'rules': "0-10000",
+                'type': "number"
+            }
+        },
+        'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
+    }
+}
 
 # Use a service account
 cred = credentials.Certificate('firestoreNonagon.json')
@@ -74,66 +124,8 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
 modeDocRef = db.collection(u'state').document(u'current')
 modeDocRef.on_snapshot(onModeSnapshot)
 constantsDocRef.on_snapshot(onConstantsSnapshot)
+constantsDocRef.document('modes').set(modes)
 
-###
-# Modes
-###    
-def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
-
-def randomColorTriangles(hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(triangles,[randomColor(), randomColor()], hangFrames, fadeFrames)
-
-def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
-    
-def exMachinaMode():
-    cycleThroughColorSequenceWithEveryNonagon(coldFour, 15, 10)
-    cycleThroughColorSequenceWithEveryNonagon(coldFour, 15, 10)
-    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
-    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
-    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
-    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
-
-def singleFrameSolidRandomColor(hangFrames=10, fadeFrames=10):
-    animation = [{
-        'groups': everyNonagon,
-        'colors': [randomColor()]
-    }]
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
-
-def singleFrameSolidRandomColorWaitForSound(threshold):
-    animation = [{
-        'groups': everyNonagon,
-        'colors': [randomColor()]
-    }]
-    animateNonagonGroups(animation, 1, 10, [0], threshold)
-
-def singleFrameTrianglesRandomColor(hangFrames=10, fadeFrames=10):
-    animation = [{
-        'groups': triangles,
-        'colors': [randomColor(), randomColor()]
-    }]
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
-
-###
-# Available Functions
-###
-modes = {
-    0: (singleFrameSolidRandomColor, []),
-    1: (singleFrameTrianglesRandomColor, []),
-    2: (exMachinaMode, []),
-    3: (colorSwapAnimation, [rowsTopToBottom, RED, BLUE, PURPLE, 10, 10]),
-    6: (rainbowCycle, [0]),
-    7: (traceSidesAnimation, [rowsTopToBottom, rainbowEight, 'top', 1, 0]),
-    8: (fillSidesAnimation, [topLeftToBottomRightDiagonal, [CYAN, BLUE, PURPLE, MAGENTA, RED, ORANGE], 'top', 'bot', 10, 1, 1]),
-    9: (handleAudio, [individualLeds, 31, fillLedsBasedOnVolume]),
-    10: (handleAudio, [verticalSides, 1, volumeMeterSides]),
-    11: (singleFrameSolidRandomColorWaitForSound, [150])
-}
-#    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
 
 try:        
     i = 0
@@ -141,10 +133,12 @@ try:
         for m, mode in enumerate(state['mode']):
             # do an args check here
             if mode in modes.keys():
-                func, args = modes[mode]
-                if state['args'][m] != "":
-                    args = ast.literal_eval(state['args'][m])
-                func(*args)
+                func = ast.literal_eval(modes[mode]['functionName'])
+                args = ast.literal_eval(state['args'][m])
+                try:
+                    func(*args)
+                except Exception as e:
+                    print("probably bad args", e)
         #path() 
         #pinwheel(0)
         #columnsCycleThroughSequence(colorSeq)

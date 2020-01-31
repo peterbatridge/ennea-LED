@@ -571,3 +571,46 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
         })  
 
     animateSideGroups(animation, hangFrames, fadeFrames)
+
+###
+# Modes
+###    
+def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
+
+def randomColorTriangles(hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(triangles,[randomColor(), randomColor()], hangFrames, fadeFrames)
+
+def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
+    shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
+    
+def exMachinaMode():
+    cycleThroughColorSequenceWithEveryNonagon(coldFour, 15, 10)
+    cycleThroughColorSequenceWithEveryNonagon(coldFour, 15, 10)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
+    shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
+    fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
+
+def singleFrameSolidRandomColor(hangFrames=10, fadeFrames=10):
+    animation = [{
+        'groups': everyNonagon,
+        'colors': [randomColor()]
+    }]
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
+
+def singleFrameSolidRandomColorWaitForSound(threshold):
+    animation = [{
+        'groups': everyNonagon,
+        'colors': [randomColor()]
+    }]
+    animateNonagonGroups(animation, 1, 10, [0], threshold)
+
+def singleFrameTrianglesRandomColor(hangFrames=10, fadeFrames=10):
+    animation = [{
+        'groups': triangles,
+        'colors': [randomColor(), randomColor()]
+    }]
+    animateNonagonGroups(animation, hangFrames, fadeFrames)
