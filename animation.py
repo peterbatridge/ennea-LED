@@ -481,25 +481,16 @@ def colorSwapAnimation(groups, colorOne, colorTwo, colorBetween, hangFrames, fad
         })
     animateNonagonGroups(animation, hangFrames,fadeFrames)
 
-def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames):
+def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor=BLANK):
     animation = []
     for i in range(0, len(sequence)):
         animation.append({
             'groups': groups,
             'colors': shiftRight(sequence, i)
             })
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
+    animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames, soundThreshold, backgroundColor)
 
-def shiftColorSequenceOverNonagonGroupsWithSound(groups, sequence, hangFrames, fadeFrames):
-    animation = []
-    for i in range(0, len(sequence)):
-        animation.append({
-            'groups': groups,
-            'colors': shiftRight(sequence, i)
-            })
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
-
-def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames):
+def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor=BLANK):
     animation = []
     for groupList in setOfGroups:
         for i in range(0, len(sequence)):
@@ -507,9 +498,9 @@ def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, 
                 'groups': groupList,
                 'colors': shiftRight(sequence, i)
                 })
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
+    animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames, soundThreshold, backgroundColor)
 
-def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames):
+def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0):
     animation = []
     for g, group in enumerate(nonagonGroups):
 
@@ -522,7 +513,7 @@ def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFram
                 'colors': [sequence[g]]})     
     animateSideGroups(animation, hangFrames, fadeFrames)
 
-def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames):
+def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0):
     if width<5:
         width = 5
     animation = []
@@ -578,9 +569,6 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
 def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFrames):
     shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
 
-def randomColorTriangles(hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(triangles,[randomColor(), randomColor()], hangFrames, fadeFrames)
-
 def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
     shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
     
@@ -594,23 +582,16 @@ def exMachinaMode():
     fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
     fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
 
-def singleFrameSolidRandomColor(hangFrames=10, fadeFrames=10):
+def singleFrameSolidRandomColor(hangFrames=10, fadeFrames=10, threshold=0):
     animation = [{
         'groups': everyNonagon,
         'colors': [randomColor()]
     }]
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
+    animateNonagonGroups(animation, hangFrames, fadeFrames, [0], threshold)
 
-def singleFrameSolidRandomColorWaitForSound(threshold):
-    animation = [{
-        'groups': everyNonagon,
-        'colors': [randomColor()]
-    }]
-    animateNonagonGroups(animation, 1, 10, [0], threshold)
-
-def singleFrameTrianglesRandomColor(hangFrames=10, fadeFrames=10):
+def singleFrameTrianglesRandomColor(hangFrames=10, fadeFrames=10, threshold=0):
     animation = [{
         'groups': triangles,
         'colors': [randomColor(), randomColor()]
     }]
-    animateNonagonGroups(animation, hangFrames, fadeFrames)
+    animateNonagonGroups(animation, hangFrames, fadeFrames, [0], threshold)
