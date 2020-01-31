@@ -31,7 +31,7 @@ mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
-strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
+strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.2, baudrate=8000000, auto_write=False)
 
 lastFrameNonagonColors = []
 lastFrameSideColors = []
