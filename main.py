@@ -272,6 +272,7 @@ try:
                 try:
                     func(*args)
                 except Exception as e:
+                    print(func, args)
                     print("probably bad args", e)
         #path() 
         #pinwheel(0)
