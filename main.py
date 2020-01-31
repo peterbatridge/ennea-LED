@@ -38,60 +38,84 @@ validFunctions = {
     'rainbowCycle': rainbowCycle
 }
 fadeFramesArg = {
+    'name': "Fade Frames",
     'optional': True,
     'rules': "0-100",
     'type': "number",
-    'notes': "The number of frames that will render between two frames with linearly interpolated colors. Recommended values between 0-10."
+    'notes': "The number of cycles that will render between two frames with linearly interpolated colors. Recommended values between 0-10."
 }
 hangFramesArg = {
+    'name': "Hang Frames",
     'optional': True,
     'rules': "0-10000",
     'type': "number" ,
-    'notes': "The number of frames that an animation will stick on each frame. Recommended values between 1-10."
+    'notes': "The number of cycles that an animation will pause on each frame. Recommended values between 1-10."
 }
 soundFramesArg = {
+    'name': "Sound Threshold Frames",
     'optional': True,
     'rules': "comma separated list",
     'type': "list of numbers",
     'notes': "Comma separated list of integers representing which frames in the animation to pause on until a sound threshold is met."
 }
 thresholdArg = {
+    'name': "Sound Threshold",
     'optional': True,
     'rules': "0-1000",
     'type': "number",
     'notes': "The sound threshold for moving to the next frame in an animation. Recommended values between 0-200."
 }
 groupsOfNonagonsArg = {
+    'name': "Groups of Nonagons",
     'optional': False,
     'rules': "select",
     'type': "groupOfNonagons",
     'notes': "Groups of nonagons, numbers can be seen in the reference image."
 }
 setsOfGroupsOfNonagonsArg = {
+    'name': "Set of Groups of Nonagons",
     'optional': False,
     'rules': "select",
     'type': "setOfGroupsOfNonagons",
     'notes': "Sets of groups of nonagons, numbers can be seen in the reference image."
 }
 colorSequenceArg = {
+    'name': "Color Sequence",
     'optional': False,
     'rules': "select",
     'type': "colorSequence",
     'notes': "List of colors."
 }
 soundMappingArg = {
+    'name': "Sound Mapping",
     'optional': False,
     'rules': "select",
     'type': "audioMapping",
     'notes': "Mapping of sound amplitude ranges to peak value ranges."
 }
-colorArg = {
+colorOneArg = {
+    'name': "Color One",
+    'optional': False,
+    'rules': "select",
+    'type': "color",
+    'notes': "A color."
+}
+colorTwoArg = {
+    'name': "Color Two",
+    'optional': False,
+    'rules': "select",
+    'type': "color",
+    'notes': "A color."
+}
+colorThreeArg = {
+    'name': "Color Three",
     'optional': False,
     'rules': "select",
     'type': "color",
     'notes': "A color."
 }
 directionArg = {
+    'name': "Direction",
     'optional': False,
     'rules': "select",
     'type': "direction",
@@ -100,99 +124,101 @@ directionArg = {
 modes = {
     '0': {
         'functionName': 'singleFrameSolidRandomColor',
-        'args': {
-            'fadeFrames': fadeFramesArg,
-            'hangFrames': hangFramesArg,
-            'threshold': thresholdArg
-        },
+        'args': [
+            fadeFramesArg,
+            hangFramesArg,
+            thresholdArg
+        ],
         'notes': "Will make all nonagons show the same random color. Takes no arguments or three arguments"
     },
     '1': {
         'functionName': 'singleFrameTrianglesRandomColor',
-        'args': {
-            'fadeFrames': fadeFramesArg,
-            'hangFrames': hangFramesArg,
-            'threshold': thresholdArg
-        },
+        'args': [
+            fadeFramesArg,
+            hangFramesArg,
+            thresholdArg
+        ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
     '2': {
         'functionName': 'shiftColorSequenceOverNonagonGroups',
-        'args': {
-            'groupsOfNonagons': groupsOfNonagonsArg,
-            'colorSequence': colorSequenceArg,
-            'hangFrames': hangFramesArg,
-            'fadeFrames': fadeFramesArg,
-            'soundFrames': soundFramesArg,
-            'soundThreshold': thresholdArg,
-            'backgroundColor': colorArg
-        },
+        'args': [
+            groupsOfNonagonsArg,
+            colorSequenceArg,
+            hangFramesArg,
+            fadeFramesArg,
+            soundFramesArg,
+            thresholdArg,
+            colorOneArg
+        ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
     '3': {
         'functionName': 'shiftColorSequenceOverSetOfNonagonGroups',
-        'args': {
-            'setsOfGroupsOfNonagons': setsOfGroupsOfNonagonsArg,
-            'colorSequence': colorSequenceArg,
-            'hangFrames': hangFramesArg,
-            'fadeFrames': fadeFramesArg,
-            'soundFrames': soundFramesArg,
-            'soundThreshold': thresholdArg,
-            'backgroundColor': colorArg
-        },
+        'args': [
+            setsOfGroupsOfNonagonsArg,
+            colorSequenceArg,
+            hangFramesArg,
+            fadeFramesArg,
+            soundFramesArg,
+            thresholdArg,
+            colorOneArg
+        ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
     '4': {
         'functionName': 'colorSwapAnimation',
-        'args': {
-            'groupsOfNonagons': groupsOfNonagonsArg,
-            'colorOne': colorArg,
-            'colorTwo': colorArg,
-            'colorBetween': colorArg,
-            'hangFrames': hangFramesArg,
-            'fadeFrames': hangFramesArg
-        },
+        'args': [
+            groupsOfNonagonsArg,
+            colorOneArg,
+            colorTwoArg,
+            colorThreeArg,
+            hangFramesArg,
+            hangFramesArg
+        ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
     '5': {
         'functionName': 'fillSidesAnimation',
-        'args': {
-            'groupsOfNonagons': groupsOfNonagonsArg,
-            'colorSequence': colorSequenceArg,
-            'fillDirection': directionArg,
-            'drainDirection': directionArg,
-            'animationWidth': {
+        'args': [
+            groupsOfNonagonsArg,
+            colorSequenceArg,
+            directionArg,
+            directionArg,
+            {
+                'name': "Animation Width",
                 'optional': False,
                 'rules': "5-20",
                 'type': "number" ,
                 'notes': "The number of sides filled on the whole animation at once, recommended between 5-20"
             },
-            'hangFrames': hangFramesArg,
-            'fadeFrames': fadeFramesArg
-        },
+            hangFramesArg,
+            fadeFramesArg
+        ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
     '6': {
         'functionName': 'traceSidesAnimation',
-        'args': {
-            'groupsOfNonagons': groupsOfNonagonsArg,
-            'colorSequence': colorSequenceArg,
-            'direction': directionArg,
-            'hangFrames': hangFramesArg,
-            'fadeFrames': fadeFramesArg
-        },
+        'args': [
+            groupsOfNonagonsArg,
+            colorSequenceArg,
+            directionArg,
+            hangFramesArg,
+            fadeFramesArg
+        ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
     '7': {
         'functionName': 'rainbowCycle',
-        'args': {
-            'waitTime': {
+        'args': [
+            {
+                'name': "Wait Time",
                 'optional': False,
                 'rules': '0-1',
                 'type': "number",
                 'notes': 'Amount of time in seconds between frames, zero is recommended, no higher than 1 second.'
             }
-        },
+        ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     }
 }
