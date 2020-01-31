@@ -30,7 +30,7 @@ import ast
 
 modes = {
     0: {
-        'functionName': singleFrameSolidRandomColor,
+        'functionName': 'singleFrameSolidRandomColor',
         'args': {
             'fadeFrames': {
                 'optional': True,
@@ -46,7 +46,7 @@ modes = {
         'notes': "Will make all nonagons show the same random color. Takes no arguments or two arguments"
     },
     1: {
-        'functionName': singleFrameTrianglesRandomColor,
+        'functionName': 'singleFrameTrianglesRandomColor',
         'args': {
             'fadeFrames': {
                 'optional': True,
