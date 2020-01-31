@@ -27,7 +27,10 @@ import ast
 #     11: (singleFrameSolidRandomColorWaitForSound, [150])
 # }
 # #    11: (handleAudioWithFrequency, [verticalSides, 1, volumeMeterSides]),
-
+validFunctions = {
+    'singleFrameSolidRandomColor': singleFrameSolidRandomColor,
+    'singleFrameTrianglesRandomColor': singleFrameTrianglesRandomColor
+}
 modes = {
     '0': {
         'functionName': 'singleFrameSolidRandomColor',
@@ -133,8 +136,9 @@ try:
         for m, mode in enumerate(state['mode']):
             # do an args check here
             if mode in modes.keys():
-                func = ast.literal_eval(modes[mode]['functionName'])
+                func = validFunctions[modes[mode]['functionName']]
                 args = ast.literal_eval(state['args'][m])
+                print(func, args)
                 try:
                     func(*args)
                 except Exception as e:
