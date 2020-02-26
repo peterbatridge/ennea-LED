@@ -12,7 +12,7 @@ from animation import *
 import ast
 import threading
 
-STATE_LOCK = threading.Semaphore(1)
+STATE_LOCK = threading.Lock()
 
 
 ###
@@ -238,11 +238,10 @@ def onModeSnapshot(doc_snapshot, changes, read_time):
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
             print(doc.to_dict())
-            STATE_LOCK.acquire(True)
-            print("Update the state!")
-            state = doc.to_dict()
-            modeChanged = True
-            STATE_LOCK.release()
+            with STATE_LOCK:
+                print("Update the state!")
+                state = doc.to_dict()
+                modeChanged = True
 
 constantsDocRef = db.collection(u'constants')
 
@@ -296,8 +295,7 @@ constantsDocRef.document('modes').set(modes)
 
 try:        
     while True:
-        STATE_LOCK.acquire()
-        try:
+        with STATE_LOCK:
             for m, mode in enumerate(state['mode']):
                 # do an args check here
                 if mode in modes.keys():
@@ -308,8 +306,6 @@ try:
                     except Exception as e:
                         print(func, args)
                         print("probably bad args", e)
-        finally:
-            STATE_LOCK.release()
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
