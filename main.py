@@ -233,14 +233,15 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 def onModeSnapshot(doc_snapshot, changes, read_time):
-    global state, modeChanged
+    global state, modeChanged, STATE_LOCK
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
             print(doc.to_dict())
-            print("Update the state!")
-            state = doc.to_dict()
-            modeChanged = True
+            with STATE_LOCK:
+                print("Update the state!")
+                state = doc.to_dict()
+                modeChanged = True
 
 constantsDocRef = db.collection(u'constants')
 
