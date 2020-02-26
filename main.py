@@ -228,7 +228,7 @@ modes = {
 }
 
 # Use a service account
-cred = credentials.Certificate('firestoreNonagon.json')
+cred = credentials.Certificate('/home/pi/Desktop/ennea-LED/firestoreNonagon.json')
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
