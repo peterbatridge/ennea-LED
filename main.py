@@ -314,6 +314,7 @@ try:
         finally:
             if locked:
                 STATE_LOCK.release()
+        pass
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
