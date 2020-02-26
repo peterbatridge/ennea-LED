@@ -233,7 +233,7 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 def onModeSnapshot(doc_snapshot, changes, read_time):
-    global state, modeChanged
+    global state, modeChanged, STATE_LOCK
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
@@ -297,17 +297,19 @@ constantsDocRef.document('modes').set(modes)
 try:        
     while True:
         STATE_LOCK.acquire()
-        for m, mode in enumerate(state['mode']):
-            # do an args check here
-            if mode in modes.keys():
-                func = validFunctions[modes[mode]['functionName']]
-                args = ast.literal_eval(state['args'][m])
-                try:
-                    func(*args)
-                except Exception as e:
-                    print(func, args)
-                    print("probably bad args", e)
-        STATE_LOCK.release()
+        try:
+            for m, mode in enumerate(state['mode']):
+                # do an args check here
+                if mode in modes.keys():
+                    func = validFunctions[modes[mode]['functionName']]
+                    args = ast.literal_eval(state['args'][m])
+                    try:
+                        func(*args)
+                    except Exception as e:
+                        print(func, args)
+                        print("probably bad args", e)
+        finally:
+            STATE_LOCK.release()
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
