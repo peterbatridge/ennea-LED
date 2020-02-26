@@ -294,16 +294,22 @@ constantsDocRef.document('modes').set(modes)
 
 try:        
     while True:
-        for m, mode in enumerate(state['mode']):
-            # do an args check here
-            if mode in modes.keys():
-                func = validFunctions[modes[mode]['functionName']]
-                args = ast.literal_eval(state['args'][m])
-                try:
-                    func(*args)
-                except Exception as e:
-                    print(func, args)
-                    print("probably bad args", e)
+        locked = STATE_LOCK.acquire(False)
+        try:
+            if locked:
+                for m, mode in enumerate(state['mode']):
+                    # do an args check here
+                    if mode in modes.keys():
+                        func = validFunctions[modes[mode]['functionName']]
+                        args = ast.literal_eval(state['args'][m])
+                        try:
+                            func(*args)
+                        except Exception as e:
+                            print(func, args)
+                            print("probably bad args", e)
+        finally:
+            if locked:
+                STATE_LOCK.release()
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
