@@ -238,9 +238,9 @@ def onModeSnapshot(doc_snapshot, changes, read_time):
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
             print(doc.to_dict())
-                print("Update the state!")
-                state = doc.to_dict()
-                modeChanged = True
+            print("Update the state!")
+            state = doc.to_dict()
+            modeChanged = True
 
 constantsDocRef = db.collection(u'constants')
 
