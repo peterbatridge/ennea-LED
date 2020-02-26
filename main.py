@@ -238,7 +238,8 @@ def onModeSnapshot(doc_snapshot, changes, read_time):
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
             print(doc.to_dict())
-            STATE_LOCK.acquire()
+            STATE_LOCK.acquire(True)
+            print("Update the state!")
             state = doc.to_dict()
             modeChanged = True
             STATE_LOCK.release()
@@ -307,61 +308,6 @@ try:
                     print(func, args)
                     print("probably bad args", e)
         STATE_LOCK.release()
-        #path() 
-        #pinwheel(0)
-        #columnsCycleThroughSequence(colorSeq)
-        #rowCycleThroughSequence(colorSeq, 0.3)
-        #exMachinaMode()
-      #  
-        #fillSidesAnimation(rowsTopToBottom, ROYGCBPG, 'top', 'bot', 10, 1, 0)
-        
-        # fillSidesAnimation(triangles, redAndBlue, 'topRight', 'botLeft', 1, 1, 0)
-        # fillSidesAnimation(triangles[::-1], redAndBlue, 'botLeft', 'topRight', 1, 1, 0)
-
-        # fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [MAGENTA], 10, 1, 1)
-        # fillSidesAnimation(topLeftToBottomRightDiagonal, [MAGENTA], 10, 1, 1)
-        # fillSidesAnimation(columnsLeftToRight, [MAGENTA], 10, 1, 1)
-        #rain()
-        #shiftColorSequenceOverNonagonGroups(bottomLeftToTopRightDiagonal, TeganSequence , 10, 10)
-        
-        
-        #shiftColorSequenceOverSetOfNonagonGroups(eightDirectionGroups, redToBlueSeq8, 10, 10)
-        #cycleThroughColorSequenceWithNonagonTriangles([RED, BLUE, ORANGE, GREEN], 10 ,10)
-        #
-
-        #colorSwapAnimation(bottomLeftToTopRightDiagonal, RED, BLUE, PURPLE, 10, 10)
-        #groupCycleThroughSequenceFade(columnsLeftToRight, redToBlueSeq8, 10, 10, 0) 
-        #cycleThroughSides()
-        #sidesWithSequences(sideList, 2, 0)
-      #  
-        #trail(217)
-        # Increase or decrease this to speed up or slow down the animation.
-        #slice_alternating(0.1)
-     
-        #rain()
-        #setStripColor
-    
-        #(WHITE, 0.5)
-     
-        # Increase or decrease this to speed up or slow down the animation.
-        #slice_rainbow(0.1)
-     
-        #time.sleep(0.5)
-     
-        # Increase this number to slow down the rainbow animation.
-        #bounce()
-        #s
-        #()
-        #solidColorCycle
-        #()
-        #single_snake()
-        #solidRandomColorEveryOther()
-    #rain()
-
-    #five_random_solid_colors()
-                #schedule.run_pending()
-                #rainbowCycle
-                #(i)
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
