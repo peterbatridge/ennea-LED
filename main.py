@@ -12,9 +12,6 @@ from animation import *
 import ast
 import traceback, sys
 
-STATE_LOCK = threading.Lock()
-
-
 ###
 # Available Functions
 ###
@@ -233,7 +230,7 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 def onModeSnapshot(doc_snapshot, changes, read_time):
-    global state, modeChanged, STATE_LOCK
+    global state, modeChanged
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
