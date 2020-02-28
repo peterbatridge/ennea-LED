@@ -500,7 +500,7 @@ def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, 
                 })
     animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames, soundThreshold, backgroundColor)
 
-def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0):
+def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor = BLANK):
     animation = []
     for g, group in enumerate(nonagonGroups):
 
@@ -511,9 +511,9 @@ def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFram
             animation.append({
                 'sides': sides,
                 'colors': [sequence[g]]})     
-    animateSideGroups(animation, hangFrames, fadeFrames)
+    animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor)
 
-def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0):
+def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor = BLANK):
     if width<5:
         width = 5
     animation = []
@@ -561,7 +561,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
         'colors': colors
         })  
 
-    animateSideGroups(animation, hangFrames, fadeFrames)
+    animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor)
 
 ###
 # Modes

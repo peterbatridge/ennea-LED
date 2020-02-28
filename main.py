@@ -194,7 +194,10 @@ modes = {
                 'notes': "The number of sides filled on the whole animation at once, recommended between 5-20"
             },
             hangFramesArg,
-            fadeFramesArg
+            fadeFramesArg,
+            soundFramesArg,
+            thresholdArg,
+            colorOneArg
         ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
@@ -205,7 +208,10 @@ modes = {
             colorSequenceArg,
             directionArg,
             hangFramesArg,
-            fadeFramesArg
+            fadeFramesArg,
+            soundFramesArg,
+            thresholdArg,
+            colorOneArg
         ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
