@@ -10,7 +10,7 @@ from firebase_admin import firestore
 from constants import *
 from animation import *
 import ast
-import threading
+import traceback, sys
 
 STATE_LOCK = threading.Lock()
 
@@ -112,7 +112,7 @@ colorTwoArg = {
     'notes': "A color."
 }
 colorThreeArg = {
-    'name': "Color Three",
+    'name': "Background Color",
     'optional': False,
     'rules': "select",
     'type': "color",
@@ -153,7 +153,7 @@ modes = {
             fadeFramesArg,
             soundFramesArg,
             thresholdArg,
-            colorOneArg
+            colorThreeArg
         ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
@@ -238,13 +238,10 @@ def onModeSnapshot(doc_snapshot, changes, read_time):
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
             print(doc.to_dict())
-            STATE_LOCK.acquire(True)
-            try:
-                print("Update the state!")
-                state = doc.to_dict()
-                modeChanged = True
-            finally:
-                STATE_LOCK.release()
+            print("Update the state!")
+            state = doc.to_dict()
+            modeChanged = True
+
 
 constantsDocRef = db.collection(u'constants')
 
@@ -298,23 +295,23 @@ constantsDocRef.document('modes').set(modes)
 
 try:        
     while True:
-        locked = STATE_LOCK.acquire(False)
         try:
-            if locked:
-                for m, mode in enumerate(state['mode']):
-                    # do an args check here
-                    if mode in modes.keys():
-                        func = validFunctions[modes[mode]['functionName']]
-                        args = ast.literal_eval(state['args'][m])
-                        try:
-                            func(*args)
-                        except Exception as e:
-                            print(func, args)
-                            print("probably bad args", e)
-        finally:
-            if locked:
-                STATE_LOCK.release()
-        time.sleep(0)
+            for m, mode in enumerate(state['mode']):
+                # do an args check here
+                if mode in modes.keys():
+                    func = validFunctions[modes[mode]['functionName']]
+                    args = ast.literal_eval(state['args'][m])
+                    try:
+                        func(*args)
+                    except Exception as e:
+                        exc_type, exc_value, exc_traceback = sys.exc_info()
+                        print(func, args)
+                        print(e)
+                        traceback.print_exc()
+        except Exception as e:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            print("Probably had the state changed and the loop broke:", e)
+            traceback.print_exc()
 except KeyboardInterrupt:
     print("Exiting due to keyboard interrupt.")
     strips.deinit()
