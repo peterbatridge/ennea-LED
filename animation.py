@@ -8,6 +8,7 @@ import Adafruit_MCP3008
 import time
 import numpy as np 
 from PIL import Image 
+import PIL
 
 class Animation:
     def __init__(self):
@@ -463,11 +464,21 @@ def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK
 
 def displayImage():
     global pixel_map
-    im = Image.open("cube.png") 
-    px = im.load() 
-    for x in pixel_map:
-        for y in pixel_map[x]:
-            strips[pixel_map[x][y]] = px[x,y] 
+    # for x in pixel_map:
+    #     for y in pixel_map[x]:
+    #         strips[pixel_map[x][y]] = px[x,y] 
+    im = Image.open("rotatingcube.gif")
+    px = im.load()
+    # Iterate through frames and pixels, top row first
+    for z in range(im.n_frames):
+        # Go to frame
+        im.seek(z)
+        rgb_im = im.convert('RGB')
+        rgb_im = rgb_im.resize((240,240), PIL.Image.LANCZOS)
+        for x in pixel_map:
+            for y in pixel_map[x]:
+                strips[pixel_map[x][y]] = rgb_im.getpixel((x, y))
+        time.sleep(0.01)
     strips.show()
 ###
 # Animation Generators
