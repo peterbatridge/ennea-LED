@@ -7,6 +7,8 @@ import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 import time
 import numpy as np 
+from PIL import Image 
+
 class Animation:
     def __init__(self):
         self.frames = {}
@@ -459,7 +461,14 @@ def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK
             strips.show()
     lastFrameSideColors = lastFrameColors
 
-
+def displayImage():
+    global pixel_map
+    im = Image.open("cube.png") 
+    px = im.load() 
+    for x in pixel_map:
+        for y in pixel_map[x]:
+            strips[pixel_map[x][y]] = px[x,y] 
+    strips.show()
 ###
 # Animation Generators
 ###

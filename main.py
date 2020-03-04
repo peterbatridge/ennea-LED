@@ -299,18 +299,19 @@ constantsDocRef.document('modes').set(modes)
 try:        
     while True:
         try:
-            for m, mode in enumerate(state['mode']):
-                # do an args check here
-                if mode in modes.keys():
-                    func = validFunctions[modes[mode]['functionName']]
-                    args = ast.literal_eval(state['args'][m])
-                    try:
-                        func(*args)
-                    except Exception as e:
-                        exc_type, exc_value, exc_traceback = sys.exc_info()
-                        print(func, args)
-                        print(e)
-                        traceback.print_exc()
+            displayImage()
+            # for m, mode in enumerate(state['mode']):
+            #     # do an args check here
+            #     if mode in modes.keys():
+            #         func = validFunctions[modes[mode]['functionName']]
+            #         args = ast.literal_eval(state['args'][m])
+            #         try:
+            #             func(*args)
+            #         except Exception as e:
+            #             exc_type, exc_value, exc_traceback = sys.exc_info()
+            #             print(func, args)
+            #             print(e)
+            #             traceback.print_exc()
         except Exception as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             print("Probably had the state changed and the loop broke:", e)
