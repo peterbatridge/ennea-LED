@@ -478,8 +478,7 @@ def displayImage():
         for x in pixel_map:
             for y in pixel_map[x]:
                 strips[pixel_map[x][y]] = rgb_im.getpixel((x, y))
-        time.sleep(0.01)
-    strips.show()
+        strips.show()
 ###
 # Animation Generators
 ###
