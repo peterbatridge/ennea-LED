@@ -34,7 +34,7 @@ mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
-strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
+strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=12000000, auto_write=False)
 
 lastFrameNonagonColors = []
 lastFrameSideColors = []
@@ -480,7 +480,7 @@ def closest(color):
     return selection
 
 def convertGifToAnimation():
-    im = Image.open("rotatingcube.gif")
+    im = Image.open("swirl.gif")
     print(im.n_frames)
     animation = []
     for z in range(im.n_frames):
@@ -497,11 +497,9 @@ def convertGifToAnimation():
     return animation
 
 def drawAnimation(animation):
-    for s in range(0,len(animation)):
-        strips[0:434] = animation[s]
+    for s in animation:
+        strips[0:434] = s
         strips.show()
-        time.sleep(0.1)
-
 ###
 # Animation Generators
 ###
