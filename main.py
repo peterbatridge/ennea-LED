@@ -296,10 +296,11 @@ constantsDocRef.on_snapshot(onConstantsSnapshot)
 constantsDocRef.document('modes').set(modes)
 
 
-try:        
+try:
+    anim = convertGifToAnimation()        
     while True:
         try:
-            displayImage()
+            drawAnimation(anim)
             # for m, mode in enumerate(state['mode']):
             #     # do an args check here
             #     if mode in modes.keys():

@@ -462,25 +462,46 @@ def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK
             strips.show()
     lastFrameSideColors = lastFrameColors
 
+def isGray(color):
+    return (color[0] > color[1]-10 and color[0] < color[1]+10 and color[1] > color[2] - 10 and color[1] < color[2]+10)
 
-def displayImage():
-    global pixel_map
-    # for x in pixel_map:
-    #     for y in pixel_map[x]:
-    #         strips[pixel_map[x][y]] = px[x,y] 
+def closest(color):
+    global colors
+    choices = colors
+    d = 500
+    selection = BLANK 
+    if isGray(color):
+        return BLANK
+    for i in range(0, len(choices)):
+        n = math.sqrt((color[0]-choices[i][0])**2 + (color[1]-choices[i][1])**2 + (color[2]-choices[i][2])**2)
+        if n < d:
+            d = n
+            selection = choices[i]
+    return selection
+
+def convertGifToAnimation():
     im = Image.open("rotatingcube.gif")
-    px = im.load()
-    # Iterate through frames and pixels, top row first
+    print(im.n_frames)
+    animation = []
     for z in range(im.n_frames):
-        # Go to frame
+        strip = [BLANK] * 434
         im.seek(z)
         rgb_im = im.convert('RGB')
-        rgb_im = rgb_im.resize((240,240), PIL.Image.NEAREST)
+        rgb_im = rgb_im.resize((240,240), PIL.Image.LANCZOS)
         for x in pixel_map:
             for y in pixel_map[x]:
-                color = rgb_im.getpixel((x, y))
-                strips[pixel_map[x][y]] = rgb_im.getpixel((x, y))
+                p = pixel_map[x][y]
+                color = closest(rgb_im.getpixel((x, y)))
+                strip[p] = color
+        animation.append(strip)
+    return animation
+
+def drawAnimation(animation):
+    for s in range(0,len(animation)):
+        strips[0:434] = animation[s]
         strips.show()
+        time.sleep(0.1)
+
 ###
 # Animation Generators
 ###
