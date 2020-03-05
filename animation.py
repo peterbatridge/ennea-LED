@@ -462,6 +462,7 @@ def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK
             strips.show()
     lastFrameSideColors = lastFrameColors
 
+
 def displayImage():
     global pixel_map
     # for x in pixel_map:
@@ -474,9 +475,10 @@ def displayImage():
         # Go to frame
         im.seek(z)
         rgb_im = im.convert('RGB')
-        rgb_im = rgb_im.resize((240,240), PIL.Image.LANCZOS)
+        rgb_im = rgb_im.resize((240,240), PIL.Image.NEAREST)
         for x in pixel_map:
             for y in pixel_map[x]:
+                color = rgb_im.getpixel((x, y))
                 strips[pixel_map[x][y]] = rgb_im.getpixel((x, y))
         strips.show()
 ###
