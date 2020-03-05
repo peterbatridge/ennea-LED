@@ -480,7 +480,7 @@ def closest(color):
     return selection
 
 def convertGifToAnimation():
-    im = Image.open("rainbowpulse.gif")
+    im = Image.open("bwnonagon.gif")
     print(im.n_frames)
     animation = []
     for z in range(im.n_frames):
