@@ -482,10 +482,14 @@ def closest(color):
 
 def gifAnimation(name):
     global gifs
+    print(name)
     animation = ast.literal_eval(gifs[name]['frames'])
+    i = 0
     for s in animation:
+        print("FRAME!: ", i)
         strips[0:434] = s
         strips.show()
+        i= i +1
 
 ###
 # Animation Generators
