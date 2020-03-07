@@ -483,7 +483,7 @@ def closest(color):
 def gifAnimation(name):
     global gifs
     print(name)
-    animation = ast.literal_eval(gifs[name]['frames'])
+    animation = gifs[name]['frames']
     i = 0
     for s in animation:
         print("FRAME!: ", i)
