@@ -235,9 +235,9 @@ modes = {
             {
                 'name': "Gif Name",
                 'optional': False,
-                'rules': '0-1',
-                'type': "string",
-                'notes': 'Amount of time in seconds between frames, zero is recommended, no higher than 1 second.'
+                'rules': '',
+                'type': "Name of Gif",
+                'notes': 'Just the name not the value'
             }
         ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
@@ -263,7 +263,7 @@ def onModeSnapshot(doc_snapshot, changes, read_time):
 constantsDocRef = db.collection(u'constants')
 
 def onConstantsSnapshot(doc_snapshot, changes, read_time):
-    global colorsDict, colorSequences, groupsOfNonagons, setsOfGroupsOfNonagons
+    global colorsDict, colorSequences, groupsOfNonagons, setsOfGroupsOfNonagons, gifs
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
         docDict = doc.to_dict()

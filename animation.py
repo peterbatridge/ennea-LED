@@ -9,6 +9,7 @@ import time
 import numpy as np 
 from PIL import Image 
 import PIL
+import ast
 
 class Animation:
     def __init__(self):
@@ -479,7 +480,9 @@ def closest(color):
             selection = choices[i]
     return selection
 
-def gifAnimation(animation):
+def gifAnimation(name):
+    global gifs
+    animation = ast.literal_eval(gifs[name]['frames'])
     for s in animation:
         strips[0:434] = s
         strips.show()
