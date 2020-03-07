@@ -303,13 +303,13 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
             for c in docDict.keys():
                 if c not in audioMappings.keys():
                     audioMappings[c] = ast.literal_eval(docDict[c])
-        elif doc.id == 'gifs':
-            for c in gifs.keys():
-                if c not in docDict.keys():
-                    constantsDocRef.document('gifs').update({c : str(gifs[c])})
-            for c in docDict.keys():
-                if c not in gifs.keys():
-                    gifs[c] = ast.literal_eval(docDict[c])
+        # elif doc.id == 'gifs':
+        #     for c in gifs.keys():
+        #         if c not in docDict.keys():
+        #             constantsDocRef.document('gifs').update({c : str(gifs[c])})
+        #     for c in docDict.keys():
+        #         if c not in gifs.keys():
+        #             gifs[c] = ast.literal_eval(docDict[c])
 
 modeDocRef = db.collection(u'state').document(u'current')
 modeDocRef.on_snapshot(onModeSnapshot)
