@@ -36,7 +36,8 @@ validFunctions = {
     'colorSwapAnimation': colorSwapAnimation,
     'fillSidesAnimation': fillSidesAnimation,
     'traceSidesAnimation': traceSidesAnimation,
-    'rainbowCycle': rainbowCycle
+    'rainbowCycle': rainbowCycle,
+    'gifAnimation' : gifAnimation
 }
 fadeFramesArg = {
     'name': "Fade Frames",
@@ -227,6 +228,19 @@ modes = {
             }
         ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
+    },
+    '8': {
+        'functionName': 'gifAnimation',
+        'args': [
+            {
+                'name': "Gif Name",
+                'optional': False,
+                'rules': '0-1',
+                'type': "string",
+                'notes': 'Amount of time in seconds between frames, zero is recommended, no higher than 1 second.'
+            }
+        ],
+        'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     }
 }
 
@@ -289,6 +303,13 @@ def onConstantsSnapshot(doc_snapshot, changes, read_time):
             for c in docDict.keys():
                 if c not in audioMappings.keys():
                     audioMappings[c] = ast.literal_eval(docDict[c])
+        elif doc.id == 'gifs':
+            for c in gifs.keys():
+                if c not in docDict.keys():
+                    constantsDocRef.document('gifs').update({c : str(gifs[c])})
+            for c in docDict.keys():
+                if c not in gifs.keys():
+                    gifs[c] = ast.literal_eval(docDict[c])
 
 modeDocRef = db.collection(u'state').document(u'current')
 modeDocRef.on_snapshot(onModeSnapshot)
@@ -297,22 +318,20 @@ constantsDocRef.document('modes').set(modes)
 
 
 try:
-    anim = convertGifToAnimation()        
     while True:
         try:
-            drawAnimation(anim)
-            # for m, mode in enumerate(state['mode']):
-            #     # do an args check here
-            #     if mode in modes.keys():
-            #         func = validFunctions[modes[mode]['functionName']]
-            #         args = ast.literal_eval(state['args'][m])
-            #         try:
-            #             func(*args)
-            #         except Exception as e:
-            #             exc_type, exc_value, exc_traceback = sys.exc_info()
-            #             print(func, args)
-            #             print(e)
-            #             traceback.print_exc()
+            for m, mode in enumerate(state['mode']):
+                # do an args check here
+                if mode in modes.keys():
+                    func = validFunctions[modes[mode]['functionName']]
+                    args = ast.literal_eval(state['args'][m])
+                    try:
+                        func(*args)
+                    except Exception as e:
+                        exc_type, exc_value, exc_traceback = sys.exc_info()
+                        print(func, args)
+                        print(e)
+                        traceback.print_exc()
         except Exception as e:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             print("Probably had the state changed and the loop broke:", e)

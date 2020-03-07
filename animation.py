@@ -479,27 +479,11 @@ def closest(color):
             selection = choices[i]
     return selection
 
-def convertGifToAnimation():
-    im = Image.open("bwnonagon.gif")
-    print(im.n_frames)
-    animation = []
-    for z in range(im.n_frames):
-        strip = [BLANK] * 434
-        im.seek(z)
-        rgb_im = im.convert('RGB')
-        rgb_im = rgb_im.resize((240,240), PIL.Image.LANCZOS)
-        for x in pixel_map:
-            for y in pixel_map[x]:
-                p = pixel_map[x][y]
-                color = closest(rgb_im.getpixel((x, y)))
-                strip[p] = color
-        animation.append(strip)
-    return animation
-
-def drawAnimation(animation):
+def gifAnimation(animation):
     for s in animation:
         strips[0:434] = s
         strips.show()
+
 ###
 # Animation Generators
 ###
