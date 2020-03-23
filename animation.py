@@ -274,7 +274,7 @@ def handleAudioWithFrequency():
         sample = mcp.read_adc(0)
         msTimestamp = int(round(time.time() * 1000))
         if fullSample:
-            np.put(sampleArr, samplesLen, sample)
+            np.append(sampleArr, sample)
             np.delete(sampleArr, 0)
             sampleTimes.append(msTimestamp)
             del sampleTimes[0]
