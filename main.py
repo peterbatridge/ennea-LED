@@ -37,7 +37,8 @@ validFunctions = {
     'fillSidesAnimation': fillSidesAnimation,
     'traceSidesAnimation': traceSidesAnimation,
     'rainbowCycle': rainbowCycle,
-    'gifAnimation' : gifAnimation
+    'gifAnimation' : gifAnimation,
+    'handleAudioWithFrequency': handleAudioWithFrequency
 }
 fadeFramesArg = {
     'name': "Fade Frames",
@@ -326,7 +327,8 @@ try:
                     func = validFunctions[modes[mode]['functionName']]
                     args = ast.literal_eval(state['args'][m])
                     try:
-                        func(*args)
+                        handleAudioWithFrequency()
+                        #func(*args)
                     except Exception as e:
                         exc_type, exc_value, exc_traceback = sys.exc_info()
                         print(func, args)

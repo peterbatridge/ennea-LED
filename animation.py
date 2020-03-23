@@ -263,27 +263,35 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, frames=6000):
     modeChanged = False
 
 
-def handleAudioWithFrequency(remap, rateOfPeakDescent, functionCalledWithPeak):
+def handleAudioWithFrequency():
     global modeChanged
     samplesLen = 60
     sampleArr = np.array([0]*samplesLen, dtype=int)
     sampleCount = 0
-    
+    sampleTimes = [0] * samplesLen
     fullSample = False
     while not modeChanged:
         sample = mcp.read_adc(0)
-        np.put(sampleArr, sampleCount, sample)
-        if sampleCount + 1 == samplesLen:
-            fullSample = True
-        sampleCount =(sampleCount+1)%samplesLen
+        msTimestamp = int(round(time.time() * 1000))
         if fullSample:
-            N = 60
+            np.put(sampleArr, samplesLen, sample)
+            np.delete(sampleArr, 0)
+            sampleTimes.append(msTimestamp)
+            del sampleTimes[0]
+            N = samplesLen
             Fs = 44100
             Y_k = np.fft.fft(sampleArr)[0:int(N/2)]/N # FFT function from numpy
             Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
             Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
             f = Fs*np.arange((N/2))/N # frequency vector
-            print('(',Pxx,', ', f ,'),')
+            print(sampleTimes[samplesLen-1] - sampleTimes[0])
+            #print('(',Pxx,', ', f ,'),')
+        else:
+            np.put(sampleArr, sampleCount, sample)
+            sampleTimes[sampleCount] = msTimestamp
+            if sampleCount + 1 == samplesLen:
+                fullSample = True
+            sampleCount =(sampleCount+1)%samplesLen
 
 
         # functionCalledWithPeak(peak)
