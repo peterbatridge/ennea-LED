@@ -283,7 +283,7 @@ def handleAudioWithFrequency():
             
             #Fs = 44100
             Y_k = np.fft.fft(sampleArr) #[0:int(N/2)]/N # FFT function from numpy
-            fftfreq = np.fft.fftfreq(len(Y_k))
+            fftfreq = np.fft.fftfreq(len(Y_k), d=(1.0/Fs))
             flist = []
             for f in fftfreq:
                 flist.append(abs(f*Fs))
