@@ -265,7 +265,7 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, frames=6000):
 
 def handleAudioWithFrequency():
     global modeChanged
-    samplesLen = 60
+    samplesLen = 30
     sampleArr = np.array([0]*samplesLen, dtype=int)
     sampleCount = 0
     sampleTimes = [0] * samplesLen
@@ -291,13 +291,12 @@ def handleAudioWithFrequency():
             for f in fftfreq:
                 flist.append(abs(f*Fs))
             print(flist)
-            print(fftfreq)
-            print("END ______________")
+            print(Y_k)
             # print(f)
             # print(Pxx)
-            Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
-            Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
-            f = Fs*np.arange((N/2))/N # frequency vector
+            # Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
+            # Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
+            # f = Fs*np.arange((N/2))/N # frequency vector
             print(sampleTimes[samplesLen-1] - sampleTimes[0])
             #print('(',Pxx,', ', f ,'),')
         else:
