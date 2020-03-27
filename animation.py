@@ -271,40 +271,45 @@ def handleAudioWithFrequency():
     sampleTimes = [0] * samplesLen
     fullSample = False
     while not modeChanged:
-        sample = mcp.read_adc(0)
-        msTimestamp = int(round(time.time() * 1000))
-        if fullSample:
-            np.append(sampleArr, sample)
-            np.delete(sampleArr, 0)
-            sampleTimes.append(msTimestamp)
-            del sampleTimes[0]
-            N = samplesLen
-            Fs = samplesLen / ((sampleTimes[samplesLen-1] - sampleTimes[0]) / 1000.0)
-            
-            #Fs = 44100
-            Y_k = np.fft.fft(sampleArr) #[0:int(N/2)]/N # FFT function from numpy
-            # Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
-            # Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
-            # f = Fs*np.arange((N/2))/N # frequency vector
-            fftfreq = np.fft.fftfreq(len(Y_k), d=(1.0/Fs))
-            flist = []
-            for f in fftfreq:
-                flist.append(abs(f*Fs))
-            print(flist)
-            print(Y_k)
-            # print(f)
-            # print(Pxx)
-            # Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
-            # Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
-            # f = Fs*np.arange((N/2))/N # frequency vector
-            print(sampleTimes[samplesLen-1] - sampleTimes[0])
-            #print('(',Pxx,', ', f ,'),')
-        else:
-            np.put(sampleArr, sampleCount, sample)
-            sampleTimes[sampleCount] = msTimestamp
-            if sampleCount + 1 == samplesLen:
-                fullSample = True
-            sampleCount =(sampleCount+1)%samplesLen
+        msTimestampStart = int(round(time.time() * 1000))
+        for i in range(0,30):
+            sample = mcp.read_adc(0)
+            sampleArr[i] = sample
+        msTimestampEnd = int(round(time.time() * 1000))
+        print(msTimestampEnd - msTimestampStart)
+        if False:
+            if fullSample:
+                np.append(sampleArr, sample)
+                np.delete(sampleArr, 0)
+                sampleTimes.append(msTimestampStart)
+                del sampleTimes[0]
+                N = samplesLen
+                Fs = samplesLen / ((sampleTimes[samplesLen-1] - sampleTimes[0]) / 1000.0)
+                
+                #Fs = 44100
+                Y_k = np.fft.fft(sampleArr) #[0:int(N/2)]/N # FFT function from numpy
+                # Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
+                # Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
+                # f = Fs*np.arange((N/2))/N # frequency vector
+                fftfreq = np.fft.fftfreq(len(Y_k), d=(1.0/Fs))
+                flist = []
+                for f in fftfreq:
+                    flist.append(abs(f*Fs))
+                print(flist)
+                print(Y_k)
+                # print(f)
+                # print(Pxx)
+                # Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
+                # Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
+                # f = Fs*np.arange((N/2))/N # frequency vector
+                print(sampleTimes[samplesLen-1] - sampleTimes[0])
+                #print('(',Pxx,', ', f ,'),')
+            else:
+                np.put(sampleArr, sampleCount, sample)
+                sampleTimes[sampleCount] = msTimestampStart
+                if sampleCount + 1 == samplesLen:
+                    fullSample = True
+                sampleCount =(sampleCount+1)%samplesLen
 
 
         # functionCalledWithPeak(peak)
