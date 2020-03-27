@@ -269,13 +269,13 @@ def handleAudioWithFrequency():
     sampleArr = np.array([0]*samplesLen, dtype=int)
     sampleCount = 0
     sampleTimes = [0] * samplesLen
+    normalArr = [0]*30
     fullSample = False
     while not modeChanged:
-        msTimestampStart = int(round(time.time() * 1000))
+        msTimestampStart = round(time.time() * 1000)
         for i in range(0,30):
-            sample = mcp.read_adc(0)
-            sampleArr[i] = sample
-        msTimestampEnd = int(round(time.time() * 1000))
+            normalArr[i] = mcp.read_adc(0)
+        msTimestampEnd = round(time.time() * 1000)
         print(msTimestampEnd - msTimestampStart)
         if False:
             if fullSample:
