@@ -10,6 +10,7 @@ import numpy as np
 from PIL import Image 
 import PIL
 import ast
+import serial
 
 class Animation:
     def __init__(self):
@@ -32,6 +33,10 @@ MISO = 23
 MOSI = 24
 CS   = 25
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
+
+# Serial Port Setup for Arduino audio data
+arduinoData = serial.Serial('COM5', 115200) #Creating our serial object named arduinoData
+blowing = False
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
@@ -203,6 +208,27 @@ def waitUntilSoundReachesThreshold(threshold):
         elif peakToPeak > 1023:
             peakToPeak = 1023
     modeChanged = False
+
+def getAudioDataFromArduino():
+    while (arduinoData.inWaiting()==0): #Wait here until there is data
+        pass #do nothing
+    frame = []
+    if arduinoData.read() == bytearray([int('0xFF', 16)]):
+        string = arduinoData.read(32)
+        for i in range(0,32):
+            frame.append(ord(string[i]))
+        #     try:
+        #         frame.append(int(string))
+        #     except:
+        #         pass
+        if len(frame)!=32:
+            continue
+        if not blowing and frame[31]>19:
+            blowing=True
+            print("BLOWING")
+        if blowing and frame[31]<=9:
+            blowing=False
+
 def fillLedsBasedOnVolume(peak):
     blankStrip()
     for i in range(peak):
@@ -506,6 +532,134 @@ def gifAnimation(name, hangFrames, fadeFrames):
         strips[0:434] = strip
         strips.show()
 
+###
+# Animations With Shape Objects
+###
+
+class Shape():
+    def __init__(self, x, y, color, size):
+        self.x = x
+        self.y = y
+        self.color = color
+        self.size = size
+
+    def contains(self, x,y):
+        """Shape contains the point x,y within its boundaries"""
+        pass
+
+    def isOffscreen(self, screenX,screenY):
+        """Returns true if no part of the shape is visible on screen"""
+        pass
+
+    def move(self, addX, addY):
+        self.x = self.x + addX
+        self.y = self.y + addY
+
+    def alterSize(self, size):
+        self.size = self.size + size
+    
+    def transform(self, moveX, moveY, alterSize):
+        self.move(moveX, moveY)
+        self.alterSize(alterSize)
+
+class Circle(Shape):
+    def contains(self, x, y):
+        return  (x-self.x)**2 + (y - self.y)**2 < self.size**2
+
+    def containsInBorder(self, x, y, borderWidth):
+        hyp = (x-self.x)**2 + (y - self.y)**2            
+        return hyp < self.size**2 and hyp > max(0, (self.size-borderWidth)**2)
+
+    def isOffscreen(self, screenX, screenY):
+        right= self.x + self.size
+        left = self.x - self.size
+        top = self.y - self.size
+        bottom = self.y + self.size
+        return (top > screenY or bottom < 0 and right < 0 or left > screenX)
+
+class Square(Shape):
+    def contains(self, x, y):
+        centerDist = self.size / 2
+        return  (x<(self.x + centerDist) and x>(self.x-centerDist) and y<(self.y + centerDist) and y>(self.y-centerDist))
+
+    def isOffscreen(self, screenX, screenY):
+        centerDist = self.size / 2
+        right= self.x + centerDist
+        left = self.x - centerDist
+        top = self.y - centerDist
+        bottom = self.y + centerDist
+        return (top > screenY or bottom < 0 and right < 0 or left > screenX)
+        
+def drawShapes(shapes, borderWidth, backgroundColor):
+    for p in range(0,434):
+        numColors = 0
+        color = backgroundColor
+        r = 0
+        g = 0
+        b = 0
+        for shape in shapes:
+            if ((borderWidth==0 and shape.contains(PIXEL_POSITIONS[p][0], PIXEL_POSITIONS[p][1])) or 
+            (borderWidth>0 and shape.containsInBorder(PIXEL_POSITIONS[p][0], PIXEL_POSITIONS[p][1], borderWidth))): 
+                numColors = numColors + 1
+                r = r + (shape.color[0] * shape.color[0])
+                g = g + (shape.color[1] * shape.color[1])
+                b = b + (shape.color[2] * shape.color[2])
+        if numColors > 0:
+            color = [math.sqrt(r/numColors), math.sqrt(g/numColors), math.sqrt(b/numColors)]
+        strips[p] = color
+
+###
+# Drawing Functions With Shapes
+###
+
+def drawExpandingSquare():
+    sq = Square(50, 50, BLUE, 1)
+    sq2 = Square(80, 80, RED, 20)
+    for i in range(0, 100):
+        drawShapes([sq, sq2], 0, BLANK)
+        sq.alterSize(1)
+        strips.show()
+
+def drawRainingSquares():
+    run = True
+    squares = []
+    fallSpeed = []
+    for i in range(0,10):
+        squares.append(Square(i*10,randrange(0,SCREEN), randomColor(), 20))
+        fallSpeed.append(randrange(1,10))
+    while run:
+        drawShapes(squares, 0, BLANK)
+
+        # Perform Transform & check for offscreens
+        for j in range(0, len(squares)):
+            squares[j].move(0, fallSpeed[j])
+            if squares[j].isOffscreen(SCREEN, SCREEN):
+                squares[j].y = 0
+                fallSpeed[j] = randrange(1,10)
+
+        # Draw to screen and wait
+        strips.show()
+
+def expandingCircles():
+    run = True
+    squares = []
+    expandLengthOriginal = [20,20,20,40,80]
+    expandLength = [20,20,20,40,80]
+    for i in range(0,5):
+        squares.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1))
+        #expandLength.append(random.randint(1,50))
+    while run:
+        drawShapes(squares, 5, BLANK)
+        # Perform Transform & check for offscreens
+        for j in range(0, len(squares)):
+            squares[j].alterSize(1)
+            expandLength[j] = expandLength[j] - 1
+            if expandLength[j] < 0:
+                squares[j] = Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1)
+                expandLength[j] = expandLengthOriginal[j]
+
+        # Draw to screen and wait
+        strips.show()
 
 
 ###
