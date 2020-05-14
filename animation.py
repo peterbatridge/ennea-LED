@@ -35,7 +35,7 @@ CS   = 25
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Serial Port Setup for Arduino audio data
-arduinoData = serial.Serial('COM5', 115200) #Creating our serial object named arduinoData
+arduinoData = serial.Serial('/dev/ttyACM0', 115200) #Creating our serial object named arduinoData
 blowing = False
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
@@ -222,7 +222,7 @@ def getAudioDataFromArduino():
         #     except:
         #         pass
         if len(frame)!=32:
-            continue
+            pass
         if not blowing and frame[31]>19:
             blowing=True
             print("BLOWING")
@@ -605,7 +605,7 @@ def drawShapes(shapes, borderWidth, backgroundColor):
                 g = g + (shape.color[1] * shape.color[1])
                 b = b + (shape.color[2] * shape.color[2])
         if numColors > 0:
-            color = [math.sqrt(r/numColors), math.sqrt(g/numColors), math.sqrt(b/numColors)]
+            color = [int(math.sqrt(r/numColors)), int(math.sqrt(g/numColors)), int(math.sqrt(b/numColors))]
         strips[p] = color
 
 ###
