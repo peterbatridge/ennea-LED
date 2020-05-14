@@ -195,10 +195,10 @@ def drawShapes(shapes):
             color = [math.sqrt(r/numColors), math.sqrt(g/numColors), math.sqrt(b/numColors)]
         drawCircle(pmap[p], color)
 
-def drawShapeBorders(shapes, borderWidth):
+def drawShapeBorders(shapes, borderWidth, backgroundColor):
     for p in range(0,434):
         numColors = 0
-        color = DARK_GRAY
+        color = backgroundColor
         r = 0
         g = 0
         b = 0
@@ -243,18 +243,35 @@ def drawRainingSquares():
         pygame.display.update()
         time.sleep(0.01)
 
+def complementaryColor(color):
+    r = color[0]
+    g = color[1]
+    b = color[2]
+    r2 = max(r,b,g) + min(r,b,g) - r   
+    b2 = max(r,b,g) + min(r,b,g) - b
+    g2 = max(r,b,g) + min(r,b,g) - g
+    return [r2, g2, b2]
 def expandingSquares():
     run = True
     squares = []
+    frame = 0
+    bgColor = DARK_GRAY
     expandLengthOriginal = [20,20,20,40,80]
     expandLength = [20,20,20,40,80]
     for i in range(0,5):
         squares.append(Circle(random.randint(0,SCREEN),random.randint(0,SCREEN), colors[random.randint(0, 8)], 1))
         #expandLength.append(random.randint(1,50))
     while run:
-        drawShapeBorders(squares, 5)
+        frame = (frame +1) % 2
+        drawShapeBorders(squares, 5, bgColor)
         # Perform Transform & check for offscreens
         for j in range(0, len(squares)):
+            if frame == 1:
+                bgColor = WHITE
+                squares[j].color = complementaryColor(squares[j].color)
+            else:
+                bgColor = DARK_GRAY
+                squares[j].color = complementaryColor(squares[j].color)
             squares[j].alterSize(1)
             expandLength[j] = expandLength[j] - 1
             if expandLength[j] < 0:
@@ -263,7 +280,7 @@ def expandingSquares():
 
         # Draw to screen and wait
         pygame.display.update()
-        time.sleep(0.05)
+        time.sleep(0.1)
 
 def drawCircle(position, color):
     pygame.draw.circle(screen, color, position, 1)

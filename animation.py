@@ -640,18 +640,36 @@ def drawRainingSquares():
         # Draw to screen and wait
         strips.show()
 
+def complementaryColor(color):
+    r = color[0]
+    g = color[1]
+    b = color[2]
+    r2 = max(r,b,g) + min(r,b,g) - r   
+    b2 = max(r,b,g) + min(r,b,g) - b
+    g2 = max(r,b,g) + min(r,b,g) - g
+    return [r2, g2, b2]
+
 def expandingCircles():
     run = True
     squares = []
     expandLengthOriginal = [20,20,20,40,80]
     expandLength = [20,20,20,40,80]
+    frame = 0
+    background = BLANK
     for i in range(0,5):
         squares.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1))
         #expandLength.append(random.randint(1,50))
     while run:
-        drawShapes(squares, 5, BLANK)
+        drawShapes(squares, 5, background)
+        frame = (frame+1) % 2
+        
+        if frame == 1:
+            background = BLANK
+        else:
+            background = WHITE
         # Perform Transform & check for offscreens
         for j in range(0, len(squares)):
+            squares[j].color = complementaryColor(squares[j].color)
             squares[j].alterSize(1)
             expandLength[j] = expandLength[j] - 1
             if expandLength[j] < 0:
