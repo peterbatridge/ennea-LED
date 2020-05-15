@@ -228,11 +228,12 @@ def getAudioDataFromArduino():
         #         pass
         if len(frame)!=32:
             pass
-        if not blowing and frame[31]>19:
-            blowing=True
-            print("BLOWING")
-        if blowing and frame[31]<=9:
-            blowing=False
+        print(frame)
+        # if not blowing and frame[31]>19:
+        #     blowing=True
+        #     print("BLOWING")
+        # if blowing and frame[31]<=9:
+        #     blowing=False
 
 def fillLedsBasedOnVolume(peak):
     blankStrip()
