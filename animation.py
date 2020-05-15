@@ -35,7 +35,7 @@ CS   = 25
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Serial Port Setup for Arduino audio data
-arduinoData = serial.Serial('/dev/ttyACM0', 115200) #Creating our serial object named arduinoData
+#arduinoData = serial.Serial('/dev/ttyACM0', 115200) #Creating our serial object named arduinoData
 blowing = False
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
@@ -625,8 +625,8 @@ def drawRainingSquares():
     squares = []
     fallSpeed = []
     for i in range(0,10):
-        squares.append(Square(i*10,randrange(0,SCREEN), randomColor(), 20))
-        fallSpeed.append(randrange(1,10))
+        squares.append(Square(i*10,randrange(0,SCREEN), wheel(randrange(256,512)), 10))
+        fallSpeed.append(randrange(1,3))
     while run:
         drawShapes(squares, 0, BLANK)
 
@@ -635,7 +635,7 @@ def drawRainingSquares():
             squares[j].move(0, fallSpeed[j])
             if squares[j].isOffscreen(SCREEN, SCREEN):
                 squares[j].y = 0
-                fallSpeed[j] = randrange(1,10)
+                fallSpeed[j] = randrange(1,3)
 
         # Draw to screen and wait
         strips.show()
@@ -660,16 +660,16 @@ def expandingCircles():
         squares.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1))
         #expandLength.append(random.randint(1,50))
     while run:
-        drawShapes(squares, 5, background)
-        frame = (frame+1) % 2
+        drawShapes(squares, 2, background)
+        #frame = (frame+1) % 2
         
         if frame == 1:
             background = BLANK
         else:
-            background = WHITE
+            background = BLANK
         # Perform Transform & check for offscreens
         for j in range(0, len(squares)):
-            squares[j].color = complementaryColor(squares[j].color)
+            #squares[j].color = complementaryColor(squares[j].color)
             squares[j].alterSize(1)
             expandLength[j] = expandLength[j] - 1
             if expandLength[j] < 0:
