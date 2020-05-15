@@ -11,6 +11,7 @@ from PIL import Image
 import PIL
 import ast
 import serial
+import serial.tools.list_ports
 
 class Animation:
     def __init__(self):
@@ -35,7 +36,11 @@ CS   = 25
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Serial Port Setup for Arduino audio data
-#arduinoData = serial.Serial('/dev/ttyACM0', 115200) #Creating our serial object named arduinoData
+ports = serial.tools.list_ports.comports()
+for port, desc, hwid in ports:
+    if desc == "Arduino Micro":
+        print(port)
+        arduinoData = serial.Serial(port, 115200) #Creating our serial object named arduinoData
 blowing = False
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
