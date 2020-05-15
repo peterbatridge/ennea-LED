@@ -229,6 +229,9 @@ def getAudioDataFromArduino():
         if len(frame)!=32:
             pass
         print(frame)
+        c = Circle(50, 50, RED, frame[2])
+        drawShapes([c], 0, BLANK)
+        strips.show()
         # if not blowing and frame[31]>19:
         #     blowing=True
         #     print("BLOWING")
