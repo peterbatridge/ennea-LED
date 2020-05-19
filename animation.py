@@ -36,11 +36,12 @@ CS   = 25
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Serial Port Setup for Arduino audio data
+arduinoData = None
 ports = serial.tools.list_ports.comports()
 for port, desc, hwid in ports:
     if desc == "Arduino Micro":
         print(port)
-        arduinoData = serial.Serial(port, 115200) #Creating our serial object named arduinoData
+        arduinoData = serial.Serial(port, 9600, parity=serial.PARITY_NONE) #Creating our serial object named arduinoData
 blowing = False
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
@@ -214,30 +215,6 @@ def waitUntilSoundReachesThreshold(threshold):
             peakToPeak = 1023
     modeChanged = False
 
-def getAudioDataFromArduino():
-    while (arduinoData.inWaiting()==0): #Wait here until there is data
-        pass #do nothing
-    frame = []
-    if arduinoData.read() == bytearray([int('0xFF', 16)]):
-        string = arduinoData.read(32)
-        for i in range(0,32):
-            frame.append(ord(string[i]))
-        #     try:
-        #         frame.append(int(string))
-        #     except:
-        #         pass
-        if len(frame)!=32:
-            pass
-        print(frame)
-        c = Circle(50, 50, RED, frame[2])
-        drawShapes([c], 0, BLANK)
-        strips.show()
-        # if not blowing and frame[31]>19:
-        #     blowing=True
-        #     print("BLOWING")
-        # if blowing and frame[31]<=9:
-        #     blowing=False
-
 def fillLedsBasedOnVolume(peak):
     blankStrip()
     for i in range(peak):
@@ -257,7 +234,27 @@ def volumeMeterSides(peak):
                 setSide(nonagon, side[1], color)
     strips.show()
 
-def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, frames=6000):
+def dimColor(color, fraction):
+    dimColor = [0,0,0]
+    dimColor[0] = int(color[0] * fraction)
+    dimColor[1] = int(color[1] * fraction)
+    dimColor[2] = int(color[2] * fraction)
+    return dimColor
+
+def audioCircle(peak):
+    blankStrip()
+    circle = Circle(50, 50, RED, peak)
+    drawShapes([circle], 0, BLANK)
+    strips.show()
+
+def solidColorDimmer(peak):
+    fraction = peak / 39.0
+    if fraction < 0.25:
+        fraction = 0.25
+    blankStrip(dimColor(RED, fraction))
+    strips.show()
+
+def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, **kwargs):
     global modeChanged
     peak = 0
     noise = 15
@@ -265,7 +262,7 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, frames=6000):
     sampleArr = [0] * samplesLen
     sampleCount = 0
     totalFrames = 0
-    while not modeChanged and totalFrames<frames:
+    while not modeChanged: 
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
@@ -283,7 +280,7 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, frames=6000):
             peakToPeak = 0
         elif peakToPeak > 1023:
             peakToPeak = 1023
-        
+
         peakToPeak = remap_range(peakToPeak, remap)
         if (peak>=rateOfPeakDescent):
             peak = peak - rateOfPeakDescent
@@ -292,62 +289,8 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, frames=6000):
         if peakToPeak > peak:
             peak = peakToPeak
 
-        print(peak)
         totalFrames = totalFrames+1
-        functionCalledWithPeak(peak)
-    modeChanged = False
-
-
-def handleAudioWithFrequency():
-    global modeChanged
-    samplesLen = 30
-    sampleArr = np.array([0]*samplesLen, dtype=int)
-    sampleCount = 0
-    sampleTimes = [0] * samplesLen
-    normalArr = [0]*30
-    fullSample = False
-    while not modeChanged:
-        msTimestampStart = round(time.time() * 1000)
-        for i in range(0,30):
-            normalArr[i] = mcp.read_adc(0)
-        msTimestampEnd = round(time.time() * 1000)
-        print(msTimestampEnd - msTimestampStart)
-        if False:
-            if fullSample:
-                np.append(sampleArr, sample)
-                np.delete(sampleArr, 0)
-                sampleTimes.append(msTimestampStart)
-                del sampleTimes[0]
-                N = samplesLen
-                Fs = samplesLen / ((sampleTimes[samplesLen-1] - sampleTimes[0]) / 1000.0)
-                
-                #Fs = 44100
-                Y_k = np.fft.fft(sampleArr) #[0:int(N/2)]/N # FFT function from numpy
-                # Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
-                # Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
-                # f = Fs*np.arange((N/2))/N # frequency vector
-                fftfreq = np.fft.fftfreq(len(Y_k), d=(1.0/Fs))
-                flist = []
-                for f in fftfreq:
-                    flist.append(abs(f*Fs))
-                print(flist)
-                print(Y_k)
-                # print(f)
-                # print(Pxx)
-                # Y_k[1:] = 2*Y_k[1:] # need to take the single-sided spectrum only
-                # Pxx = np.abs(Y_k) # be sure to get rid of imaginary part
-                # f = Fs*np.arange((N/2))/N # frequency vector
-                print(sampleTimes[samplesLen-1] - sampleTimes[0])
-                #print('(',Pxx,', ', f ,'),')
-            else:
-                np.put(sampleArr, sampleCount, sample)
-                sampleTimes[sampleCount] = msTimestampStart
-                if sampleCount + 1 == samplesLen:
-                    fullSample = True
-                sampleCount =(sampleCount+1)%samplesLen
-
-
-        # functionCalledWithPeak(peak)
+        functionCalledWithPeak(peak, **kwargs)
     modeChanged = False
 
 ###
@@ -544,13 +487,19 @@ def gifAnimation(name, hangFrames, fadeFrames):
 ###
 # Animations With Shape Objects
 ###
+class Transformations():
+    def __init__(self, moveX, moveY, alterSize):
+        self.moveX = moveX
+        self.moveY = moveY
+        self.alterSize = alterSize
 
 class Shape():
-    def __init__(self, x, y, color, size):
+    def __init__(self, x, y, color, size, transformations):
         self.x = x
         self.y = y
         self.color = color
         self.size = size
+        self.transformations = transformations
 
     def contains(self, x,y):
         """Shape contains the point x,y within its boundaries"""
@@ -567,9 +516,12 @@ class Shape():
     def alterSize(self, size):
         self.size = self.size + size
     
-    def transform(self, moveX, moveY, alterSize):
+    def doTransform(self, moveX, moveY, alterSize):
         self.move(moveX, moveY)
         self.alterSize(alterSize)
+
+    def transform(self):
+        self.doTransform(self.transformations.moveX, self.transformations.moveY, self.transformations.alterSize)
 
 class Circle(Shape):
     def contains(self, x, y):
@@ -584,7 +536,7 @@ class Circle(Shape):
         left = self.x - self.size
         top = self.y - self.size
         bottom = self.y + self.size
-        return (top > screenY or bottom < 0 and right < 0 or left > screenX)
+        return (top > screenY or bottom < 0 or right < 25 or left > 75)
 
 class Square(Shape):
     def contains(self, x, y):
@@ -599,7 +551,7 @@ class Square(Shape):
         bottom = self.y + centerDist
         return (top > screenY or bottom < 0 and right < 0 or left > screenX)
         
-def drawShapes(shapes, borderWidth, backgroundColor):
+def drawShapes(shapes, borderWidth, backgroundColor, dimFactor=1):
     for p in range(0,434):
         numColors = 0
         color = backgroundColor
@@ -615,39 +567,75 @@ def drawShapes(shapes, borderWidth, backgroundColor):
                 b = b + (shape.color[2] * shape.color[2])
         if numColors > 0:
             color = [int(math.sqrt(r/numColors)), int(math.sqrt(g/numColors)), int(math.sqrt(b/numColors))]
-        strips[p] = color
+        strips[p] = dimColor(color, dimFactor)
 
-###
+###:
 # Drawing Functions With Shapes
 ###
 
 def drawExpandingSquare():
-    sq = Square(50, 50, BLUE, 1)
-    sq2 = Square(80, 80, RED, 20)
+    sq = Square(50, 50, BLUE, 1, Transformations(0,0,0))
+    sq2 = Square(80, 80, RED, 20, Transformations(0,0,0))
     for i in range(0, 100):
         drawShapes([sq, sq2], 0, BLANK)
         sq.alterSize(1)
         strips.show()
 
 def drawRainingSquares():
-    run = True
+    global modeChanged
     squares = []
-    fallSpeed = []
     for i in range(0,10):
-        squares.append(Square(i*10,randrange(0,SCREEN), wheel(randrange(256,512)), 10))
-        fallSpeed.append(randrange(1,3))
-    while run:
+        transformation = Transformations(0, randrange(1,3), 0)
+        squares.append(Square(i*10,randrange(0,SCREEN), wheel(randrange(256,512)), 10, transformation))
+    while not modeChanged:
         drawShapes(squares, 0, BLANK)
 
         # Perform Transform & check for offscreens
         for j in range(0, len(squares)):
-            squares[j].move(0, fallSpeed[j])
+            squares[j].transform()
             if squares[j].isOffscreen(SCREEN, SCREEN):
                 squares[j].y = 0
-                fallSpeed[j] = randrange(1,3)
-
-        # Draw to screen and wait
+                squares[j].color = wheel(randrange(256,512))
+                squares[j].transformations = Transformations(0, randrange(1,3), 0)
         strips.show()
+    modeChanged = False
+
+def drawFireWithPeak(peak, circles):
+    if peak < 7:
+        peak = 6
+    drawShapes(circles, 0, RED, peak/39.0)
+    strips.show()
+    for i in range(0, len(circles)):
+        circles[i].transform()
+        if circles[i].isOffscreen(SCREEN, SCREEN):
+            circles[i].x = 25+(i*5)
+            circles[i].y = SCREEN
+            circles[i].color = wheel(randrange(20,60))
+            circles[i].transformations = Transformations(randrange(-2,2), randrange(-5,-2), 0)
+
+def fireAudioHandlerWrapper():
+    circles = []
+    for i in range(0,10):
+        transformation = Transformations(randrange(-2,2), randrange(-5, -2), 0)
+        circles.append(Circle(25+(i*5), randrange(0,SCREEN), wheel(randrange(20,60)), 5, transformation))
+    handleAudio(verticalSides, 3, drawFireWithPeak, circles=circles)
+
+def fireRandom(flicker = False):
+    global modeChanged
+    circles = []
+    for i in range(0,10):
+        transformation = Transformations(randrange(-2,2), randrange(-5,-2), 0)
+        circles.append(Circle(25+(i*5), randrange(0, SCREEN), wheel(randrange(20,60)), 5, transformation))
+    r1 = randrange(5,39)
+    while not modeChanged:
+        r2 = randrange(5,39)
+        step = 3
+        if r1 - r2 > 0:
+            step = -3
+        for i in range(r1,r2, step):
+            drawFireWithPeak(i, circles)
+        r1 = r2
+    modeChanged = False
 
 def complementaryColor(color):
     r = color[0]
@@ -666,7 +654,7 @@ def expandingCircles():
     frame = 0
     background = BLANK
     for i in range(0,5):
-        squares.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1))
+        squares.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None))
         #expandLength.append(random.randint(1,50))
     while run:
         drawShapes(squares, 2, background)
@@ -682,7 +670,7 @@ def expandingCircles():
             squares[j].alterSize(1)
             expandLength[j] = expandLength[j] - 1
             if expandLength[j] < 0:
-                squares[j] = Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1)
+                squares[j] = Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None)
                 expandLength[j] = expandLengthOriginal[j]
 
         # Draw to screen and wait

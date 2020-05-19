@@ -37,8 +37,7 @@ validFunctions = {
     'fillSidesAnimation': fillSidesAnimation,
     'traceSidesAnimation': traceSidesAnimation,
     'rainbowCycle': rainbowCycle,
-    'gifAnimation' : gifAnimation,
-    'handleAudioWithFrequency': handleAudioWithFrequency
+    'gifAnimation' : gifAnimation
 }
 fadeFramesArg = {
     'name': "Fade Frames",
@@ -327,8 +326,11 @@ try:
                     func = validFunctions[modes[mode]['functionName']]
                     args = ast.literal_eval(state['args'][m])
                     try:
-                        #handleAudioWithFrequency()
-                        getAudioDataFromArduino()
+                        #waitUntilSoundReachesThreshold(0)
+                        #getAudioDataFromArduino()
+                        #handleAudio(verticalSides, 1, solidColorDimmer)
+                        #drawExpandingSquare()
+                        expandingCircles()
                         #func(*args)
                     except Exception as e:
                         exc_type, exc_value, exc_traceback = sys.exc_info()
