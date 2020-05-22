@@ -330,7 +330,7 @@ try:
                         #getAudioDataFromArduino()
                         #handleAudio(verticalSides, 1, solidColorDimmer)
                         #drawExpandingSquare()
-                        drawSpinningRectAudioWrapper()
+                        pinwheelAudio()
                         #expandingCircles()
                         #func(*args)
                     except Exception as e:
