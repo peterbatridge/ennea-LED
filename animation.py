@@ -37,7 +37,7 @@ strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, bau
 
 lastFrameNonagonColors = []
 lastFrameSideColors = []
-
+lastFrameBackgroundColor = BLANK
 wheelIterator = 0
 
 ###
@@ -144,8 +144,11 @@ def sidesFromDirection(nonagon, step, direction, fill=True):
     else:
         return generateSidesListFromNonagonAndSides(nonagon, func(oddStart[direction],step))
 
-def randomColor():
-    return colors[randrange(9)]
+def randomColor(avoidColor=None):
+    rand = randrange(9)
+    if avoidColor == colors[rand]:
+        return colors[(rand+2)%9]
+    return colors[rand]
 
 def nextInWheel(step = 1):
     global wheelIterator
@@ -514,13 +517,16 @@ def drawFallingRect():
         strips.show()    
 
 def expandingRectangle():
-    sq = Rectangle(50, 50, BLUE, 1, 1, Transformations(0,0,1,1))
-    background = BLANK
+    global lastFrameBackgroundColor
+    newColor = randomColor(lastFrameBackgroundColor)
+    sq = Rectangle(50, 50, newColor, 1, 1, Transformations(0,0,1,1))
+    background = lastFrameBackgroundColor
     for i in range(0, 100):
         drawShapes([sq], 0, background)
         strips.show()
         sq.transformations = Transformations(0,0,1,1)
         sq.transform()
+    lastFrameBackgroundColor = newColor
 
 def drawSparkleWithPeak(peak, fadeFrames):
     baseColor = nextInWheel(3)
