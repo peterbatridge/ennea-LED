@@ -33,7 +33,7 @@ mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
-strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=16000000, auto_write=False)
+strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
 
 lastFrameNonagonColors = []
 lastFrameSideColors = []
@@ -555,72 +555,100 @@ def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     drawShapes([rect], 0, backgroundColor)
     strips.show()
 
-def drawFireWithPeak(peak, circles):
-    if peak < 7:
-        peak = 6
-    drawShapes(circles, 0, RED, peak/39.0)
+def drawFireWithPeak(peak, circles, colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
+    if peak < 11:
+        peak = 10
+    drawShapes(circles, 0, wheel(backgroundColorWheel), peak/39.0)
     strips.show()
     for i in range(0, len(circles)):
         circles[i].transform()
         if circles[i].isOffscreen(SCREEN, SCREEN):
             circles[i].x = 25+(i*5)
             circles[i].y = SCREEN
-            circles[i].color = wheel(randrange(20,60))
+            circles[i].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
             circles[i].transformations = Transformations(randrange(-2,2), randrange(-5,-2), 0)
 
-def fireAudio():
+def fireAudio(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
     circles = []
+    radius = 5
     for i in range(0,10):
         transformation = Transformations(randrange(-2,2), randrange(-5, -2), 0)
-        circles.append(Circle(25+(i*5), randrange(0,SCREEN), wheel(randrange(20,60)), 5, transformation))
-    handleAudio(verticalSides, 3, drawFireWithPeak, circles=circles)
+        circles.append(Circle(
+            SCREEN_X_BEGIN+(i*5), 
+            randrange(0,SCREEN), 
+            wheel(randrange(colorWheelLowerBound,colorWheelUpperBound)), 
+            radius, 
+            transformation)
+        )
 
-def fireRandom():
+    handleAudio(
+        verticalSides, 
+        3,
+        drawFireWithPeak, 
+        circles=circles, 
+        colorWheelLowerBound=colorWheelLowerBound, 
+        colorWheelUpperBound=colorWheelUpperBound, 
+        backgroundColorWheel=backgroundColorWheel, 
+    )
+
+def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
     global modeChanged
     circles = []
+    radius = 5
     for i in range(0,10):
         transformation = Transformations(randrange(-2,2), randrange(-5,-2), 0)
-        circles.append(Circle(25+(i*5), randrange(0, SCREEN), wheel(randrange(20,60)), 5, transformation))
-    r1 = randrange(5,39)
+        circles.append(Circle(
+            SCREEN_X_BEGIN+(i*5), 
+            randrange(0,SCREEN), 
+            wheel(randrange(colorWheelLowerBound,colorWheelUpperBound)), 
+            radius, 
+            transformation)
+        )
+    
+    r1 = randrange(10,39)
     while not modeChanged:
-        r2 = randrange(5,39)
+        r2 = randrange(10,39)
         step = 3
         if r1 - r2 > 0:
             step = -3
         for i in range(r1,r2, step):
-            drawFireWithPeak(i, circles)
+            drawFireWithPeak(i, circles,
+                colorWheelLowerBound=colorWheelLowerBound, 
+                colorWheelUpperBound=colorWheelUpperBound, 
+                backgroundColorWheel=backgroundColorWheel
+            )
         r1 = r2
     modeChanged = False
 
 def expandingCircles():
-    run = True
-    squares = []
-    expandLengthOriginal = [20,20,20,40,80]
-    expandLength = [20,20,20,40,80]
+    global modeChanged
+    circles = []
+    expandLength = [randrange(20,30),randrange(20,30),randrange(40,60),randrange(60,100),randrange(60,90)]
     frame = 0
     background = BLANK
     for i in range(0,5):
-        squares.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None))
-        #expandLength.append(random.randint(1,50))
-    while run:
-        drawShapes(squares, 2, background)
+        circles.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None))
+
+    while not modeChanged:
+        drawShapes(circles, 2, background)
         #frame = (frame+1) % 2
-        
         if frame == 1:
             background = BLANK
         else:
             background = BLANK
+
         # Perform Transform & check for offscreens
-        for j in range(0, len(squares)):
+        for j in range(0, len(circles)):
             #squares[j].color = complementaryColor(squares[j].color)
-            squares[j].alterSize(1)
+            circles[j].alterSize(1)
             expandLength[j] = expandLength[j] - 1
             if expandLength[j] < 0:
-                squares[j] = Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None)
-                expandLength[j] = expandLengthOriginal[j]
+                circles[j] = Circle(randrange(SCREEN_X_BEGIN, SCREEN_X_END), randrange(0,SCREEN), randomColor(), 1, None)
+                expandLength[j] = randrange(20,90)
 
         # Draw to screen and wait
         strips.show()
+    modeChanged = False
 
 def audioCircle(peak):
     blankStrip()
