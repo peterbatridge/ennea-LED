@@ -356,12 +356,12 @@ def fiveSolidRandomColors(wait=1):
     time.sleep(wait)
 
 def pinwheel(wait):
-    for i in range(0,434):
+    for i in range(0,768):
         strips[0:434] = [(0,0,0)] * 434
         for q in range(0,62):
             strips[(i+(7*q))%434] = wheel(i)
-            strips[(i+(7*q)+1)%434] = wheel(i+15)
-            strips[(i+(7*q)+2)%434] = wheel(i+30)
+            strips[(i+(7*q)+1)%434] = wheel((i+30)%768)
+            strips[(i+(7*q)+2)%434] = wheel((i+60)%768)
         strips.show()
         time.sleep(wait)
 
@@ -522,16 +522,43 @@ def drawExpandingSquare():
         sq.transformations = Transformations(0,0,1,1)
         sq.transform()
 
-def sparkleAudio():
+def drawSparkleWithPeak(peak, fadeFrames):
     baseColor = nextInWheel(3)
+    if peak >= 28:
+        peak = 28
+    if peak < 3:
+        peak = 3
+    onNum = peak
     for n in range(0,14):
-        onNum = randrange(10,30)
         mask = [BLANK] * 31
         mask[0:onNum] = [wheel((baseColor+n*50)%768)] * onNum
         shuffle(mask)
-        strips[n*31:(n+1)*31] = mask
+        for i in range(0, fadeFrames):        
+            for p in range(0,31):
+                strips[n*31+p] = stepBetweenColors(strips[n*31+p], mask[p], fadeFrames, i)
     strips.show()
 
+def sparkleAudio(fadeFrames=2):
+    handleAudio(verticalSides, 3, drawSparkleWithPeak, fadeFrames=fadeFrames)
+
+def oppositeRains():
+    upTransform = Transformations(0,-2,0)
+    downTransform = Transformations(0,2,0)
+    circles = [Circle(42, 100, MAGENTA, 7, upTransform), Circle(70, 100, MAGENTA, 7, upTransform), 
+            Circle(29, 0 , MAGENTA, 7, downTransform), Circle(56, 0, MAGENTA, 7 , downTransform)]
+    for i in range(0, 100):
+        drawShapes(circles, 0, BLANK)
+        strips.show()
+        if i == 50:
+            circles[0].transformations = downTransform
+            circles[1].transformations = downTransform
+            circles[2].transformations = upTransform
+            circles[3].transformations = upTransform
+        circles[0].transform()
+        circles[1].transform()
+        circles[2].transform()
+        circles[3].transform()
+   
 def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
     global modeChanged
     squares = []
