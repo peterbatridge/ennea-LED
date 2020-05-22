@@ -331,7 +331,8 @@ try:
                         #handleAudio(verticalSides, 1, solidColorDimmer)
                         #drawExpandingSquare()
                         #sparkleAudio()
-                        oppositeRains()
+                        expandingRectangle()
+                        #oppositeRains()
                         #expandingCircles()
                         #func(*args)
                     except Exception as e:

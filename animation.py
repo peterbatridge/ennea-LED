@@ -513,11 +513,11 @@ def drawFallingRect():
         #    print(p.x, " ", p.y)
         strips.show()    
 
-def drawExpandingSquare():
-    sq = Rectangle(50, 50, BLUE, 1, 1, Transformations(0,0,0))
-    sq2 = Rectangle(80, 80, RED, 20, 20, Transformations(0,0,0))
+def expandingRectangle():
+    sq = Rectangle(50, 50, BLUE, 1, 1, Transformations(0,0,1,1))
+    background = BLANK
     for i in range(0, 100):
-        drawShapes([sq, sq2], 0, BLANK)
+        drawShapes([sq], 0, background)
         strips.show()
         sq.transformations = Transformations(0,0,1,1)
         sq.transform()
