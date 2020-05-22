@@ -1,7 +1,7 @@
 from constants import *
 import board
 import adafruit_dotstar as dotstar
-from random import randrange
+from random import randrange, shuffle
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 import time
@@ -33,7 +33,7 @@ mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
-strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=8000000, auto_write=False)
+strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=10000000, auto_write=False)
 
 lastFrameNonagonColors = []
 lastFrameSideColors = []
@@ -525,7 +525,11 @@ def drawExpandingSquare():
 def sparkleAudio():
     baseColor = nextInWheel(3)
     for n in range(0,14):
-        strips[n*31:(n+1)*31] = [wheel((baseColor+n*50)%768)]*31
+        onNum = randrange(10,30)
+        mask = [BLANK] * 31
+        mask[0:onNum] = [wheel((baseColor+n*50)%768)] * onNum
+        shuffle(mask)
+        strips[n*31:(n+1)*31] = mask
     strips.show()
 
 def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
