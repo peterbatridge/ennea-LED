@@ -482,7 +482,7 @@ def drawShapes(shapes, borderWidth, backgroundColor, dimFactor=1):
         g = 0
         b = 0
         for shape in shapes:
-            if ((borderWidth==0 and shape.contain(PIXEL_POSITIONS[p][0], PIXEL_POSITIONS[p][1])) or 
+            if ((borderWidth==0 and shape.contains(PIXEL_POSITIONS[p][0], PIXEL_POSITIONS[p][1])) or 
             (borderWidth>0 and shape.containsInBorder(PIXEL_POSITIONS[p][0], PIXEL_POSITIONS[p][1], borderWidth))): 
                 numColors = numColors + 1
                 r = r + (shape.color[0] * shape.color[0])
