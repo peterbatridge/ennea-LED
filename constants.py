@@ -52,6 +52,8 @@ topLeftToBottomRightSharpDiagonal = bottomRightToTopLeftSharpDiagonal[::-1]
 
 triangles = [[0,2,4,6,8,10,12], [1,3,5,7,9,11,13]]
 
+everyThirdRow = [[0,3,6,8,11],[1,4,7,10,13],[2,5,9,12]]
+
 groupsOfNonagons = {
     'everyNonagon' : everyNonagon,
     'columnsLeftToRight': columnsLeftToRight,
@@ -98,6 +100,7 @@ coldToWarmSixteen = [BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, BLUE, MAGENTA, RED, RED
 rainbowTwelve = [RED, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, PURPLE, BLUE, GREEN, YELLOW, ORANGE]
 rainbowNine = [RED, ORANGE, YELLOW, GREEN, TEAL, CYAN, BLUE, PURPLE, MAGENTA]
 rainbowEight = [RED, ORANGE, YELLOW, GREEN, CYAN, BLUE, PURPLE, MAGENTA]
+redGreenBlue = [RED, GREEN, BLUE]
 
 colorSequences = {
     'redAndBlue': redAndBlue,
