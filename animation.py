@@ -38,6 +38,8 @@ strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, bau
 lastFrameNonagonColors = []
 lastFrameSideColors = []
 
+wheelIterator = 0
+
 ###
 # Helper Functions
 ###
@@ -145,6 +147,14 @@ def sidesFromDirection(nonagon, step, direction, fill=True):
 def randomColor():
     return colors[randrange(9)]
 
+def nextInWheel(step = 1):
+    global wheelIterator
+    wheelIterator = (wheelIterator + step) % 768
+    return wheelIterator
+
+def wheelComplementaryColor(color):
+    return (color + 384) % 768
+
 def dimColor(color, fraction):
     dimColor = [0,0,0]
     dimColor[0] = int(color[0] * fraction)
@@ -159,7 +169,7 @@ def complementaryColor(color):
     r2 = max(r,b,g) + min(r,b,g) - r   
     b2 = max(r,b,g) + min(r,b,g) - b
     g2 = max(r,b,g) + min(r,b,g) - g
-    return [r2, g2, b2]
+    return [r2, g2, b2]    
 
 def wheel(num):
     r =0
@@ -512,12 +522,12 @@ def drawExpandingSquare():
         sq.transformations = Transformations(0,0,1,1)
         sq.transform()
 
-def drawRainingSquares(wheelLowerBound=256, wheelUpperBound=512):
+def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
     global modeChanged
     squares = []
     for i in range(0,10):
         transformation = Transformations(0, randrange(1,3), 0)
-        squares.append(Rectangle(i*10,randrange(0,SCREEN), wheel(randrange(256,512)), 10, 10, transformation))
+        squares.append(Rectangle(i*10,randrange(0,SCREEN), wheel(randrange(colorWheelLowerBound,colorWheelUpperBound)), 10, 10, transformation))
     while not modeChanged:
         drawShapes(squares, 0, BLANK)
 
@@ -526,18 +536,22 @@ def drawRainingSquares(wheelLowerBound=256, wheelUpperBound=512):
             squares[j].transform()
             if squares[j].isOffscreen(SCREEN, SCREEN):
                 squares[j].y = 0
-                squares[j].color = wheel(randrange(256,512))
+                squares[j].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
                 squares[j].transformations = Transformations(0, randrange(1,3), 0)
         strips.show()
     modeChanged = False
 
-def pinwheelAudio():
-    rect = Rectangle(50,50,BLUE, 10, 100, None)
-    handleAudio(verticalSides, 3, drawPinwheelWithPeak, rect=rect)
+def pinwheelAudio(color = None, backgroundColor = None):
+    rect = Rectangle(50, 50, color, 10, 100, None)
+    handleAudio(verticalSides, 3, drawPinwheelWithPeak, rect=rect, color=color, backgroundColor=backgroundColor)
 
-def drawPinwheelWithPeak(peak, rect):
+def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     rect.rotate(peak)
-    drawShapes([rect], 0, RED)
+    if color == None or backgroundColor == None:
+        color = nextInWheel()
+        backgroundColor = wheelComplementaryColor(color)
+    rect.color = color
+    drawShapes([rect], 0, backgroundColor)
     strips.show()
 
 def drawFireWithPeak(peak, circles):
