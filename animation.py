@@ -2,16 +2,12 @@ from constants import *
 import board
 import adafruit_dotstar as dotstar
 from random import randrange
-import math
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_MCP3008
 import time
 import numpy as np 
-from PIL import Image 
-import PIL
 import ast
-import serial
-import serial.tools.list_ports
+from shapes import *
 
 class Animation:
     def __init__(self):
@@ -34,15 +30,6 @@ MISO = 23
 MOSI = 24
 CS   = 25
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
-
-# Serial Port Setup for Arduino audio data
-arduinoData = None
-ports = serial.tools.list_ports.comports()
-for port, desc, hwid in ports:
-    if desc == "Arduino Micro":
-        print(port)
-        arduinoData = serial.Serial(port, 9600, parity=serial.PARITY_NONE) #Creating our serial object named arduinoData
-blowing = False
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
@@ -158,6 +145,22 @@ def sidesFromDirection(nonagon, step, direction, fill=True):
 def randomColor():
     return colors[randrange(9)]
 
+def dimColor(color, fraction):
+    dimColor = [0,0,0]
+    dimColor[0] = int(color[0] * fraction)
+    dimColor[1] = int(color[1] * fraction)
+    dimColor[2] = int(color[2] * fraction)
+    return dimColor
+
+def complementaryColor(color):
+    r = color[0]
+    g = color[1]
+    b = color[2]
+    r2 = max(r,b,g) + min(r,b,g) - r   
+    b2 = max(r,b,g) + min(r,b,g) - b
+    g2 = max(r,b,g) + min(r,b,g) - g
+    return [r2, g2, b2]
+
 def wheel(num):
     r =0
     g =0
@@ -232,26 +235,6 @@ def volumeMeterSides(peak):
             sides = sidesFromDirection(nonagon, fill, 'bot')
             for side in sides:
                 setSide(nonagon, side[1], color)
-    strips.show()
-
-def dimColor(color, fraction):
-    dimColor = [0,0,0]
-    dimColor[0] = int(color[0] * fraction)
-    dimColor[1] = int(color[1] * fraction)
-    dimColor[2] = int(color[2] * fraction)
-    return dimColor
-
-def audioCircle(peak):
-    blankStrip()
-    circle = Circle(50, 50, RED, peak)
-    drawShapes([circle], 0, BLANK)
-    strips.show()
-
-def solidColorDimmer(peak):
-    fraction = peak / 39.0
-    if fraction < 0.25:
-        fraction = 0.25
-    blankStrip(dimColor(RED, fraction))
     strips.show()
 
 def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, **kwargs):
@@ -484,156 +467,13 @@ def gifAnimation(name, hangFrames, fadeFrames):
         strips[0:434] = strip
         strips.show()
 
+
+
+
 ###
 # Animations With Shape Objects
 ###
-class Transformations():
-    def __init__(self, moveX, moveY, alterSizeX, alterSizeY, rotation):
-        self.moveX = moveX
-        self.moveY = moveY
-        self.alterSizeX = alterSizeX
-        self.alterSize = alterSizeX
-        self.alterSizeY = alterSizeY
 
-class Shape():
-    def __init__(self, x, y, color, sizeX, sizeY, transformations):
-        self.x = x
-        self.y = y
-        self.color = color
-        self.size = sizeX
-        self.sizeX = sizeX
-        self.sizeY = sizeY
-        self.transformations = transformations
-
-    def contains(self, x,y):
-        """Shape contains the point x,y within its boundaries"""
-        pass
-
-    def isOffscreen(self, screenX,screenY):
-        """Returns true if no part of the shape is visible on screen"""
-        pass
-
-    def move(self, addX, addY):
-        self.x = self.x + addX
-        self.y = self.y + addY
-
-    def alterSize(self, size):
-        self.size = self.size + size
-    
-    def doTransform(self, moveX, moveY, alterSize):
-        self.move(moveX, moveY)
-        self.alterSize(alterSize)
-
-    def transform(self):
-        self.doTransform(self.transformations.moveX, self.transformations.moveY, self.transformations.alterSize)
-
-class Polygon(Shape):
-    def contains(self, x, y):
-        import sys
-        inf = sys.float_info.max
-        tiny = 0.00001
-        inside = False
-        for edge in self.edges():
-            Ax, Ay = edge[0][0], edge[0][1]
-            Bx, By = edge[1][0], edge[1][1]
-
-            if Ay > By:
-                Ax, Ay, Bx, By = Bx, By, Ax, Ay
-
-            if y == Ay or y == By:
-                y += tiny
-
-            if (y > By or y < Ay or x > max(Ax, Bx)):
-                continue
-
-            if x < min(Ax, Bx):
-                inside = not inside
-                continue
-
-            try:
-                m_edge = (By - Ay) / (Bx - Ax)
-            except ZeroDivisionError:
-                m_edge = inf
-            try:
-                m_point = (y - Ay) / (x - Ax)
-            except ZeroDivisionError:
-                m_point = inf
-            if m_point >= m_edge:
-                inside = not inside
-                continue
-            
-        return inside
-
-    def rotate(self, degrees):
-        self.rotation = (self.rotation + degrees) % 360
-        rads = math.radians(self.rotation)
-        cosang, sinang = math.cos(rads), math.sin(rads)
-        for i in range(0, len(self.points)):
-            x = self.origPoints[i][0]
-            y = self.origPoints[i][1]
-            tx, ty = x-self.x, y-self.y
-            self.points[i][0] = (tx*cosang + ty*sinang) + self.x
-            self.points[i][1] = (-tx*sinang +ty*cosang) + self.y
-
-    def edges(self):
-        edgeList = []
-        for i, point in enumerate(self.points):
-            p1 = point
-            p2 = self.points[(i+1) % 4]
-            edgeList.append([p1,p2])
-        return edgeList
-
-class Circle(Shape):
-    def __init__(self, x, y, color, radius, transformations):
-        self.x = x
-        self.y = y
-        self.color = color
-        self.size = radius
-        self.sizeX = radius
-        self.sizeY = radius
-        self.transformations = transformations
-
-    def contains(self, x, y):
-        return  (x-self.x)**2 + (y - self.y)**2 < self.size**2
-
-    def containsInBorder(self, x, y, borderWidth):
-        hyp = (x-self.x)**2 + (y - self.y)**2            
-        return hyp < self.size**2 and hyp > max(0, (self.size-borderWidth)**2)
-
-    def isOffscreen(self, screenX, screenY):
-        right= self.x + self.size
-        left = self.x - self.size
-        top = self.y - self.size
-        bottom = self.y + self.size
-        return (top > screenY or bottom < 0 or right < 25 or left > 75)
-
-class Rectangle(Shape):
-    def __init__(self, x, y, color, sizeX, sizeY, transformations):
-        self.x = x
-        self.y = y
-        self.color = color
-        self.sizeX = sizeX
-        self.sizeY = sizeY
-        self.transformations = transformations
-        self.points = [[x-sizeX/2, y-sizeY/2],[x-sizeX/2, y+sizeY/2],[x+sizeX/2, y+sizeY/2],[x+sizeX/2, y-sizeY/2]]
-        self.origPoints = [[x-sizeX/2, y-sizeY/2],[x-sizeX/2, y+sizeY/2],[x+sizeX/2, y+sizeY/2],[x+sizeX/2, y-sizeY/2]]
-        self.rotation = 0
-        print(self.points)
-
-    def containsWithoutRotation(self, x, y):
-        centerXDist = self.sizeX / 2
-        centerYDist = self.sizeY / 2
-        return (x<(self.x + centerXDist) and x>(self.x-centerXDist) and y<(self.y + centerYDist) and y>(self.y-centerYDist))
-
-    def isOffscreen(self, screenX, screenY):
-        centerXDist = self.sizeX / 2
-        centerYDist = self.sizeY / 2
-        right= self.x + centerXDist
-        left = self.x - centerXDist
-        top = self.y - centerYDist
-        bottom = self.y + centerYDist
-        return (top > screenY or bottom < 0 and right < 0 or left > screenX)
-        
 def drawShapes(shapes, borderWidth, backgroundColor, dimFactor=1):
     for p in range(0,434):
         numColors = 0
@@ -652,10 +492,6 @@ def drawShapes(shapes, borderWidth, backgroundColor, dimFactor=1):
             color = [int(math.sqrt(r/numColors)), int(math.sqrt(g/numColors)), int(math.sqrt(b/numColors))]
         strips[p] = dimColor(color, dimFactor)
 
-###:
-# Drawing Functions With Shapes
-###
-
 def drawFallingRect():
     rect = Rectangle(50, 50, BLUE, 10, 100, None)
     while True:
@@ -666,20 +502,22 @@ def drawFallingRect():
         #for p in rect.points:
         #    print(p.x, " ", p.y)
         strips.show()    
+
 def drawExpandingSquare():
-    sq = Square(50, 50, BLUE, 1, Transformations(0,0,0))
-    sq2 = Square(80, 80, RED, 20, Transformations(0,0,0))
+    sq = Rectangle(50, 50, BLUE, 1, 1, Transformations(0,0,0))
+    sq2 = Rectangle(80, 80, RED, 20, 20, Transformations(0,0,0))
     for i in range(0, 100):
         drawShapes([sq, sq2], 0, BLANK)
-        sq.alterSize(1)
         strips.show()
+        sq.transformations = Transformations(0,0,1,1)
+        sq.transform()
 
-def drawRainingSquares():
+def drawRainingSquares(wheelLowerBound=256, wheelUpperBound=512):
     global modeChanged
     squares = []
     for i in range(0,10):
         transformation = Transformations(0, randrange(1,3), 0)
-        squares.append(Square(i*10,randrange(0,SCREEN), wheel(randrange(256,512)), 10, 10, transformation))
+        squares.append(Rectangle(i*10,randrange(0,SCREEN), wheel(randrange(256,512)), 10, 10, transformation))
     while not modeChanged:
         drawShapes(squares, 0, BLANK)
 
@@ -695,7 +533,7 @@ def drawRainingSquares():
 
 def pinwheelAudio():
     rect = Rectangle(50,50,BLUE, 10, 100, None)
-    handleAudio(verticalSides, 3, drawSpinningRectWithPeak, rect=rect)
+    handleAudio(verticalSides, 3, drawPinwheelWithPeak, rect=rect)
 
 def drawPinwheelWithPeak(peak, rect):
     rect.rotate(peak)
@@ -739,15 +577,6 @@ def fireRandom():
         r1 = r2
     modeChanged = False
 
-def complementaryColor(color):
-    r = color[0]
-    g = color[1]
-    b = color[2]
-    r2 = max(r,b,g) + min(r,b,g) - r   
-    b2 = max(r,b,g) + min(r,b,g) - b
-    g2 = max(r,b,g) + min(r,b,g) - g
-    return [r2, g2, b2]
-
 def expandingCircles():
     run = True
     squares = []
@@ -778,6 +607,18 @@ def expandingCircles():
         # Draw to screen and wait
         strips.show()
 
+def audioCircle(peak):
+    blankStrip()
+    circle = Circle(50, 50, RED, peak, None)
+    drawShapes([circle], 0, BLANK)
+    strips.show()
+
+def solidColorDimmer(peak, denominator=39.0):
+    fraction = peak / denominator
+    if fraction < 0.25:
+        fraction = 0.25
+    blankStrip(dimColor(RED, fraction))
+    strips.show()
 
 ###
 # Animation Generators
