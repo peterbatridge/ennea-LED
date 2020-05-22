@@ -522,6 +522,12 @@ def drawExpandingSquare():
         sq.transformations = Transformations(0,0,1,1)
         sq.transform()
 
+def sparkleAudio():
+    baseColor = nextInWheel()
+    for n in range(0,14):
+        strips[n*31:(n+1)*31] = [wheel((baseColor+50)%768)]*31
+    strips.show()
+
 def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
     global modeChanged
     squares = []
@@ -620,7 +626,7 @@ def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColor
         r1 = r2
     modeChanged = False
 
-def expandingCircles():
+def expandingCircles(borderWidth = 0):
     global modeChanged
     circles = []
     expandLength = [randrange(20,30),randrange(20,30),randrange(40,60),randrange(60,100),randrange(60,90)]
@@ -630,7 +636,7 @@ def expandingCircles():
         circles.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None))
 
     while not modeChanged:
-        drawShapes(circles, 2, background)
+        drawShapes(circles, borderWidth, background)
         #frame = (frame+1) % 2
         if frame == 1:
             background = BLANK
