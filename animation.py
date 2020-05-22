@@ -548,8 +548,9 @@ def pinwheelAudio(color = None, backgroundColor = None):
 def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     rect.rotate(peak)
     if color == None or backgroundColor == None:
-        color = nextInWheel()
-        backgroundColor = wheelComplementaryColor(color)
+        wheelPos = nextInWheel()
+        color = wheel(wheelPos)
+        backgroundColor = wheel(wheelComplementaryColor(wheelPos))
     rect.color = color
     drawShapes([rect], 0, backgroundColor)
     strips.show()
