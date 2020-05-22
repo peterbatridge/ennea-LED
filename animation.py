@@ -523,9 +523,9 @@ def drawExpandingSquare():
         sq.transform()
 
 def sparkleAudio():
-    baseColor = nextInWheel()
+    baseColor = nextInWheel(3)
     for n in range(0,14):
-        strips[n*31:(n+1)*31] = [wheel((baseColor+50)%768)]*31
+        strips[n*31:(n+1)*31] = [wheel((baseColor+n*50)%768)]*31
     strips.show()
 
 def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
