@@ -116,6 +116,55 @@ colorThreeArg = {
     'type': "color",
     'notes': "A color."
 }
+colorOneOptionalArg = {
+    'name': "Color One",
+    'optional': True,
+    'rules': "select",
+    'type': "color",
+    'notes': "A color."
+}
+colorTwoOptionalArg = {
+    'name': "Color Two",
+    'optional': True,
+    'rules': "select",
+    'type': "color",
+    'notes': "A color."
+}
+colorBackgroundOptionalArg = {
+    'name': "Background Color",
+    'optional': True,
+    'rules': "select",
+    'type': "color",
+    'notes': "A color."
+}
+colorWheelOptionalOneArg = {
+    'name': "Color Wheel One",
+    'optional': True,
+    'rules': "0-768",
+    'type': "number",
+    'notes': "A color."
+}
+colorWheelOptionalTwoArg = {
+    'name': "Color Wheel Two",
+    'optional': True,
+    'rules': "0-768",
+    'type': "number",
+    'notes': "A color."
+}
+colorWheelOptionalThreeArg = {
+    'name': "Color Wheel Three",
+    'optional': True,
+    'rules': "0-768",
+    'type': "number",
+    'notes': "A color."
+}
+borderWidth = {
+    'name': "Border Width",
+    'optional': True,
+    'rules': "0-10",
+    'type': "number",
+    'notes': "A number of pixels for border width"
+}
 directionArg = {
     'name': "Direction",
     'optional': False,
@@ -241,6 +290,65 @@ modes = {
             }
         ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
+    },
+    '9': {
+        'functionName': 'drawRainingSquares',
+        'args': [
+            {
+                'name': "",
+                'optional': True,
+                'rules': "",
+                'type': "",
+                'notes': ""
+            },
+            {
+                'name': "",
+                'optional': True,
+                'rules': "",
+                'type': "",
+                'notes': ""
+            }
+        ],
+        'notes': ''
+    },
+    '10': {
+        'functionName': 'oppositeRains',
+        'args': [
+        ],
+        'notes': ''
+    },
+    '11': {
+        'functionName': 'pinwheelAudio',
+        'args': [
+            colorOneOptionalArg,
+            colorBackgroundOptionalArg
+        ],
+        'notes': ''
+    },
+    '12': {
+        'functionName': 'fireAudio',
+        'args': [
+        ],
+        'notes': ''
+    },
+    '13': {
+        'functionName': 'fireRandom',
+        'args': [
+        ],
+        'notes': ''
+    },
+    '14': {
+        'functionName': 'expandingCircles',
+        'args': [
+            borderWidth
+        ],
+        'notes': ''
+    },
+    '15': {
+        'functionName': 'expandingRectangle',
+        'args': [
+        ],
+        'notes': ''
     }
 }
 
@@ -326,15 +434,7 @@ try:
                     func = validFunctions[modes[mode]['functionName']]
                     args = ast.literal_eval(state['args'][m])
                     try:
-                        #waitUntilSoundReachesThreshold(0)
-                        #getAudioDataFromArduino()
-                        #handleAudio(verticalSides, 1, solidColorDimmer)
-                        #drawExpandingSquare()
-                        #sparkleAudio()
-                        expandingRectangle()
-                        #oppositeRains()
-                        #expandingCircles()
-                        #func(*args)
+                        func(*args)
                     except Exception as e:
                         exc_type, exc_value, exc_traceback = sys.exc_info()
                         print(func, args)
