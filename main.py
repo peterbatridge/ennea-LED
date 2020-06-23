@@ -44,7 +44,8 @@ validFunctions = {
     'fireAudio': fireAudio,
     'fireRandom': fireRandom,
     'expandingCircles': expandingCircles,
-    'expandingRectangle': expandingRectangle
+    'expandingRectangle': expandingRectangle,
+    'sparkleAudio': sparkleAudio
 
 }
 fadeFramesArg = {
@@ -354,6 +355,12 @@ modes = {
     },
     '15': {
         'functionName': 'expandingRectangle',
+        'args': [
+        ],
+        'notes': ''
+    },
+    '16': {
+        'functionName': 'sparkleAudio',
         'args': [
         ],
         'notes': ''
