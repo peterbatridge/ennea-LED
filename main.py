@@ -37,7 +37,15 @@ validFunctions = {
     'fillSidesAnimation': fillSidesAnimation,
     'traceSidesAnimation': traceSidesAnimation,
     'rainbowCycle': rainbowCycle,
-    'gifAnimation' : gifAnimation
+    'gifAnimation' : gifAnimation,
+    'drawRainingSquares': drawRainingSquares,
+    'oppositeRains': oppositeRains,
+    'pinwheelAudio': pinwheelAudio,
+    'fireAudio': fireAudio,
+    'fireRandom': fireRandom,
+    'expandingCircles': expandingCircles,
+    'expandingRectangle': expandingRectangle
+
 }
 fadeFramesArg = {
     'name': "Fade Frames",
