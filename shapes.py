@@ -157,6 +157,10 @@ class Rectangle(Polygon):
         bottom = self.y + centerYDist
         return (top > screenY or bottom < 0 and right < 0 or left > screenX)
 
+    def moveNoRotation(self):
+        self.x = self.x + self.transformations.moveX
+        self.y = self.y + self.transformations.moveY
+
     def transform(self):
         self.sizeX = self.sizeX + self.transformations.alterSizeX
         self.sizeY = self.sizeY + self.transformations.alterSizeY

@@ -576,7 +576,7 @@ def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
 
         # Perform Transform & check for offscreens
         for j in range(0, len(squares)):
-            squares[j].transform()
+            squares[j].moveNoRotation()
             if squares[j].isOffscreen(SCREEN, SCREEN):
                 squares[j].y = 0
                 squares[j].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
