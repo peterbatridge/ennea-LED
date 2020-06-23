@@ -570,13 +570,13 @@ def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
     squares = []
     for i in range(0,10):
         transformation = Transformations(0, randrange(1,3), 0)
-        squares.append(Rectangle(i*10,randrange(0,SCREEN), wheel(randrange(colorWheelLowerBound,colorWheelUpperBound)), 10, 10, transformation))
+        squares.append(Circle(i*10,randrange(0,SCREEN), wheel(randrange(colorWheelLowerBound,colorWheelUpperBound)), 10, transformation))
     while not modeChanged:
         drawShapes(squares, 0, BLANK)
 
         # Perform Transform & check for offscreens
         for j in range(0, len(squares)):
-            squares[j].moveNoRotation()
+            squares[j].transform()
             if squares[j].isOffscreen(SCREEN, SCREEN):
                 squares[j].y = 0
                 squares[j].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
