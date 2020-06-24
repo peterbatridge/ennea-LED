@@ -11,6 +11,7 @@ from constants import *
 from animation import *
 import ast
 import traceback, sys
+import shared
 
 ###
 # Available Functions
@@ -373,14 +374,13 @@ firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 def onModeSnapshot(doc_snapshot, changes, read_time):
-    global state, modeChanged
     for doc in doc_snapshot:
         print(u'Received document snapshot: {}'.format(doc.id))
         if doc.id == 'current':
             print(doc.to_dict())
             print("Update the state!")
-            state = doc.to_dict()
-            modeChanged = True
+            shared.state = doc.to_dict()
+            shared.modeChanged = True
 
 
 constantsDocRef = db.collection(u'constants')
@@ -443,11 +443,11 @@ constantsDocRef.document('modes').set(modes)
 try:
     while True:
         try:
-            for m, mode in enumerate(state['mode']):
+            for m, mode in enumerate(shared.state['mode']):
                 # do an args check here
                 if mode in modes.keys():
                     func = validFunctions[modes[mode]['functionName']]
-                    args = ast.literal_eval(state['args'][m])
+                    args = ast.literal_eval(shared.state['args'][m])
                     try:
                         func(*args)
                     except Exception as e:

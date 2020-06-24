@@ -8,6 +8,7 @@ import time
 import numpy as np 
 import ast
 from shapes import *
+import shared
 
 class Animation:
     def __init__(self):
@@ -17,13 +18,6 @@ class Animation:
         self.soundFrames = []
         self.soundThreshold = 0
         self.backgroundColor = BLANK
-
-
-state = {
-    'mode': [0],
-    'args': ["[]"]
-}
-modeChanged = False
 
 CLK  = 18
 MISO = 23
@@ -202,14 +196,13 @@ def remap_range(value, remap):
                 return int((value / maxes[0])* maxes[1])
 
 def waitUntilSoundReachesThreshold(threshold):
-    global modeChanged
     peakToPeak = 0
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
     fullSample = False
-    while (peakToPeak<threshold or not fullSample) and not modeChanged:
+    while (peakToPeak<threshold or not fullSample) and not shared.modeChanged:
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
@@ -229,7 +222,7 @@ def waitUntilSoundReachesThreshold(threshold):
             peakToPeak = 0
         elif peakToPeak > 1023:
             peakToPeak = 1023
-    modeChanged = False
+    shared.modeChanged = False
 
 def fillLedsBasedOnVolume(peak):
     blankStrip()
@@ -251,14 +244,13 @@ def volumeMeterSides(peak):
     strips.show()
 
 def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, **kwargs):
-    global modeChanged
     peak = 0
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
     totalFrames = 0
-    while not modeChanged: 
+    while not shared.modeChanged: 
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
@@ -287,7 +279,7 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, **kwargs):
 
         totalFrames = totalFrames+1
         functionCalledWithPeak(peak, **kwargs)
-    modeChanged = False
+    shared.modeChanged = False
 
 ###
 # Pattern Functions
@@ -566,12 +558,11 @@ def oppositeRains():
         circles[3].transform()
    
 def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
-    global modeChanged
     squares = []
     for i in range(0,10):
         transformation = Transformations(0, randrange(1,3), 0)
         squares.append(Circle(i*10,randrange(0,SCREEN), wheel(randrange(colorWheelLowerBound,colorWheelUpperBound)), 10, transformation))
-    while not modeChanged:
+    while not shared.modeChanged:
         drawShapes(squares, 0, BLANK)
 
         # Perform Transform & check for offscreens
@@ -582,7 +573,7 @@ def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
                 squares[j].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
                 squares[j].transformations = Transformations(0, randrange(1,3), 0)
         strips.show()
-    modeChanged = False
+    shared.modeChanged = False
 
 def pinwheelAudio(color = None, backgroundColor = None):
     rect = Rectangle(50, 50, color, 10, 100, None)
@@ -635,7 +626,6 @@ def fireAudio(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorW
     )
 
 def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
-    global modeChanged
     circles = []
     radius = 5
     for i in range(0,10):
@@ -649,7 +639,7 @@ def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColor
         )
     
     r1 = randrange(10,39)
-    while not modeChanged:
+    while not shared.modeChanged:
         r2 = randrange(10,39)
         step = 3
         if r1 - r2 > 0:
@@ -661,10 +651,9 @@ def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColor
                 backgroundColorWheel=backgroundColorWheel
             )
         r1 = r2
-    modeChanged = False
+    shared.modeChanged = False
 
 def expandingCircles(borderWidth = 0):
-    global modeChanged
     circles = []
     expandLength = [randrange(20,30),randrange(20,30),randrange(40,60),randrange(60,100),randrange(60,90)]
     frame = 0
@@ -672,7 +661,7 @@ def expandingCircles(borderWidth = 0):
     for i in range(0,5):
         circles.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None))
 
-    while not modeChanged:
+    while not shared.modeChanged:
         drawShapes(circles, borderWidth, background)
         #frame = (frame+1) % 2
         if frame == 1:
@@ -691,7 +680,7 @@ def expandingCircles(borderWidth = 0):
 
         # Draw to screen and wait
         strips.show()
-    modeChanged = False
+    shared.modeChanged = False
 
 def audioCircle(peak):
     blankStrip()
