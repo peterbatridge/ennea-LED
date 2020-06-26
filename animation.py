@@ -462,12 +462,10 @@ def applyScaleAndGetColor(color):
         return BLANK
     return wheel(int((color/253.0)*768))
 
-def gifAnimation(name, hangFrames, fadeFrames):
+def gifAnimation(name):
     global gifs
     animation = gifs[name]['frames']
     for n, s in enumerate(animation):
-        # for f in range(hangFrames+fadeFrames):
-        #     if f < fadeFrames:
         strip = list(map(wheel, s))
         strips[0:434] = strip
         strips.show()
