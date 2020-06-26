@@ -31,7 +31,7 @@ strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, bau
 
 lastFrameNonagonColors = []
 lastFrameSideColors = []
-lastFrameBackgroundColor = BLANK
+lastRandomColor = BLANK
 wheelIterator = 0
 
 ###
@@ -187,14 +187,6 @@ def wheel(num):
         g = 0
     return [r,g,b]
 
-def gifWheel(num):
-    if num == 255:
-        return [255,255,255]
-    elif num == 254:
-        return [0,0,0]
-    else:
-        return wheel(int((num / 253.0)*768))
-
 def remap_range(value, remap):
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
@@ -251,14 +243,14 @@ def volumeMeterSides(peak):
                 setSide(nonagon, side[1], color)
     strips.show()
 
-def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, **kwargs):
+def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, maxFrames = 0, **kwargs):
     peak = 0
     noise = 15
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
     totalFrames = 0
-    while not shared.modeChanged: 
+    while not shared.modeChanged and (maxFrames == 0 or maxFrames > totalFrames):
         signalMax = 0
         signalMin = 1023
         sample = mcp.read_adc(0)
@@ -293,31 +285,31 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, **kwargs):
 # Pattern Functions
 ###
  
-def rainbowCycle(wait):
+def rainbowCycle(wait = 0):
     for j in range(768):
         for i in range(num_pixels):
             rc_index = (i * 768 // num_pixels) + j
             strips[i] = wheel(rc_index % 768)
         strips.show()
         time.sleep(wait) 
-def bounce(background, foreground):
+def bounce(foregroundColor = RED, backgroundColor = BLANK):
     pattern = [BLANK] * 31
     for frame in range(0,60):
         for i in range(num_pixels//3):
             if frame > 30:
                 frame = 29 - (frame % 31)
             if frame == i: # or frame+15 == i or frame-15==i:
-                pattern[i] = foreground
+                pattern[i] = foregroundColor
                 #strips[(i+31)%61] = PURPLE
                 #strips[(i+62)%93] = PURPLE
             else:
-                pattern[i] = background           
+                pattern[i] = backgroundColor           
                 #strips[i+31] = BLUE
                 #strips[i+62] = BLUE
         setPatternOnEveryNonagon(pattern)
         strips.show()
 
-def solidRandomColors(wait=0.2):
+def solidRandomColors(wait = 0.2):
     for n in range(0,14):
         strips[0:31] = [randomColor()]*31
         strips[31:62] = [randomColor()]*31
@@ -336,13 +328,13 @@ def solidRandomColors(wait=0.2):
         strips.show() 
         time.sleep(wait)
 
-def solidColorCycle(wait=0.2):
+def solidColorCycle(wait = 0.2):
     for n in range(0,14):
         setNonagonColor(n, colors[n%9])
         strips.show() 
         time.sleep(wait)
 
-def solidRandomColorEveryOther(wait=1):
+def solidRandomColorEveryOther(wait = 1):
     for i in range(0,2):
         blankStrip()
         for q in range(0,14, 2):
@@ -350,7 +342,7 @@ def solidRandomColorEveryOther(wait=1):
         strips.show()
         time.sleep(wait)
 
-def fiveSolidRandomColors(wait=1):
+def fiveSolidRandomColors(wait = 1):
     blankStrip()
     for i in range(0,5):
         x = randrange(0,14)
@@ -358,7 +350,7 @@ def fiveSolidRandomColors(wait=1):
     strips.show()
     time.sleep(wait)
 
-def pinwheel(wait):
+def pinwheel(wait = 0):
     for i in range(0,768):
         strips[0:434] = [(0,0,0)] * 434
         for q in range(0,62):
@@ -378,16 +370,6 @@ def trail(length):
 ###
 # Animation Core Functions
 ###
-
-def groupCycleThroughSequence(group, colorSeq, wait):
-    length = len(colorSeq)
-    for i in range(0,length):
-        for q, row in enumerate(group):
-            color = colorSeq[(i+q)%length]
-            for nonagon in row:
-                setNonagonColor(nonagon, color)
-        strips.show()
-        time.sleep(wait)
 
 def stepBetweenColors(startColor, endColor, stepCount, currentStep):
     r = ((endColor[0]-startColor[0]) * currentStep /stepCount)+startColor[0]
@@ -474,12 +456,9 @@ def gifAnimation(name):
     global gifs
     animation = gifs[name]['frames']
     for n, s in enumerate(animation):
-        strip = list(map(gifWheel, s))
+        strip = list(map(applyScaleAndGetColor, s))
         strips[0:434] = strip
         strips.show()
-
-
-
 
 ###
 # Animations With Shape Objects
@@ -515,16 +494,16 @@ def drawFallingRect():
         strips.show()    
 
 def expandingRectangle():
-    global lastFrameBackgroundColor
-    newColor = randomColor(lastFrameBackgroundColor)
+    global lastRandomColor
+    newColor = randomColor(lastRandomColor)
     sq = Rectangle(50, 50, newColor, 1, 1, Transformations(0,0,1,1))
-    background = lastFrameBackgroundColor
+    background = lastRandomColor
     for i in range(0, 100):
         drawShapes([sq], 0, background)
         strips.show()
         sq.transformations = Transformations(0,0,1,1)
         sq.transform()
-    lastFrameBackgroundColor = newColor
+    lastRandomColor = newColor
 
 def drawSparkleWithPeak(peak, fadeFrames):
     baseColor = nextInWheel(3)
@@ -542,16 +521,16 @@ def drawSparkleWithPeak(peak, fadeFrames):
                 strips[n*31+p] = stepBetweenColors(strips[n*31+p], mask[p], fadeFrames, i)
     strips.show()
 
-def sparkleAudio(fadeFrames=2):
-    handleAudio(verticalSides, 3, drawSparkleWithPeak, fadeFrames=fadeFrames)
+def sparkleAudio(fadeFrames=2, maxFrames = 0):
+    handleAudio(verticalSides, 3, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames)
 
-def oppositeRains():
+def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = BLANK):
     upTransform = Transformations(0,-2,0)
     downTransform = Transformations(0,2,0)
-    circles = [Circle(42, 100, MAGENTA, 7, upTransform), Circle(70, 100, MAGENTA, 7, upTransform), 
-            Circle(29, 0 , MAGENTA, 7, downTransform), Circle(56, 0, MAGENTA, 7 , downTransform)]
+    circles = [Circle(42, 100, bottomColor, 7, upTransform), Circle(70, 100, bottomColor, 7, upTransform), 
+            Circle(29, 0 , topColor, 7, downTransform), Circle(56, 0, topColor, 7 , downTransform)]
     for i in range(0, 100):
-        drawShapes(circles, 0, BLANK)
+        drawShapes(circles, 0, backgroundColor)
         strips.show()
         if i == 50:
             circles[0].transformations = downTransform
@@ -563,12 +542,13 @@ def oppositeRains():
         circles[2].transform()
         circles[3].transform()
    
-def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
+def drawRainingSquares(colorWheelLowerBound = 256, colorWheelUpperBound = 512, maxFrames = 0):
     squares = []
     for i in range(0,10):
         transformation = Transformations(0, randrange(1,3), 0)
         squares.append(Circle(i*10,randrange(0,SCREEN), wheel(randrange(colorWheelLowerBound,colorWheelUpperBound)), 10, transformation))
-    while not shared.modeChanged:
+    totalFrames = 0
+    while not shared.modeChanged and (maxFrames == 0 or maxFrames > totalFrames):
         drawShapes(squares, 0, BLANK)
 
         # Perform Transform & check for offscreens
@@ -579,11 +559,12 @@ def drawRainingSquares(colorWheelLowerBound=256, colorWheelUpperBound=512):
                 squares[j].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
                 squares[j].transformations = Transformations(0, randrange(1,3), 0)
         strips.show()
+        totalFrames = totalFrames + 1
     shared.modeChanged = False
 
-def pinwheelAudio(color = None, backgroundColor = None):
+def pinwheelAudio(color = None, backgroundColor = None, maxFrames = 0):
     rect = Rectangle(50, 50, color, 10, 100, None)
-    handleAudio(verticalSides, 3, drawPinwheelWithPeak, rect=rect, color=color, backgroundColor=backgroundColor)
+    handleAudio(verticalSides, 3, drawPinwheelWithPeak, maxFrames, rect=rect, color=color, backgroundColor=backgroundColor)
 
 def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     rect.rotate(peak)
@@ -608,7 +589,7 @@ def drawFireWithPeak(peak, circles, colorWheelLowerBound=20, colorWheelUpperBoun
             circles[i].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
             circles[i].transformations = Transformations(randrange(-2,2), randrange(-5,-2), 0)
 
-def fireAudio(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
+def fireAudio(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0, maxFrames = 0):
     circles = []
     radius = 5
     for i in range(0,10):
@@ -624,14 +605,15 @@ def fireAudio(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorW
     handleAudio(
         verticalSides, 
         3,
-        drawFireWithPeak, 
+        drawFireWithPeak,
+        maxFrames, 
         circles=circles, 
         colorWheelLowerBound=colorWheelLowerBound, 
         colorWheelUpperBound=colorWheelUpperBound, 
         backgroundColorWheel=backgroundColorWheel, 
     )
 
-def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
+def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0, maxFrames = 0):
     circles = []
     radius = 5
     for i in range(0,10):
@@ -645,7 +627,8 @@ def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColor
         )
     
     r1 = randrange(10,39)
-    while not shared.modeChanged:
+    totalFrames = 0
+    while not shared.modeChanged and (maxFrames == 0 or maxFrames > totalFrames):
         r2 = randrange(10,39)
         step = 3
         if r1 - r2 > 0:
@@ -657,9 +640,10 @@ def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColor
                 backgroundColorWheel=backgroundColorWheel
             )
         r1 = r2
+        totalFrames = totalFrames + 1
     shared.modeChanged = False
 
-def expandingCircles(borderWidth = 0):
+def expandingCircles(borderWidth = 0, maxFrames = 0):
     circles = []
     expandLength = [randrange(20,30),randrange(20,30),randrange(40,60),randrange(60,100),randrange(60,90)]
     frame = 0
@@ -667,7 +651,8 @@ def expandingCircles(borderWidth = 0):
     for i in range(0,5):
         circles.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None))
 
-    while not shared.modeChanged:
+    totalFrames = 0
+    while not shared.modeChanged and (maxFrames == 0 or maxFrames > totalFrames):
         drawShapes(circles, borderWidth, background)
         #frame = (frame+1) % 2
         if frame == 1:
@@ -686,6 +671,7 @@ def expandingCircles(borderWidth = 0):
 
         # Draw to screen and wait
         strips.show()
+        totalFrames = totalFrames + 1
     shared.modeChanged = False
 
 def audioCircle(peak):
@@ -824,15 +810,22 @@ def exMachinaMode():
     fillSidesAnimation(topLeftToBottomRightSharpDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
 
 def singleFrameSolidRandomColor(hangFrames=10, fadeFrames=10, threshold=0):
+    global lastRandomColor
+    uniqueRandomColor = randomColor(lastRandomColor)
+    lastRandomColor = uniqueRandomColor 
     animation = [{
         'groups': everyNonagon,
-        'colors': [randomColor()]
+        'colors': [uniqueRandomColor]
     }]
     animateNonagonGroups(animation, hangFrames, fadeFrames, [0], threshold)
 
 def singleFrameTrianglesRandomColor(hangFrames=10, fadeFrames=10, threshold=0):
+    global lastRandomColor
+    uniqueRandomColorOne = randomColor(lastRandomColor)
+    uniqueRandomColorTwo = randomColor(uniqueRandomColorOne)
+    lastRandomColor = uniqueRandomColorTwo
     animation = [{
         'groups': triangles,
-        'colors': [randomColor(), randomColor()]
+        'colors': [uniqueRandomColorOne, uniqueRandomColorTwo]
     }]
     animateNonagonGroups(animation, hangFrames, fadeFrames, [0], threshold)
