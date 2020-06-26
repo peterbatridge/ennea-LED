@@ -294,8 +294,8 @@ modes = {
             {
                 'name': "Gif Name",
                 'optional': False,
-                'rules': '',
-                'type': "Name of Gif",
+                'rules': 'select',
+                'type': "gifNames",
                 'notes': 'Just the name not the value'
             }
         ],
