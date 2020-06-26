@@ -185,7 +185,15 @@ def wheel(num):
         b = 255 - (num%256)
         r = num % 256
         g = 0
-    return (r,g,b)
+    return [r,g,b]
+
+def gifWheel(num):
+    if num == 255:
+        return [255,255,255]
+    elif num == 254:
+        return [0,0,0]
+    else:
+        return wheel(int((num / 253.0)*768))
 
 def remap_range(value, remap):
     for m, maxes in enumerate(remap):
@@ -466,7 +474,7 @@ def gifAnimation(name):
     global gifs
     animation = gifs[name]['frames']
     for n, s in enumerate(animation):
-        strip = list(map(wheel, s))
+        strip = list(map(gifWheel, s))
         strips[0:434] = strip
         strips.show()
 
