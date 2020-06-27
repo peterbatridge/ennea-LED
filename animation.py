@@ -351,6 +351,8 @@ def fiveSolidRandomColors(wait = 1):
     time.sleep(wait)
 
 def individualPinwheels(wait = 0):
+    if wait > 0.1:
+        wait = 0.1
     for i in range(0,768):
         strips[0:434] = [(0,0,0)] * 434
         for q in range(0,62):
