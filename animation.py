@@ -802,13 +802,10 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
 ###    
 def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFrames):
     shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
-
-def cycleThroughColorSequenceWithEveryNonagon(sequence, hangFrames, fadeFrames):
-    shiftColorSequenceOverNonagonGroups(everyNonagon, sequence, hangFrames, fadeFrames)
     
-def exMachinaMode():
-    cycleThroughColorSequenceWithEveryNonagon(coldFour, 15, 10)
-    cycleThroughColorSequenceWithEveryNonagon(coldFour, 15, 10)
+def exMachinaMode(threshold=50):
+    shiftColorSequenceOverNonagonGroups(everyNonagon, coldFour, 15, 10, threshold)
+    shiftColorSequenceOverNonagonGroups(everyNonagon, coldFour, 15, 10, threshold)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
     fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)

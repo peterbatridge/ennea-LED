@@ -53,7 +53,8 @@ validFunctions = {
     'solidRandomColorEveryOther': solidRandomColorEveryOther,
     'fiveSolidRandomColors': fiveSolidRandomColors,
     'individualPinwheels': individualPinwheels,
-    'trail': trail
+    'trail': trail,
+    'exMachinaMode': exMachinaMode
 }
 fadeFramesArg = {
     'name': "Fade Frames",
@@ -453,6 +454,14 @@ modes = {
             }
         ],
         'notes': ''
+    },
+    '24': {
+        'functionName': 'exMachinaMode',
+        'args': [
+            {
+                thresholdArg
+            }
+        ]
     }
 }
 
