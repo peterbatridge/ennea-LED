@@ -295,7 +295,7 @@ def rainbowCycle(wait = 0):
 def bounce(foregroundColor = RED, backgroundColor = BLANK):
     pattern = [BLANK] * 31
     for frame in range(0,60):
-        for i in range(num_pixels//3):
+        for i in range(num_pixels//14):
             if frame > 30:
                 frame = 29 - (frame % 31)
             if frame == i: # or frame+15 == i or frame-15==i:
@@ -547,7 +547,7 @@ def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = B
         circles[2].transform()
         circles[3].transform()
    
-def drawRainingSquares(colorWheelLowerBound = 256, colorWheelUpperBound = 512, maxFrames = 0):
+def drawRainingSquares(maxFrames = 0, colorWheelLowerBound = 256, colorWheelUpperBound = 512):
     squares = []
     for i in range(0,10):
         transformation = Transformations(0, randrange(3,5), 0)
@@ -567,7 +567,7 @@ def drawRainingSquares(colorWheelLowerBound = 256, colorWheelUpperBound = 512, m
         totalFrames = totalFrames + 1
     shared.modeChanged = False
 
-def pinwheelAudio(color = BLANK, backgroundColor = BLANK, maxFrames = 0):
+def pinwheelAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK):
     rect = Rectangle(50, 50, color, 10, 100, None)
     handleAudio(verticalSides, 3, drawPinwheelWithPeak, maxFrames, rect=rect, color=color, backgroundColor=backgroundColor)
 
@@ -648,7 +648,7 @@ def fireRandom(maxFrames = 0, colorWheelLowerBound=20, colorWheelUpperBound=60, 
         totalFrames = totalFrames + 1
     shared.modeChanged = False
 
-def expandingCircles(borderWidth = 0, maxFrames = 0):
+def expandingCircles(maxFrames = 0, borderWidth = 0):
     circles = []
     expandLength = [randrange(20,30),randrange(20,30),randrange(40,60),randrange(60,100),randrange(60,90)]
     frame = 0

@@ -318,6 +318,7 @@ modes = {
     '9': {
         'functionName': 'drawRainingSquares',
         'args': [
+            maxFramesArg,
             {
                 'name': "",
                 'optional': True,
@@ -347,9 +348,9 @@ modes = {
     '11': {
         'functionName': 'pinwheelAudio',
         'args': [
+            maxFramesArg,
             colorOneOptionalArg,
             colorBackgroundOptionalArg,
-            maxFramesArg
         ],
         'notes': ''
     },
@@ -370,6 +371,7 @@ modes = {
     '14': {
         'functionName': 'expandingCircles',
         'args': [
+            maxFramesArg,
             borderWidth
         ],
         'notes': ''
@@ -432,14 +434,14 @@ modes = {
         ],
         'notes': ''
     },
-    '21': {
+    '22': {
         'functionName': 'individualPinwheels',
         'args': [
             waitTimeArg
         ],
         'notes': ''
     },
-    '21': {
+    '23': {
         'functionName': 'trail',
         'args': [
             {
