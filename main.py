@@ -383,7 +383,16 @@ modes = {
     '16': {
         'functionName': 'sparkleAudio',
         'args': [
-            maxFramesArg
+            maxFramesArg,
+            colorOneOptionalArg,
+            colorBackgroundOptionalArg,
+            {
+                'name': "All Nonagons Boolean",
+                'optional': True,
+                'rules': "0-1",
+                'type': "number",
+                'notes': "Boolean 0 or 1 for whether the rainbow should be for all nonagons or not"
+            }
         ],
         'notes': ''
     },

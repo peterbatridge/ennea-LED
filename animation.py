@@ -507,7 +507,7 @@ def expandingRectangle():
 
 def drawSparkleWithPeak(peak, fadeFrames, color, backgroundColor, allNonagons):
     baseColor = nextInWheel(3)
-    if color != None:
+    if color != BLANK:
         baseColor = color
     if peak >= 28:
         peak = 28
@@ -526,7 +526,7 @@ def drawSparkleWithPeak(peak, fadeFrames, color, backgroundColor, allNonagons):
                 strips[n*31+p] = stepBetweenColors(strips[n*31+p], mask[p], fadeFrames, i)
     strips.show()
 
-def sparkleAudio(fadeFrames=2, maxFrames = 0, color = None, backgroundColor = BLANK, allNonagons = 0):
+def sparkleAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK, allNonagons = 0, fadeFrames=2):
     handleAudio(verticalSides, 3, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
 
 def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = BLANK):
