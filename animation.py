@@ -806,7 +806,7 @@ def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFram
     
 def exMachinaMode(threshold=50):
     shiftColorSequenceOverNonagonGroups(everyNonagon, coldFour, 15, 10, [0,1,2,3], threshold)
-    shiftColorSequenceOverNonagonGroups(everyNonagon, coldFour, 15, 10, threshold)
+    shiftColorSequenceOverNonagonGroups(everyNonagon, coldFour, 15, 10, [0,1,2,3], threshold)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
     fillSidesAnimation(topLeftToBottomRightDiagonal, [RED]*len(topLeftToBottomRightDiagonal), 'top', 'bot', 10, 1, 1)
