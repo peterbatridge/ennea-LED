@@ -458,9 +458,7 @@ modes = {
     '24': {
         'functionName': 'exMachinaMode',
         'args': [
-            {
-                thresholdArg
-            }
+            thresholdArg
         ]
     }
 }
