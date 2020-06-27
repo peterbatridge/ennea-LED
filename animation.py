@@ -722,6 +722,7 @@ def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames
             'groups': groups,
             'colors': shiftRight(sequence, i)
             })
+    print(len(animation))
     animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames, soundThreshold, backgroundColor)
 
 def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor=BLANK):
@@ -804,7 +805,7 @@ def cycleThroughColorSequenceWithNonagonTriangles(sequence, hangFrames, fadeFram
     shiftColorSequenceOverNonagonGroups(triangles, sequence, hangFrames, fadeFrames)
     
 def exMachinaMode(threshold=50):
-    shiftColorSequenceOverNonagonGroups(everyNonagon, coldFour, 15, 10, threshold)
+    shiftColorSequenceOverNonagonGroups(everyNonagon, coldFour, 15, 10, [0,1,2,3], threshold)
     shiftColorSequenceOverNonagonGroups(everyNonagon, coldFour, 15, 10, threshold)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
     shiftColorSequenceOverNonagonGroups(topLeftToBottomRightSharpDiagonal, coldToWarmSixteen, 1, 5)
