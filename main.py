@@ -46,8 +46,14 @@ validFunctions = {
     'fireRandom': fireRandom,
     'expandingCircles': expandingCircles,
     'expandingRectangle': expandingRectangle,
-    'sparkleAudio': sparkleAudio
-
+    'sparkleAudio': sparkleAudio,
+    'bounce': bounce,
+    'solidRandomColors': solidRandomColors,
+    'solidColorCycle': solidColorCycle,
+    'solidRandomColorEveryOther': solidRandomColorEveryOther,
+    'fiveSolidRandomColors': fiveSolidRandomColors,
+    'individualPinwheels': individualPinwheels,
+    'trail': trail
 }
 fadeFramesArg = {
     'name': "Fade Frames",
@@ -62,6 +68,13 @@ hangFramesArg = {
     'rules': "0-10000",
     'type': "number" ,
     'notes': "The number of cycles that an animation will pause on each frame. Recommended values between 1-10."
+}
+maxFramesArg = {
+    'name': "Max Frames",
+    'optional': True,
+    'rules': "0-10000",
+    'type': "number" ,
+    'notes': "The number of cycles that an animation run before exiting its while loop"
 }
 soundFramesArg = {
     'name': "Sound Threshold Frames",
@@ -182,6 +195,13 @@ directionArg = {
     'type': "direction",
     'notes': "A direction."
 }
+waitTimeArg = {
+    'name': "Wait Time",
+    'optional': False,
+    'rules': '0-1',
+    'type': "number",
+    'notes': 'Amount of time in seconds between frames, zero is recommended, no higher than 1 second.'
+}
 modes = {
     '0': {
         'functionName': 'singleFrameSolidRandomColor',
@@ -278,13 +298,7 @@ modes = {
     '7': {
         'functionName': 'rainbowCycle',
         'args': [
-            {
-                'name': "Wait Time",
-                'optional': False,
-                'rules': '0-1',
-                'type': "number",
-                'notes': 'Amount of time in seconds between frames, zero is recommended, no higher than 1 second.'
-            }
+            waitTimeArg
         ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"
     },
@@ -331,19 +345,22 @@ modes = {
         'functionName': 'pinwheelAudio',
         'args': [
             colorOneOptionalArg,
-            colorBackgroundOptionalArg
+            colorBackgroundOptionalArg,
+            maxFramesArg
         ],
         'notes': ''
     },
     '12': {
         'functionName': 'fireAudio',
         'args': [
+            maxFramesArg
         ],
         'notes': ''
     },
     '13': {
         'functionName': 'fireRandom',
         'args': [
+            maxFramesArg
         ],
         'notes': ''
     },
@@ -363,6 +380,63 @@ modes = {
     '16': {
         'functionName': 'sparkleAudio',
         'args': [
+            maxFramesArg
+        ],
+        'notes': ''
+    },
+    '17': {
+        'functionName': 'bounce',
+        'args': [
+            colorOneOptionalArg,
+            colorTwoOptionalArg
+        ],
+        'notes': ''
+    },
+    '18': {
+        'functionName': 'solidRandomColors',
+        'args': [
+            waitTimeArg
+        ],
+        'notes': ''
+    },
+    '19': {
+        'functionName': 'solidColorCycle',
+        'args': [
+            waitTimeArg
+        ],
+        'notes': ''
+    },
+    '20': {
+        'functionName': 'solidRandomColorEveryOther',
+        'args': [
+            waitTimeArg
+        ],
+        'notes': ''
+    },
+    '21': {
+        'functionName': 'fiveSolidRandomColors',
+        'args': [
+            waitTimeArg
+        ],
+        'notes': ''
+    },
+    '21': {
+        'functionName': 'individualPinwheels',
+        'args': [
+            waitTimeArg
+        ],
+        'notes': ''
+    },
+    '21': {
+        'functionName': 'trail',
+        'args': [
+            {
+                'name': "Trail Length",
+                'optional': False,
+                'rules': '1-50',
+                'type': "number",
+                'notes': 'Amount of pixels to trail'
+            }
         ],
         'notes': ''
     }

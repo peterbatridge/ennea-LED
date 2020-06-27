@@ -350,7 +350,7 @@ def fiveSolidRandomColors(wait = 1):
     strips.show()
     time.sleep(wait)
 
-def pinwheel(wait = 0):
+def individualPinwheels(wait = 0):
     for i in range(0,768):
         strips[0:434] = [(0,0,0)] * 434
         for q in range(0,62):
@@ -505,24 +505,29 @@ def expandingRectangle():
         sq.transform()
     lastRandomColor = newColor
 
-def drawSparkleWithPeak(peak, fadeFrames):
+def drawSparkleWithPeak(peak, fadeFrames, color, backgroundColor, allNonagons):
     baseColor = nextInWheel(3)
+    if color != None:
+        baseColor = color
     if peak >= 28:
         peak = 28
     if peak < 3:
         peak = 3
     onNum = peak
     for n in range(0,14):
-        mask = [BLANK] * 31
-        mask[0:onNum] = [wheel((baseColor+n*50)%768)] * onNum
+        mask = [backgroundColor] * 31
+        increment = n*50
+        if allNonagons == 1:
+            increment = 0
+        mask[0:onNum] = [wheel((baseColor+increment)%768)] * onNum
         shuffle(mask)
         for i in range(0, fadeFrames):        
             for p in range(0,31):
                 strips[n*31+p] = stepBetweenColors(strips[n*31+p], mask[p], fadeFrames, i)
     strips.show()
 
-def sparkleAudio(fadeFrames=2, maxFrames = 0):
-    handleAudio(verticalSides, 3, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames)
+def sparkleAudio(fadeFrames=2, maxFrames = 0, color = None, backgroundColor = BLANK, allNonagons = 0):
+    handleAudio(verticalSides, 3, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
 
 def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = BLANK):
     upTransform = Transformations(0,-2,0)
@@ -545,7 +550,7 @@ def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = B
 def drawRainingSquares(colorWheelLowerBound = 256, colorWheelUpperBound = 512, maxFrames = 0):
     squares = []
     for i in range(0,10):
-        transformation = Transformations(0, randrange(1,3), 0)
+        transformation = Transformations(0, randrange(3,5), 0)
         squares.append(Circle(i*10,randrange(0,SCREEN), wheel(randrange(colorWheelLowerBound,colorWheelUpperBound)), 10, transformation))
     totalFrames = 0
     while not shared.modeChanged and (maxFrames == 0 or maxFrames > totalFrames):
@@ -557,18 +562,18 @@ def drawRainingSquares(colorWheelLowerBound = 256, colorWheelUpperBound = 512, m
             if squares[j].isOffscreen(SCREEN, SCREEN):
                 squares[j].y = 0
                 squares[j].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
-                squares[j].transformations = Transformations(0, randrange(1,3), 0)
+                squares[j].transformations = Transformations(0, randrange(3,5), 0)
         strips.show()
         totalFrames = totalFrames + 1
     shared.modeChanged = False
 
-def pinwheelAudio(color = None, backgroundColor = None, maxFrames = 0):
+def pinwheelAudio(color = BLANK, backgroundColor = BLANK, maxFrames = 0):
     rect = Rectangle(50, 50, color, 10, 100, None)
     handleAudio(verticalSides, 3, drawPinwheelWithPeak, maxFrames, rect=rect, color=color, backgroundColor=backgroundColor)
 
 def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
-    rect.rotate(peak)
-    if color == None or backgroundColor == None:
+    rect.rotate(-peak)
+    if color == BLANK and backgroundColor == BLANK:
         wheelPos = nextInWheel()
         color = wheel(wheelPos)
         backgroundColor = wheel(wheelComplementaryColor(wheelPos))
