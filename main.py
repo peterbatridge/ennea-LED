@@ -338,6 +338,9 @@ modes = {
     '10': {
         'functionName': 'oppositeRains',
         'args': [
+            colorOneOptionalArg,
+            colorTwoOptionalArg,
+            colorBackgroundOptionalArg
         ],
         'notes': ''
     },

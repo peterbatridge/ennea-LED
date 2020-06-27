@@ -594,7 +594,7 @@ def drawFireWithPeak(peak, circles, colorWheelLowerBound=20, colorWheelUpperBoun
             circles[i].color = wheel(randrange(colorWheelLowerBound,colorWheelUpperBound))
             circles[i].transformations = Transformations(randrange(-2,2), randrange(-5,-2), 0)
 
-def fireAudio(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0, maxFrames = 0):
+def fireAudio(maxFrames = 0, colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
     circles = []
     radius = 5
     for i in range(0,10):
@@ -618,7 +618,7 @@ def fireAudio(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorW
         backgroundColorWheel=backgroundColorWheel, 
     )
 
-def fireRandom(colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0, maxFrames = 0):
+def fireRandom(maxFrames = 0, colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
     circles = []
     radius = 5
     for i in range(0,10):
