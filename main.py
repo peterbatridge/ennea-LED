@@ -459,7 +459,8 @@ modes = {
         'functionName': 'exMachinaMode',
         'args': [
             thresholdArg
-        ]
+        ],
+        'notes': ''
     }
 }
 
