@@ -642,7 +642,6 @@ def fireRandom(maxFrames = 0, colorWheelLowerBound=20, colorWheelUpperBound=60, 
 def expandingCircles(maxFrames = 0, borderWidth = 0):
     circles = []
     expandLength = [randrange(20,30),randrange(20,30),randrange(40,60),randrange(60,100),randrange(60,90)]
-    frame = 0
     background = BLANK
     for i in range(0,5):
         circles.append(Circle(randrange(0,SCREEN), randrange(0,SCREEN), randomColor(), 1, None))
@@ -653,7 +652,6 @@ def expandingCircles(maxFrames = 0, borderWidth = 0):
 
         # Perform Transform & check for offscreens
         for j in range(0, len(circles)):
-            circles[j].color = complementaryColor(circles[j].color)
             circles[j].alterSize(1)
             expandLength[j] = expandLength[j] - 1
             if expandLength[j] < 0:
@@ -777,6 +775,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
         'sides': sides,
         'colors': colors
         })
+    print(animation.frames)
     animateSideGroups(animation)
 
 ###
