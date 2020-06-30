@@ -366,6 +366,7 @@ def trail(length):
 
 class Animation:
     def __init__(self, frames = [], hangFrames = 1, fadeFrames = 0, soundFrames = [], soundThreshold = 0, backgroundColor = BLANK):
+        self.frames = []
         self.frames = frames
         self.hangFrames = hangFrames
         self.fadeFrames = fadeFrames
