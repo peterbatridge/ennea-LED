@@ -775,7 +775,6 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
         'sides': sides,
         'colors': colors
         })
-    print(animation.frames)
     animateSideGroups(animation)
 
 ###
