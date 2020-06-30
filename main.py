@@ -207,8 +207,8 @@ modes = {
     '0': {
         'functionName': 'singleFrameSolidRandomColor',
         'args': [
-            fadeFramesArg,
             hangFramesArg,
+            fadeFramesArg,
             thresholdArg
         ],
         'notes': "Will make all nonagons show the same random color. Takes no arguments or three arguments"
@@ -216,8 +216,8 @@ modes = {
     '1': {
         'functionName': 'singleFrameTrianglesRandomColor',
         'args': [
-            fadeFramesArg,
             hangFramesArg,
+            fadeFramesArg,
             thresholdArg
         ],
         'notes': "Will make every other nonagon show the same random color. Takes no arguments or two arguments"

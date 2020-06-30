@@ -10,15 +10,6 @@ import ast
 from shapes import *
 import shared
 
-class Animation:
-    def __init__(self):
-        self.frames = {}
-        self.hangFrames = 1
-        self.fadeFrames = 0
-        self.soundFrames = []
-        self.soundThreshold = 0
-        self.backgroundColor = BLANK
-
 CLK  = 18
 MISO = 23
 MOSI = 24
@@ -373,54 +364,63 @@ def trail(length):
 # Animation Core Functions
 ###
 
+class Animation:
+    def __init__(self, frames = [], hangFrames = 1, fadeFrames = 0, soundFrames = [], soundThreshold = 0, backgroundColor = BLANK):
+        self.frames = frames
+        self.hangFrames = hangFrames
+        self.fadeFrames = fadeFrames
+        self.soundFrames = soundFrames
+        self.soundThreshold = soundThreshold
+        self.backgroundColor = backgroundColor
+
 def stepBetweenColors(startColor, endColor, stepCount, currentStep):
     r = ((endColor[0]-startColor[0]) * currentStep /stepCount)+startColor[0]
     g = ((endColor[1]-startColor[1]) * currentStep /stepCount)+startColor[1]
     b = ((endColor[2]-startColor[2]) * currentStep /stepCount)+startColor[2]
     return (int(r),int(g),int(b))
 
-def getLastFrameColors(animation):
+def getLastFrameColors(animationFrames):
     global lastFrameNonagonColors
     if lastFrameNonagonColors!=[]:
         return lastFrameNonagonColors
     lastFrameColors = [BLANK]*14
-    frame = animation[len(animation)-1]
+    frame = animationFrames[len(animationFrames)-1]
     for g, group in enumerate(frame['groups']):
         for nonagon in group:
             lastFrameColors[nonagon] = frame['colors'][g]
     return lastFrameColors
 
-def getLastFrameSideColors(animation):
+def getLastFrameSideColors(animationFrames):
     global lastFrameSideColors
     if lastFrameSideColors!=[]:
         return lastFrameSideColors
     lastFrameColors = [[BLANK]*9 for i in range(14)]
-    frame = animation[len(animation)-1]
+    frame = animationFrames[len(animationFrames)-1]
     for g, group in enumerate(frame['sides']):
         for side in group:
             lastFrameColors[side[0]][side[1]] = frame['colors'][g]
     return lastFrameColors
 
-def animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames = [], soundThreshold=0,  backgroundColor = BLANK):
+def animateNonagonGroups(animation):
     global lastFrameNonagonColors
     lastFrameColors = getLastFrameColors(animation)
-    for n, frame in enumerate(animation):
-        for f in range(hangFrames+fadeFrames):
-            blankStrip(backgroundColor)
-            if soundThreshold > 0 and n in soundFrames and f >= fadeFrames:
+    for n, frame in enumerate(animation.frames):
+        for f in range(animation.hangFrames+animation.fadeFrames):
+            blankStrip(animation.backgroundColor)
+            if animation.soundThreshold > 0 and n in animation.soundFrames and f >= animation.fadeFrames:
                 for g, group in enumerate(frame['groups']):
                     color = frame['colors'][g]
                     for nonagon in group:
                         lastFrameColors[nonagon] = color
                         setNonagonColor(nonagon, color)
-                waitUntilSoundReachesThreshold(soundThreshold)
+                waitUntilSoundReachesThreshold(animation.soundThreshold)
             else:
                 for g, group in enumerate(frame['groups']):
                     color = frame['colors'][g]
                     for nonagon in group:
-                        if f < fadeFrames:
+                        if f < animation.fadeFrames:
                             startColor = lastFrameColors[nonagon]
-                            stepColor = stepBetweenColors(startColor, color, fadeFrames, f)
+                            stepColor = stepBetweenColors(startColor, color, animation.fadeFrames, f)
                             setNonagonColor(nonagon, stepColor)
                         else:
                             lastFrameColors[nonagon] = color
@@ -428,18 +428,18 @@ def animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames = [], so
                 strips.show()
     lastFrameNonagonColors = lastFrameColors
 
-def animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor = BLANK):
+def animateSideGroups(animation):
     global lastFrameSideColors
-    lastFrameColors = getLastFrameSideColors(animation)
-    for n, frame in enumerate(animation):
-        for f in range(hangFrames+fadeFrames):
-            blankStrip(backgroundColor)
+    lastFrameColors = getLastFrameSideColors(animation.frames)
+    for n, frame in enumerate(animation.frames):
+        for f in range(animation.hangFrames+animation.fadeFrames):
+            blankStrip(animation.backgroundColor)
             for g, group in enumerate(frame['sides']):
                 color = frame['colors'][g]
                 for side in group:
-                    if f < fadeFrames:
+                    if f < animation.fadeFrames:
                         startColor = lastFrameColors[side[0]][side[1]]
-                        stepColor = stepBetweenColors(startColor, color, fadeFrames, f)
+                        stepColor = stepBetweenColors(startColor, color, animation.fadeFrames, f)
                         setSide(side[0], side[1], stepColor)
                     else:
                         lastFrameColors[side[0]][side[1]] = color
@@ -484,17 +484,6 @@ def drawShapes(shapes, borderWidth, backgroundColor, dimFactor=1):
             color = [int(math.sqrt(r/numColors)), int(math.sqrt(g/numColors)), int(math.sqrt(b/numColors))]
         strips[p] = dimColor(color, dimFactor)
 
-def drawFallingRect():
-    rect = Rectangle(50, 50, BLUE, 10, 100, None)
-    while True:
-        drawShapes([rect], 0, RED)
-        rect.rotate(30)
-        #rect.rotate(5)
-        #print("**************")
-        #for p in rect.points:
-        #    print(p.x, " ", p.y)
-        strips.show()    
-
 def expandingRectangle():
     global lastRandomColor
     newColor = randomColor(lastRandomColor)
@@ -529,7 +518,7 @@ def drawSparkleWithPeak(peak, fadeFrames, color, backgroundColor, allNonagons):
     strips.show()
 
 def sparkleAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK, allNonagons = 0, fadeFrames=2):
-    handleAudio(verticalSides, 3, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
+    handleAudio(sparkleEachNonagon, 3, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
 
 def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = BLANK):
     upTransform = Transformations(0,-2,0)
@@ -700,53 +689,51 @@ def solidColorDimmer(peak, denominator=39.0):
 
 def colorSwapAnimation(groups, colorOne, colorTwo, colorBetween, hangFrames, fadeFrames):
     lengthOfGroup = len(groups)
-    animation = []
+    animation = Animation(hangFrames = hangFrames, fadeFrames = fadeFrames)
     for i in range(1, int(lengthOfGroup/2)+1):
         colorList = [colorOne]*i +[colorBetween]*(lengthOfGroup-(2*i)) + [colorTwo]*i
-        animation.append({
+        animation.frames.append({
             'groups': groups,
             'colors': colorList
         })
     for i in range(int(lengthOfGroup/2), -1, -1):
         colorList =  [colorTwo]*i+[colorBetween]*(lengthOfGroup-(2*i)) + [colorOne]*i
-        animation.append({
+        animation.frames.append({
             'groups': groups,
             'colors': colorList
         })
-    animateNonagonGroups(animation, hangFrames,fadeFrames)
+    animateNonagonGroups(animation)
 
 def shiftColorSequenceOverNonagonGroups(groups, sequence, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor=BLANK):
-    animation = []
+    animation = Animation(hangFrames = hangFrames, fadeFrames = fadeFrames, soundFrames = soundFrames, soundThreshold = soundThreshold, backgroundColor = backgroundColor)
     for i in range(0, len(sequence)):
-        animation.append({
+        animation.frames.append({
             'groups': groups,
             'colors': shiftRight(sequence, i)
             })
-    print(len(animation))
-    animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames, soundThreshold, backgroundColor)
+    animateNonagonGroups(animation)
 
 def shiftColorSequenceOverSetOfNonagonGroups(setOfGroups, sequence, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor=BLANK):
-    animation = []
+    animation = Animation(hangFrames = hangFrames, fadeFrames = fadeFrames, soundFrames = soundFrames, soundThreshold = soundThreshold, backgroundColor = backgroundColor)
     for groupList in setOfGroups:
         for i in range(0, len(sequence)):
-            animation.append({
+            animation.frames.append({
                 'groups': groupList,
                 'colors': shiftRight(sequence, i)
                 })
-    animateNonagonGroups(animation, hangFrames, fadeFrames, soundFrames, soundThreshold, backgroundColor)
+    animateNonagonGroups(animation)
 
 def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor = BLANK):
-    animation = []
+    animation = Animation(hangFrames = hangFrames, fadeFrames = fadeFrames, soundFrames = soundFrames, soundThreshold = soundThreshold, backgroundColor = backgroundColor)
     for g, group in enumerate(nonagonGroups):
-
         for s in range(0, 5):
             sides = [[]]
             for n in group:
                 sides[0] = sides[0] + sidesFromDirection(n, s, direction, False)
-            animation.append({
+            animation.frames.append({
                 'sides': sides,
                 'colors': [sequence[g]]})     
-    animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor)
+    animateSideGroups(animation)
 
 def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor = BLANK):
     if width<5:
@@ -757,6 +744,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
     filled = 0
     startIter = 0
     endIter = 1
+    animation = Animation(hangFrames = hangFrames, fadeFrames = fadeFrames, soundFrames = soundFrames, soundThreshold = soundThreshold, backgroundColor = backgroundColor)
     for i in range(numBuckets*width):
         sides = []
         colors = []
@@ -791,12 +779,12 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
                 for n in nonagonGroups[b]:
                     sides[len(sides)-1] = sides[len(sides)-1] + sidesFromDirection(n, buckets[b], direction)
 
-        animation.append({
+        animation.frames.append({
         'sides': sides,
         'colors': colors
         })  
 
-    animateSideGroups(animation, hangFrames, fadeFrames, backgroundColor)
+    animateSideGroups(animation)
 
 ###
 # Modes
@@ -817,20 +805,22 @@ def exMachinaMode(threshold=50):
 def singleFrameSolidRandomColor(hangFrames=10, fadeFrames=10, threshold=0):
     global lastRandomColor
     uniqueRandomColor = randomColor(lastRandomColor)
-    lastRandomColor = uniqueRandomColor 
-    animation = [{
+    lastRandomColor = uniqueRandomColor
+    animation = Animation(hangFrames = hangFrames, fadeFrames = fadeFrames, soundFrames = [0], soundThreshold = threshold)
+    animation.frames = [{
         'groups': everyNonagon,
         'colors': [uniqueRandomColor]
     }]
-    animateNonagonGroups(animation, hangFrames, fadeFrames, [0], threshold)
+    animateNonagonGroups(animation)
 
 def singleFrameTrianglesRandomColor(hangFrames=10, fadeFrames=10, threshold=0):
     global lastRandomColor
     uniqueRandomColorOne = randomColor(lastRandomColor)
     uniqueRandomColorTwo = randomColor(uniqueRandomColorOne)
     lastRandomColor = uniqueRandomColorTwo
-    animation = [{
+    animation = Animation(hangFrames = hangFrames, fadeFrames = fadeFrames, soundFrames = [0], soundThreshold = threshold)
+    animation.frames = [{
         'groups': triangles,
         'colors': [uniqueRandomColorOne, uniqueRandomColorTwo]
     }]
-    animateNonagonGroups(animation, hangFrames, fadeFrames, [0], threshold)
+    animateNonagonGroups(animation)
