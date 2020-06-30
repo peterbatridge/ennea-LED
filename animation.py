@@ -365,14 +365,13 @@ def trail(length):
 ###
 
 class Animation:
-    def __init__(self, frames = [], hangFrames = 1, fadeFrames = 0, soundFrames = [], soundThreshold = 0, backgroundColor = BLANK):
-        self.frames = []
-        self.frames = frames
-        self.hangFrames = hangFrames
-        self.fadeFrames = fadeFrames
-        self.soundFrames = soundFrames
-        self.soundThreshold = soundThreshold
-        self.backgroundColor = backgroundColor
+    def __init__(self, frames = None, soundFrames = None, hangFrames = None, fadeFrames = None, soundThreshold = None, backgroundColor = None):
+        self.frames = [] if frames is None else frames
+        self.hangFrames = 1 if hangFrames is None else hangFrames
+        self.fadeFrames = 0 if fadeFrames is None else fadeFrames
+        self.soundFrames = [] if soundFrames is None else soundFrames
+        self.soundThreshold = 0 if soundThreshold is None else soundThreshold
+        self.backgroundColor = BLANK if backgroundColor is None else backgroundColor
 
 def stepBetweenColors(startColor, endColor, stepCount, currentStep):
     r = ((endColor[0]-startColor[0]) * currentStep /stepCount)+startColor[0]
