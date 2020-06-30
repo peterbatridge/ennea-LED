@@ -744,6 +744,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
     startIter = 0
     endIter = 1
     animation = Animation(hangFrames = hangFrames, fadeFrames = fadeFrames, soundFrames = soundFrames, soundThreshold = soundThreshold, backgroundColor = backgroundColor)
+    print(animation)
     for i in range(numBuckets*width):
         sides = []
         colors = []
@@ -783,6 +784,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
         'colors': colors
         })
 
+    print(animation)
     animateSideGroups(animation)
 
 ###
