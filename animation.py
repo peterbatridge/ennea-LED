@@ -650,11 +650,6 @@ def expandingCircles(maxFrames = 0, borderWidth = 0):
     totalFrames = 0
     while not shared.modeChanged and (maxFrames == 0 or maxFrames > totalFrames):
         drawShapes(circles, borderWidth, background)
-        frame = (frame+1) % 2
-        if frame == 1:
-            background = WHITE
-        else:
-            background = BLANK
 
         # Perform Transform & check for offscreens
         for j in range(0, len(circles)):
