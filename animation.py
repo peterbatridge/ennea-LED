@@ -738,7 +738,6 @@ def traceSidesAnimation(nonagonGroups, sequence, direction, hangFrames, fadeFram
 def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, hangFrames, fadeFrames, soundFrames=[], soundThreshold=0, backgroundColor = BLANK):
     if width<5:
         width = 5
-    animation = []
     numBuckets = len(nonagonGroups)
     buckets = [-1]*numBuckets
     filled = 0
@@ -782,7 +781,7 @@ def fillSidesAnimation(nonagonGroups, seqeuence, fillSide, drainSide, width, han
         animation.frames.append({
         'sides': sides,
         'colors': colors
-        })  
+        })
 
     animateSideGroups(animation)
 
