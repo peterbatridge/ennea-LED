@@ -510,7 +510,10 @@ def drawSparkleWithPeak(peak, fadeFrames, color, backgroundColor, allNonagons):
         increment = n*50
         if allNonagons == 1:
             increment = 0
-        mask[0:onNum] = [wheel((baseColor+increment)%768)] * onNum
+        if color != BLANK:
+            mask[0:onNum] = [color] * onNum
+        else:
+            mask[0:onNum] = [wheel((baseColor+increment)%768)] * onNum
         shuffle(mask)
         for i in range(0, fadeFrames):        
             for p in range(0,31):
