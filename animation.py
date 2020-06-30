@@ -403,7 +403,7 @@ def getLastFrameSideColors(animationFrames):
 
 def animateNonagonGroups(animation):
     global lastFrameNonagonColors
-    lastFrameColors = getLastFrameColors(animation)
+    lastFrameColors = getLastFrameColors(animation.frames)
     for n, frame in enumerate(animation.frames):
         for f in range(animation.hangFrames+animation.fadeFrames):
             blankStrip(animation.backgroundColor)
