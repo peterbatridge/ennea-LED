@@ -186,13 +186,12 @@ def remap_range(value, remap):
     if len(volumeData) >= 100:
         volumeData.pop(0)
         volumeSorted = sorted(volumeData)
-        print(volumeSorted[25], volumeSorted[50], volumeSorted[80])
+        print(value, volumeSorted[25], volumeSorted[50], volumeSorted[90])
         highest = remap[len(remap)-1][1]
-        if volumeSorted[50] < 30:
-            if value < volumeSorted[80]:
-                return int((value / volumeSorted[80]) * highest)
-            else:
-                return highest
+        if value < volumeSorted[90]:
+            return int((value / volumeSorted[90]) * highest)
+        else:
+            return highest
     
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
@@ -282,7 +281,8 @@ def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, maxFrames = 0,
             peak - peak-1
         if peakToPeak > peak:
             peak = peakToPeak
-
+            
+        print(peakToPeak, peak)
         totalFrames = totalFrames+1
         functionCalledWithPeak(peak, **kwargs)
     shared.modeChanged = False
