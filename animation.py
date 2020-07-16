@@ -181,19 +181,18 @@ def wheel(num):
 
 def remap_range(value, remap):
     global volumeData
+
     volumeData.append(value)
     if len(volumeData) >= 100:
-        volumeData.remove(0)
+        volumeData.pop(0)
         volumeSorted = sorted(volumeData)
-        print(volumeSorted[25], volumeSorted[50], volumeSorted[75])
-
-    mean = 0
-    for d in volumeData:
-        mean = mean + d
-    mean = int(mean / len(volumeData))
-
-
-
+        print(volumeSorted[25], volumeSorted[50], volumeSorted[80])
+        highest = remap[len(remap)-1][1]
+        if value < volumeSorted[80]:
+            return int((value / volumeSorted[80]) * highest)
+        else:
+            return highest
+    
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
             if m >0:
