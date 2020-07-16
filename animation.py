@@ -24,6 +24,7 @@ lastFrameNonagonColors = []
 lastFrameSideColors = []
 lastRandomColor = BLANK
 wheelIterator = 0
+volumeData = []
 
 ###
 # Helper Functions
@@ -179,6 +180,20 @@ def wheel(num):
     return [r,g,b]
 
 def remap_range(value, remap):
+    global volumeData
+    volumeData.append(value)
+    if len(volumeData) >= 100:
+        volumeData.remove(0)
+        volumeSorted = sorted(volumeData)
+        print(volumeSorted[25], volumeSorted[50], volumeSorted[75])
+
+    mean = 0
+    for d in volumeData:
+        mean = mean + d
+    mean = int(mean / len(volumeData))
+
+
+
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
             if m >0:
@@ -236,7 +251,7 @@ def volumeMeterSides(peak):
 
 def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, maxFrames = 0, **kwargs):
     peak = 0
-    noise = 15
+    noise = 0
     samplesLen = 10
     sampleArr = [0] * samplesLen
     sampleCount = 0
