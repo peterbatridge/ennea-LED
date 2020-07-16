@@ -188,10 +188,11 @@ def remap_range(value, remap):
         volumeSorted = sorted(volumeData)
         print(volumeSorted[25], volumeSorted[50], volumeSorted[80])
         highest = remap[len(remap)-1][1]
-        if value < volumeSorted[80]:
-            return int((value / volumeSorted[80]) * highest)
-        else:
-            return highest
+        if volumeSorted[50] < 30:
+            if value < volumeSorted[80]:
+                return int((value / volumeSorted[80]) * highest)
+            else:
+                return highest
     
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
@@ -535,7 +536,7 @@ def drawSparkleWithPeak(peak, fadeFrames, color, backgroundColor, allNonagons):
     strips.show()
 
 def sparkleAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK, allNonagons = 0, fadeFrames=2):
-    handleAudio(sparkleEachNonagon, 3, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
+    handleAudio(sparkleEachNonagon, 5, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
 
 def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = BLANK):
     upTransform = Transformations(0,-2,0)
@@ -577,7 +578,7 @@ def drawRainingSquares(maxFrames = 0, colorWheelLowerBound = 256, colorWheelUppe
 
 def pinwheelAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK):
     rect = Rectangle(50, 50, color, 10, 100, None)
-    handleAudio(verticalSides, 3, drawPinwheelWithPeak, maxFrames, rect=rect, color=color, backgroundColor=backgroundColor)
+    handleAudio(verticalSides, 5, drawPinwheelWithPeak, maxFrames, rect=rect, color=color, backgroundColor=backgroundColor)
 
 def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     rect.rotate(-peak)
@@ -617,7 +618,7 @@ def fireAudio(maxFrames = 0, colorWheelLowerBound=20, colorWheelUpperBound=60, b
 
     handleAudio(
         verticalSides, 
-        3,
+        5,
         drawFireWithPeak,
         maxFrames, 
         circles=circles, 
