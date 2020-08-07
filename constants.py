@@ -122,7 +122,8 @@ individualLeds = [[50,75], [75, 250], [250, 400], [1024, 433]]
 verticalSides = [[50,25], [75, 30], [250, 35], [1024, 39]] 
 sparkleEachNonagon = [[40,3], [250, 26], [1024, 28]] 
 verticalNonagons = [[50,4], [75, 5], [250, 6], [1024, 7]] 
-
+usbMapping = [[15, 5], [100, 35], [200, 39]]
+usbSparkle = [[10, 5], [100, 29]]
 audioMappings = {
     'individualLeds': individualLeds,
     'verticalSides': verticalSides,

@@ -9,11 +9,40 @@ import numpy as np
 import ast
 from shapes import *
 import shared
-
+import pyaudio
+import audioop
+import threading
+from enum import Enum
 CLK  = 18
 MISO = 23
 MOSI = 24
 CS   = 25
+
+
+form_1 = pyaudio.paInt16 # 16-bit resolution
+chans = 1  # 1 channel
+samp_rate = 44100 # 44.1kHz sampling rate
+chunk = 1024 # 212 samples for buffer
+dev_index = 2 # device index found by p.get_device_info_by_index(ii)
+
+audio = pyaudio.PyAudio() # create pyaudio instantiation
+lastVolumeData = []
+volumeDataLock = threading.Lock()
+
+def updateUSBAudio(in_data, frame_count, time_info, status):
+    global lastVolumeData, volumeDataLock
+    if volumeDataLock.acquire(False):
+        try:
+            lastVolumeData = in_data
+        finally:
+            volumeDataLock.release()
+    return (in_data, pyaudio.paContinue)
+
+# create pyaudio stream
+stream = audio.open(format = form_1,rate = samp_rate,channels = chans, \
+                       input_device_index = dev_index, input = True, \
+                       frames_per_buffer=chunk, stream_callback=updateUSBAudio)
+    
 mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
@@ -25,6 +54,7 @@ lastFrameSideColors = []
 lastRandomColor = BLANK
 wheelIterator = 0
 volumeData = []
+lastVolumeData = []
 
 ###
 # Helper Functions
@@ -145,6 +175,8 @@ def wheelComplementaryColor(color):
     return (color + 384) % 768
 
 def dimColor(color, fraction):
+    if fraction > 1:
+        fraction = 1
     dimColor = [0,0,0]
     dimColor[0] = int(color[0] * fraction)
     dimColor[1] = int(color[1] * fraction)
@@ -180,18 +212,18 @@ def wheel(num):
     return [r,g,b]
 
 def remap_range(value, remap):
-    global volumeData
+    #global volumeData
 
-    volumeData.append(value)
-    if len(volumeData) >= 100:
-        volumeData.pop(0)
-        volumeSorted = sorted(volumeData)
-        print(value, volumeSorted[25], volumeSorted[50], volumeSorted[90])
-        highest = remap[len(remap)-1][1]
-        if value < volumeSorted[90]:
-            return int((value / volumeSorted[90]) * highest)
-        else:
-            return highest
+    #volumeData.append(value)
+    #if len(volumeData) >= 40:
+    #    volumeData.pop(0)
+    #    volumeSorted = sorted(volumeData)
+    #   #print(value, volumeSorted[25], volumeSorted[50], volumeSorted[90])
+    #    highest = remap[len(remap)-1][1]
+    #    if value < volumeSorted[35]:
+    #        return int((value / volumeSorted[35]) * highest)
+    #    else:
+    #        return highest
     
     for m, maxes in enumerate(remap):
         if value <= maxes[0]:
@@ -201,33 +233,11 @@ def remap_range(value, remap):
                 return int((value / maxes[0])* maxes[1])
 
 def waitUntilSoundReachesThreshold(threshold):
-    peakToPeak = 0
-    noise = 15
-    samplesLen = 10
-    sampleArr = [0] * samplesLen
-    sampleCount = 0
-    fullSample = False
-    while (peakToPeak<threshold or not fullSample) and not shared.modeChanged:
-        signalMax = 0
-        signalMin = 1023
-        sample = mcp.read_adc(0)
-        sampleArr[sampleCount] = sample
-        if sampleCount+1 == samplesLen:
-            fullSample = True
-        sampleCount =(sampleCount+1)%samplesLen
-        for i in range(samplesLen):
-            if sampleArr[i] > signalMax:
-                signalMax = sampleArr[i]
-            elif sampleArr[i] < signalMin:
-                signalMin = sampleArr[i]
-        
-        peakToPeak = signalMax - signalMin
-        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
-        if peakToPeak < 0:
-            peakToPeak = 0
-        elif peakToPeak > 1023:
-            peakToPeak = 1023
-    shared.modeChanged = False
+    global lastSoundData
+    audioRMS = 0
+    while (audioRMS<threshold) and not shared.modeChanged:
+        audioRMS = audioop.rms(lastSoundData, 2)
+    shared.modeChanded = False
 
 def fillLedsBasedOnVolume(peak):
     blankStrip()
@@ -248,43 +258,75 @@ def volumeMeterSides(peak):
                 setSide(nonagon, side[1], color)
     strips.show()
 
-def handleAudio(remap, rateOfPeakDescent, functionCalledWithPeak, maxFrames = 0, **kwargs):
-    peak = 0
-    noise = 0
-    samplesLen = 10
-    sampleArr = [0] * samplesLen
-    sampleCount = 0
-    totalFrames = 0
-    while not shared.modeChanged and (maxFrames == 0 or maxFrames > totalFrames):
-        signalMax = 0
-        signalMin = 1023
-        sample = mcp.read_adc(0)
-        sampleArr[sampleCount] = sample
-        sampleCount =(sampleCount+1)%samplesLen
-        for i in range(samplesLen):
-            if sampleArr[i] > signalMax:
-                signalMax = sampleArr[i]
-            elif sampleArr[i] < signalMin:
-                signalMin = sampleArr[i]
-        
-        peakToPeak = signalMax - signalMin
-        peakToPeak = 0 if peakToPeak <= noise else peakToPeak-noise
-        if peakToPeak < 0:
-            peakToPeak = 0
-        elif peakToPeak > 1023:
-            peakToPeak = 1023
+class AudioType(Enum):
+    PEAK_TO_PEAK = 1
+    RMS = 2
+    FFT = 3
+    FFT_SUM = 4
 
-        peakToPeak = remap_range(peakToPeak, remap)
-        if (peak>=rateOfPeakDescent):
-            peak = peak - rateOfPeakDescent
-        elif (peak>0):
-            peak - peak-1
-        if peakToPeak > peak:
-            peak = peakToPeak
-            
-        print(peakToPeak, peak)
-        totalFrames = totalFrames+1
-        functionCalledWithPeak(peak, **kwargs)
+def audioPP(mode, fData):
+    return min(audioop.maxpp(fData, 2), 300)
+        
+def audioRMS(mode, fData):
+    return min(audioop.rms(fData, 2), 100)
+        
+def audioFFT(mode, fData):
+    window = np.hanning(len(fData)).astype(np.float32)
+    data = fData * window
+    fft = np.fft.rfft(data)
+    fft = np.delete(fft, len(fft)-1)
+    power = np.log10(np.abs(fft)) ** 2
+    power = np.reshape(power, (32, 16))
+    matrix = np.int_(np.average(power, axis =1))
+    matrix = matrix[0:14]
+    noise = [8,6,6,5,4,3,3,3,3,3,3,3,3,3]
+    reducedNoise = np.subtract(matrix, noise)
+    for i in range(0,14):
+        if reducedNoise[i] < 0:
+            reducedNoise[i] = 0
+    if mode == AudioType.FFT_SUM:
+        ret = np.sum(reducedNoise)
+        return ret #min(np.sum(reducedNoise), 100)                
+    new_fft = [0.] * 14
+    for i, bucket in enumerate(reducedNoise):
+        new_fft[i] = remap_range(bucket, [[10, 28], [100, 31]])
+    return new_fft
+
+switch = {
+    AudioType.PEAK_TO_PEAK: audioPP,
+    AudioType.RMS: audioRMS,
+    AudioType.FFT: audioFFT,
+    AudioType.FFT_SUM: audioFFT
+}
+
+
+def audio(remap, rateOfPeakDescent, functionCalledWithData, maxFrames = 0, mode = AudioType.FFT_SUM, **kwargs):
+    global lastVolumeData, volumeDataLock
+    totalFrames = 0
+    peak = 0
+    while not shared.modeChanged and (maxFrames == 0 or maxFrames > totalFrames):
+        latest = 0
+        if volumeDataLock.acquire(False):
+            try:
+                fData = np.frombuffer(lastVolumeData, np.int16)    
+            finally:
+                volumeDataLock.release()
+        else:
+            continue
+        data = switch[mode](mode, fData)
+        if mode != AudioType.FFT:
+            mapped_data = remap_range(data, remap)
+            if peak > rateOfPeakDescent:
+                peak = peak - rateOfPeakDescent
+            elif peak > 0:
+                peak = peak - 1
+
+            if mapped_data > peak:
+                peak = mapped_data
+        else:
+            peak = data
+        functionCalledWithData(peak, **kwargs)
+        totalFrames = totalFrames + 1
     shared.modeChanged = False
 
 ###
@@ -536,7 +578,7 @@ def drawSparkleWithPeak(peak, fadeFrames, color, backgroundColor, allNonagons):
     strips.show()
 
 def sparkleAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK, allNonagons = 0, fadeFrames=2):
-    handleAudio(sparkleEachNonagon, 5, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
+    handleUSBAudio(usbSparkle, 0, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
 
 def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = BLANK):
     upTransform = Transformations(0,-2,0)
@@ -578,7 +620,7 @@ def drawRainingSquares(maxFrames = 0, colorWheelLowerBound = 256, colorWheelUppe
 
 def pinwheelAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK):
     rect = Rectangle(50, 50, color, 10, 100, None)
-    handleAudio(verticalSides, 5, drawPinwheelWithPeak, maxFrames, rect=rect, color=color, backgroundColor=backgroundColor)
+    handleUSBAudio(usbMapping, 5, drawPinwheelWithPeak, maxFrames, rect=rect, color=color, backgroundColor=backgroundColor)
 
 def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     rect.rotate(-peak)
@@ -616,8 +658,8 @@ def fireAudio(maxFrames = 0, colorWheelLowerBound=20, colorWheelUpperBound=60, b
             transformation)
         )
 
-    handleAudio(
-        verticalSides, 
+    handleUSBAudio(
+        usbMapping, 
         5,
         drawFireWithPeak,
         maxFrames, 
@@ -693,6 +735,30 @@ def solidColorDimmer(peak, denominator=39.0):
         fraction = 0.25
     blankStrip(dimColor(RED, fraction))
     strips.show()
+
+def boundlessColorDimmer(peak, denominator):
+    global lastRandomColor
+    fraction = peak / denominator
+    #print(fraction)
+    if peak > 60:
+        lastRandomColor = randomColor(lastRandomColor)
+    blankStrip(dimColor(lastRandomColor, fraction))
+    strips.show()
+
+def solidColorAudioMode(maxFrames = 0): 
+    global lastRandomColor
+    totalFrames = 0
+    waitFrames = 5
+    mapping = [[10, 20],[60, 99],[100000,100]] 
+    lastRandomColor = randomColor(lastRandomColor)
+    audio(
+        mapping, 
+        5,
+        boundlessColorDimmer,
+        maxFrames, 
+        AudioType.FFT_SUM,
+        denominator = 100.0
+    )   
 
 ###
 # Animation Generators
