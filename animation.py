@@ -218,7 +218,7 @@ def remap_range(value, remap):
     #if len(volumeData) >= 40:
     #    volumeData.pop(0)
     #    volumeSorted = sorted(volumeData)
-    #   #print(value, volumeSorted[25], volumeSorted[50], volumeSorted[90])
+       #print(value, volumeSorted[25], volumeSorted[50], volumeSorted[90])
     #    highest = remap[len(remap)-1][1]
     #    if value < volumeSorted[35]:
     #        return int((value / volumeSorted[35]) * highest)
@@ -233,11 +233,11 @@ def remap_range(value, remap):
                 return int((value / maxes[0])* maxes[1])
 
 def waitUntilSoundReachesThreshold(threshold):
-    global lastSoundData
+    global lastVolumeData
     audioRMS = 0
     while (audioRMS<threshold) and not shared.modeChanged:
-        audioRMS = audioop.rms(lastSoundData, 2)
-    shared.modeChanded = False
+        audioRMS = audioop.rms(lastVolumeData, 2)
+    shared.modeChanged = False
 
 def fillLedsBasedOnVolume(peak):
     blankStrip()
@@ -265,7 +265,7 @@ class AudioType(Enum):
     FFT_SUM = 4
 
 def audioPP(mode, fData):
-    return min(audioop.maxpp(fData, 2), 300)
+    return min(audioop.maxpp(fData, 2), 100)
         
 def audioRMS(mode, fData):
     return min(audioop.rms(fData, 2), 100)
@@ -286,6 +286,7 @@ def audioFFT(mode, fData):
             reducedNoise[i] = 0
     if mode == AudioType.FFT_SUM:
         ret = np.sum(reducedNoise)
+        #print(ret)
         return ret #min(np.sum(reducedNoise), 100)                
     new_fft = [0.] * 14
     for i, bucket in enumerate(reducedNoise):
@@ -314,6 +315,7 @@ def audio(remap, rateOfPeakDescent, functionCalledWithData, maxFrames = 0, mode 
         else:
             continue
         data = switch[mode](mode, fData)
+        #print(data)
         if mode != AudioType.FFT:
             mapped_data = remap_range(data, remap)
             if peak > rateOfPeakDescent:
@@ -578,7 +580,7 @@ def drawSparkleWithPeak(peak, fadeFrames, color, backgroundColor, allNonagons):
     strips.show()
 
 def sparkleAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK, allNonagons = 0, fadeFrames=2):
-    handleUSBAudio(usbSparkle, 0, drawSparkleWithPeak, maxFrames, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
+    audio(usbSparkle, 3, drawSparkleWithPeak, maxFrames, AudioType.RMS, fadeFrames=fadeFrames, color = color, backgroundColor = backgroundColor, allNonagons = allNonagons)
 
 def oppositeRains(topColor = MAGENTA, bottomColor = MAGENTA, backgroundColor = BLANK):
     upTransform = Transformations(0,-2,0)
@@ -620,7 +622,7 @@ def drawRainingSquares(maxFrames = 0, colorWheelLowerBound = 256, colorWheelUppe
 
 def pinwheelAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK):
     rect = Rectangle(50, 50, color, 10, 100, None)
-    handleUSBAudio(usbMapping, 5, drawPinwheelWithPeak, maxFrames, rect=rect, color=color, backgroundColor=backgroundColor)
+    audio([[10, 20],[60, 99],[100000,100]], 1, drawPinwheelWithPeak, maxFrames, AudioType.FFT_SUM, rect=rect, color=color, backgroundColor=backgroundColor)
 
 def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     rect.rotate(-peak)
@@ -658,11 +660,12 @@ def fireAudio(maxFrames = 0, colorWheelLowerBound=20, colorWheelUpperBound=60, b
             transformation)
         )
 
-    handleUSBAudio(
-        usbMapping, 
+    audio(
+         [[10, 20],[60, 99],[100000,100]] , 
         5,
         drawFireWithPeak,
-        maxFrames, 
+        maxFrames,
+        AudioType.FFT_SUM,
         circles=circles, 
         colorWheelLowerBound=colorWheelLowerBound, 
         colorWheelUpperBound=colorWheelUpperBound, 
@@ -736,28 +739,29 @@ def solidColorDimmer(peak, denominator=39.0):
     blankStrip(dimColor(RED, fraction))
     strips.show()
 
-def boundlessColorDimmer(peak, denominator):
+def boundlessColorDimmer(peak, denominator, threshold):
     global lastRandomColor
     fraction = peak / denominator
     #print(fraction)
-    if peak > 60:
+    if peak > threshold:
         lastRandomColor = randomColor(lastRandomColor)
     blankStrip(dimColor(lastRandomColor, fraction))
     strips.show()
 
-def solidColorAudioMode(maxFrames = 0): 
+def solidColorAudioMode(threshold = 75, maxFrames = 0): 
     global lastRandomColor
     totalFrames = 0
     waitFrames = 5
-    mapping = [[10, 20],[60, 99],[100000,100]] 
+    mapping = [[4, 20],[60, 99],[100000,100]] 
     lastRandomColor = randomColor(lastRandomColor)
     audio(
         mapping, 
-        5,
+        1,
         boundlessColorDimmer,
         maxFrames, 
         AudioType.FFT_SUM,
-        denominator = 100.0
+        denominator = 100.0,
+        threshold = threshold
     )   
 
 ###
