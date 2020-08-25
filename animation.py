@@ -47,15 +47,16 @@ mcp = Adafruit_MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
 # Using hardware SPI. 436 = 12*31 leds + 2*32 leds
 num_pixels = 434
-strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.1, baudrate=4000000, auto_write=False)
+strips = dotstar.DotStar(board.SCLK, board.MOSI, num_pixels, brightness=0.2, baudrate=4000000, auto_write=False)
 
 lastFrameNonagonColors = []
 lastFrameSideColors = []
+lastFramePeak = 0
 lastRandomColor = BLANK
 wheelIterator = 0
 volumeData = []
 lastVolumeData = []
-
+counter = 0
 ###
 # Helper Functions
 ###
@@ -284,6 +285,7 @@ def audioFFT(mode, fData):
     for i in range(0,14):
         if reducedNoise[i] < 0:
             reducedNoise[i] = 0
+    print(reducedNoise, np.sum(reducedNoise))
     if mode == AudioType.FFT_SUM:
         ret = np.sum(reducedNoise)
         #print(ret)
@@ -334,7 +336,10 @@ def audio(remap, rateOfPeakDescent, functionCalledWithData, maxFrames = 0, mode 
 ###
 # Pattern Functions
 ###
- 
+def offMode(wait = 1):
+    blankStrip()
+    time.sleep(wait)
+
 def rainbowCycle(wait = 0):
     for j in range(768):
         for i in range(num_pixels):
@@ -622,7 +627,7 @@ def drawRainingSquares(maxFrames = 0, colorWheelLowerBound = 256, colorWheelUppe
 
 def pinwheelAudio(maxFrames = 0, color = BLANK, backgroundColor = BLANK):
     rect = Rectangle(50, 50, color, 10, 100, None)
-    audio([[10, 20],[60, 99],[100000,100]], 1, drawPinwheelWithPeak, maxFrames, AudioType.FFT_SUM, rect=rect, color=color, backgroundColor=backgroundColor)
+    audio([[10, 35],[60, 80],[100000,81]], 1, drawPinwheelWithPeak, maxFrames, AudioType.FFT_SUM, rect=rect, color=color, backgroundColor=backgroundColor)
 
 def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     rect.rotate(-peak)
@@ -635,9 +640,9 @@ def drawPinwheelWithPeak(peak, rect, color, backgroundColor):
     strips.show()
 
 def drawFireWithPeak(peak, circles, colorWheelLowerBound=20, colorWheelUpperBound=60, backgroundColorWheel=0):
-    if peak < 11:
-        peak = 10
-    drawShapes(circles, 0, wheel(backgroundColorWheel), peak/39.0)
+    if peak < 6:
+        peak = 5
+    drawShapes(circles, 0, wheel(backgroundColorWheel), peak/100.0)
     strips.show()
     for i in range(0, len(circles)):
         circles[i].transform()
@@ -661,7 +666,7 @@ def fireAudio(maxFrames = 0, colorWheelLowerBound=20, colorWheelUpperBound=60, b
         )
 
     audio(
-         [[10, 20],[60, 99],[100000,100]] , 
+        [[4, 20],[60, 99],[100000,100]], 
         5,
         drawFireWithPeak,
         maxFrames,
@@ -739,24 +744,47 @@ def solidColorDimmer(peak, denominator=39.0):
     blankStrip(dimColor(RED, fraction))
     strips.show()
 
+def randomColorForSolidColorAudio(avoidColor = None):
+    colorSet = [RED, ORANGE, GREEN, CYAN, BLUE, PURPLE]
+    rand = randrange(6)
+    if avoidColor == colors[rand]:
+        return colors[(rand+2)%6]
+    return colorSet[rand]
+
+
 def boundlessColorDimmer(peak, denominator, threshold):
-    global lastRandomColor
+    global lastRandomColor, lastFramePeak, counter
     fraction = peak / denominator
-    #print(fraction)
+    if fraction <= 0.025:
+        fraction = 0.025
+        
     if peak > threshold:
-        lastRandomColor = randomColor(lastRandomColor)
-    blankStrip(dimColor(lastRandomColor, fraction))
+        if counter == 0:
+            lastRandomColor = randomColorForSolidColorAudio(lastRandomColor)
+            counter = 15
+    if counter > 0:
+        counter = counter - 1
+    color = dimColor(lastRandomColor, fraction)
+    startColor = dimColor(lastRandomColor, (lastFramePeak / denominator))
+    if fraction > 0.025:
+        blankStrip(stepBetweenColors(startColor, color, 1, 0))
+        lastFramePeak = peak
+        strips.show()
+    #blankStrip(stepBetweenColors(startColor, color, 4, 2))
+    #strips.show()
+    #blankStrip(stepBetweenColors(startColor, color, 4, 3))
+    #strips.show()
+
+    blankStrip(color)
     strips.show()
 
 def solidColorAudioMode(threshold = 75, maxFrames = 0): 
     global lastRandomColor
-    totalFrames = 0
-    waitFrames = 5
-    mapping = [[4, 20],[60, 99],[100000,100]] 
-    lastRandomColor = randomColor(lastRandomColor)
+    mapping = [[4, 10],[50, 99],[100000,100]] 
+    lastRandomColor = randomColorForSolidColorAudio(lastRandomColor)
     audio(
         mapping, 
-        1,
+        2,
         boundlessColorDimmer,
         maxFrames, 
         AudioType.FFT_SUM,
@@ -903,3 +931,6 @@ def singleFrameTrianglesRandomColor(hangFrames=10, fadeFrames=10, threshold=0):
         'colors': [uniqueRandomColorOne, uniqueRandomColorTwo]
     }]
     animateNonagonGroups(animation)
+
+def randomMode(audioModes = True):
+    print(math.rand(0,30))

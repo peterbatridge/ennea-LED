@@ -55,7 +55,9 @@ validFunctions = {
     'individualPinwheels': individualPinwheels,
     'trail': trail,
     'exMachinaMode': exMachinaMode,
-    'solidColorAudioMode': solidColorAudioMode
+    'solidColorAudioMode': solidColorAudioMode,
+    'randomMode': randomMode,
+    'offMode': offMode
 }
 fadeFramesArg = {
     'name': "Fade Frames",
@@ -470,6 +472,26 @@ modes = {
             maxFramesArg
         ],
         'notes': ''
+    },
+    '30': {
+        'functionName': 'randomMode',
+        'args': [
+            {
+            'name': 'Include Audio Modes Boolean',
+            'optional': True,
+            'rules': '0-1',
+            'type': 'number',
+            'notes': 'This represents whether or not audio modes should be included'
+            },
+            thresholdArg,
+            maxFramesArg
+        ],
+        'notes': ''
+    },
+    '31': {
+        'functionName': 'offMode',
+        'args': [],
+        'notes': 'Blanks the strip every second'
     }
 }
 
