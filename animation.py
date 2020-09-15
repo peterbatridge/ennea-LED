@@ -285,7 +285,7 @@ def audioFFT(mode, fData):
     for i in range(0,14):
         if reducedNoise[i] < 0:
             reducedNoise[i] = 0
-    print(reducedNoise, np.sum(reducedNoise))
+    #print(reducedNoise, np.sum(reducedNoise))
     if mode == AudioType.FFT_SUM:
         ret = np.sum(reducedNoise)
         #print(ret)
