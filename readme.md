@@ -156,10 +156,12 @@ After making this I couldn't stop seeing similar patterns, for example:<br>
 ![](./readme-content/small/.jpg)
 
 ## Finished Product
+### Images
 ![Finished Product Off](./readme-content/small/FinishedOff.jpg)
 ![Finished Product Rainbow Sparkle](./readme-content/small/FinishedRainbowSparkle.jpg)
 ![Finished Product Rainbow at Night](./readme-content/small/FinishedRainbow.jpg)
-![Finished Product Rainbow Circles Gif](./readme-content/small/rainbowCircles.jpg)
+![Finished Product Rainbow Circles](./readme-content/small/rainbowCircles.jpg)
+### Gifs
 ![Rainbow Circles Closeup](./readme-content/gifs/rainbowcirclescloseup.gif)
 ![Acid Mode](./readme-content/gifs/acidmode.gif)
 ![Rainbow Explosion](./readme-content/gifs/rainbowexplosion.gif)
@@ -170,6 +172,10 @@ After making this I couldn't stop seeing similar patterns, for example:<br>
 ![Blue Line Green Background](./readme-content/gifs/blueline.gif)
 ![Ex Machina Mode](./readme-content/gifs/exmachina.gif)
 ![Rainbow Circles](./readme-content/gifs/rainbowcircles.gif)
-
+### Videos
+[![Popping noise triggers brightness change](./readme-content/small/audiodemo.PNG)](https://youtu.be/n0ZV-ptZl_Y)
+[![Music Triggers Pinwheel](./readme-content/small/audiodemopinwheel.PNG)](https://youtu.be/ieBVs7NSkAc)
+[![Music Triggers Pinwheel 2](./readme-content/small/audiodemopinwheel2.PNG)](https://youtu.be/9pl_Fcg_5wQ)
+[![Ex Machina Mode](./readme-content/small/exmachinamode.PNG)](https://youtu.be/SgAImAgqI5I)
 
 
