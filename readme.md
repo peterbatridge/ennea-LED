@@ -58,7 +58,7 @@ The Nonagons are an art project I started back in December of 2019 to fill the s
 - Sandpaper of varyings grits (Some for wood, some very fine for the aluminum pieces)
 
 ## 3D Printing
-The plastic nonagons were first designed in Blender as a flat surface with walls to keep the LEDs inside. Then I printed them with transparent filament.<br>
+The plastic nonagons were first designed in Blender as a flat surface with walls to keep the LEDs inside. Then I printed them with transparent filament. The model can be found [here](https://github.com/peterbatridge/models) as nonagon.stl and is definitely broken but my 3D printer's software automatically fixed it before printing.<br>
 ![3D Print Design](./readme-content/small/3DPrintDesign.jpg)
 ![3D Printing](./readme-content/small/3DPrinting.jpg)<br>
 
@@ -68,7 +68,7 @@ At this point there was no plan for the board and after seeing that they managed
 ![Nonagons Upside Down](./readme-content/small/CoastersUpsidedown.jpg)
 
 ## CNC Routing
-The design for the CNC cut was created in the Inventables Easel program, it's super easy to use. There are little tails on each nonagon so that there is room for wires sticking out of each nonagon</br> 
+The design for the CNC cut was created in the Inventables Easel program, it's super easy to use. There are little tails on each nonagon so that there is room for wires sticking out of each nonagon. The design for the nonagons can be found [here](https://github.com/peterbatridge/models) in Nonagons2.zip</br> 
 ![CNC Design](./readme-content/small/CNCRouterDesigns.jpg)<br>
 
 Test cuts were made in an MDF board to get the size right holes for the plastic nonagons. I had to pause the cut and turn off the drill as soon as each nonagon was cut completely out in order to remove the cut out piece of wood. Without removing the wood the drill bit could potentially fling it across the work surface.<br>
@@ -168,8 +168,12 @@ Mostly using SSH to write code in vim on the raspberry pi mostly and then testin
   - [physical_mapping.py](./physical_mapping.py) contains snippets that can be used to convert gifs to animations displayed on the nonagons. It also contains the code for drawing the expected physical mapping of the LEDs with pygame and running the converted animations. This can be useful for testing if a gif animation will look good.
   - [trains.py](./trains.py) contains snippets for using the Chicago CTA API
   - [weather.py](./weather.py) contains snippets for using the Open Weather Map API
-- That connects to a firestore database for determining the state of the nonagons and to store animation modes
+- A firestore database for determining the state of the nonagons and to store animation modes
 - The frontend is an angular app that can be found [here](https://github.com/peterbatridge/peterbatridge.github.io/tree/master/lights) and can switch modes on the nonagons from any browser.
+
+### UI
+![UI1](./readme-content/small/ui.PNG)
+![UI2](./readme-content/small/ui2.PNG)
 
 ### Setup
 I'm running raspbian headless and accessing it via SSH which takes some easily googlable setup<br>
