@@ -1,5 +1,25 @@
 
 # The Nonagons
+- [Introduction](#introduction)
+- [Parts](#parts)
+- [Tools](#tools)
+- [3D Printing](#3d-printing)
+- [CNC Routing](#cnc-routing)
+- [Assembly](#assembly)
+  * [Gluing](#gluing)
+  * [Coasters](#coasters)
+  * [Wiring](#wiring)
+- [Software](#software)
+  * [Development Environment](#development-environment)
+  * [Libraries](#libraries)
+  * [Architecture](#architecture)
+  * [Setup](#setup)
+  * [Making Patterns](#making-patterns)
+- [Similar Patterns](#similar-patterns)
+- [Finished Product](#finished-product)
+  * [Images](#images)
+  * [Gifs](#gifs)
+  * [Videos](#videos)
 ## Introduction
 The Nonagons are an art project I started back in December of 2019 to fill the space on an empty wall in my living room. I had some LEDs and an old raspberry pi laying around that were put to good use in the nonagons.
 ## Parts
@@ -109,7 +129,16 @@ I stained the cutouts and then sprayed them with lacquer before cutting very thi
 
 
 ### Wiring
-![The Back Of The Board](./readme-content/small/TheBack.jpg)
+![The Back Of The Board](./readme-content/small/TheBack.jpg)<br>
+Thankfully the wiring is simpler than it looks in that image. I got rid of the analog to digital converter chip and electret microphone that are pictured above. All the remains are the raspberry pi, the power sources, the strips and the level shifter. The microphone I'm using is called "Mini USB Microphone" and it's plugged into the USB port along with the WIFI adapter.
+#### Power
+The Raspberry Pi is being powered by it's stock usb power cable
+The LED Strips are being powered separately by a 5V/10A power supply
+  - Each strip of 31 LEDs is in parallel with regard to power, with power and ground coming from this supply
+  - There is a capacitor also in parallel with the strips to prevent any current spikes from damaging the LEDs
+  - Adafruit has great guides on [powering LEDs](https://learn.adafruit.com/adafruit-neopixel-uberguide/powering-neopixels) and [managing power draw](https://learn.adafruit.com/sipping-power-with-neopixels/insights)
+#### LEDs and Raspberry Pi
+I followed [this](https://learn.adafruit.com/adafruit-dotstar-leds/power-and-connections) guide on adafruit's website to wire up the LEDs. ![Adafruit Wiring Guide](https://cdn-learn.adafruit.com/assets/assets/000/063/125/medium640/led_strips_image-1.png)
 
 
 ## Software
@@ -149,6 +178,28 @@ firestore.py contains your firestore credentials
 ### Making Patterns
 ![Nonagon Edge Reference Sheet](./readme-content/small/NonagonEdgeReference.jpg)
 
+### TODO
+- So so so much
+- Scheduling for modes (like automatically turning off or at 8am displaying a weather mode)
+- Mode Ideas:
+  - Weather Mode
+  - Train Passing Mode
+- Engine Improvements:
+    - Add Triangle Class (and also add that to expanding stuff)
+    - Ensure that all modes have a way of breaking from their loop if the mode changes
+    - Create random modes
+        - All non-audio modes
+        - All audio modes
+        - Mix of audio and non audio
+        - Blinding Modes?
+- User Interface:
+    - Add acceptable range for all parameters
+    - Ensure UI can handle all types of modes
+    - Allow addition of color palettes
+    - Allow addition of nonagon groups 
+- Bugs:
+    - Some parameters aren't named correctly
+    
 ## Similar Patterns
 After making this I couldn't stop seeing similar patterns, for example:<br>
 ![Chicago Flag](./readme-content/small/Inspiration2.jpg)
