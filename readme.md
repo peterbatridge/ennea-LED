@@ -68,6 +68,7 @@ The wooden cutouts are a good size for coasters so I saved them<br>
 Somewhere along the way I realized I could only fit 31 LEDs on a strip inside the nonagons if I had plastic connectors and wires on both ends of the strip. Originally I hadn't planned to do all the LEDs in series but it was the path of least resistance. 
 - In order to have the wires sit comfortably in the nonagon I needed to cut a rectangle out of the plastic nonagon walls. This seemed very difficult to do at first but a simple method I discovered was heating up my exacto knife blade and then quickly cutting/melting through the portion of the nonagon I wanted to remove.
 - I removed the cover on one side of each plastic connector so that the LED strip could fit in it. I had to shave off a very small amount of the strip's sides in order to fit them into the plastic connectors.
+
 <br>![Melted Nonagon Edge And Strips](./readme-content/small/meltedNonagonEdgeAndStrips.jpg)<br>
 
 Next the rough edges of the board needed to be sanded and then the board was stained. After the stain dried the board was coated several times in spray on lacquer (make sure to do this in a well ventilated area and wear a respirator)<br>
@@ -112,6 +113,10 @@ I stained the cutouts and then sprayed them with lacquer before cutting very thi
 
 
 ## Software
+### Development Environment
+![My Development Setup](./readme-content/gifs/myDevSetup.gif)
+![Gif Conversion](./readme-content/gifs/gifTesting.gif)
+
 ### Libraries
 - pyaudio and audioop for audio processing 
 - numpy for more audio processing
@@ -155,5 +160,16 @@ After making this I couldn't stop seeing similar patterns, for example:<br>
 ![Finished Product Rainbow Sparkle](./readme-content/small/FinishedRainbowSparkle.jpg)
 ![Finished Product Rainbow at Night](./readme-content/small/FinishedRainbow.jpg)
 ![Finished Product Rainbow Circles Gif](./readme-content/small/rainbowCircles.jpg)
+![Rainbow Circles Closeup](./readme-content/gifs/rainbowcirclescloseup.gif)
+![Acid Mode](./readme-content/gifs/acidmode.gif)
+![Rainbow Explosion](./readme-content/gifs/rainbowexplosion.gif)
+![Tearing](./readme-content/gifs/tearing.gif)
+![Red Blue Alternating](./readme-content/gifs/redbluealternating.gif)
+![Rainbow Lines](./readme-content/gifs/pridelines.gif)
+![Color Swap](./readme-content/gifs/colorswap.gif)
+![Blue Line Green Background](./readme-content/gifs/blueline.gif)
+![Ex Machina Mode](./readme-content/gifs/exmachina.gif)
+![Rainbow Circles](./readme-content/gifs/rainbowcircles.gif)
+
 
 
