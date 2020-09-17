@@ -131,7 +131,7 @@ I stained the cutouts and then sprayed them with lacquer before cutting very thi
 
 ### Wiring
 ![The Back Of The Board](./readme-content/small/TheBack.jpg)<br>
-Thankfully the wiring is simpler than it looks in that image. I got rid of the analog to digital converter chip and electret microphone that are pictured above. All the remains are the raspberry pi, the power sources, the strips and the level shifter. The microphone I'm using is called "Mini USB Microphone" and it's plugged into the USB port along with the WIFI adapter.
+Thankfully the wiring is simpler than it looks in that image. I got rid of the analog to digital converter chip and electret microphone that are pictured above. All that remains are the raspberry pi, the power sources, the strips and the level shifter. The microphone I'm using is called "Mini USB Microphone" and it's plugged into the USB port along with the WIFI adapter.
 #### Power
 The Raspberry Pi is being powered by it's stock usb power cable
 The LED Strips are being powered separately by a 5V/10A power supply
