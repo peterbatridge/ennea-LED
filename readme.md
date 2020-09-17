@@ -13,6 +13,7 @@
   * [Development Environment](#development-environment)
   * [Libraries](#libraries)
   * [Architecture](#architecture)
+  * [UI](#ui)
   * [Setup](#setup)
   * [Making Patterns](#making-patterns)
 - [Similar Patterns](#similar-patterns)
