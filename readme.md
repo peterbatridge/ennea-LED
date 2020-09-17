@@ -63,7 +63,7 @@ The plastic nonagons were first designed in Blender as a flat surface with walls
 ![3D Print Design](./readme-content/small/3DPrintDesign.jpg)
 ![3D Printing](./readme-content/small/3DPrinting.jpg)<br>
 
-At this point there was no plan for the board and after seeing that they managed to fit some LEDs comfortably inside, then the rest of the board was planned around their size<br>
+At this point there was no plan for the board. After seeing that nonagons managed to fit some LEDs comfortably inside, then the rest of the board was planned around their size<br>
 ![First Nonagon](./readme-content/small/CoasterFirstLight.jpg)
 ![Several Nonagons](./readme-content/small/Coasters.jpg)
 ![Nonagons Upside Down](./readme-content/small/CoastersUpsidedown.jpg)
