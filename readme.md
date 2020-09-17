@@ -196,7 +196,7 @@ cta_api_key = "API_KEY_HERE"
 There is also a file for firestore credentials
 
 ### Making Patterns
-This sheet is useful for creating animations by nonagon or side of nonagon since it shows how they can be addressed in relation to their physical position.<br>
+[This sheet](https://github.com/peterbatridge/ennea-LED/blob/master/reference.png) is useful for creating animations by nonagon or side of nonagon since it shows how they can be addressed in relation to their physical position.<br>
 ![Nonagon Edge Reference Sheet](./readme-content/small/NonagonEdgeReference.jpg)
 
 ### TODO
