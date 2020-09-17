@@ -237,7 +237,7 @@ After making this I couldn't stop seeing similar patterns, for example:<br>
 ![Acid Mode](./readme-content/gifs/acidmode.gif)
 ![Rainbow Explosion](./readme-content/gifs/rainbowexplosion.gif)
 ![Tearing](./readme-content/gifs/tearing.gif)
-![Red Blue Alternating](./readme-content/gifs/redbluealternating.gif)
+![Red Blue Alternating](./readme-content/gifs/redbluealternating.gif)<br>
 ![Rainbow Lines](./readme-content/gifs/pridelines.gif)
 ![Color Swap](./readme-content/gifs/colorswap.gif)
 ![Blue Line Green Background](./readme-content/gifs/blueline.gif)
