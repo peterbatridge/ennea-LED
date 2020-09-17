@@ -110,7 +110,7 @@ Next two rectangles of wood were glued onto the back of the main board and screw
 Next the aluminum edges were glued onto the board<br>
 ![Gluing and clamping aluminum to board](./readme-content/small/clampingAluminum.jpg)<br>
 
-About an hour after gluing once the glue is set but not 100% dried, I flipped the project over to remove any excess glue from the front of the board while it was still ever so slightly malleable. When completely dried the glue can also be removed very carefully using an exacto knife.<br>
+About an hour after gluing once the glue was set but not 100% dried, I flipped the project over to remove any excess glue from the front of the board while it was still ever so slightly malleable. When completely dried the glue can also be removed very carefully using an exacto knife.<br>
 ![Edges](./readme-content/small/edges.jpg)
 ![Edges 2](./readme-content/small/edgesGlue.jpg)<br>
 
