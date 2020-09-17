@@ -192,7 +192,7 @@ owm_api_key = "API_KEY_HERE"
 cta_api_key = "API_KEY_HERE"
 ```
 
-firestore.py contains your firestore credentials
+There is also a file for firestore credentials
 
 ### Making Patterns
 This sheet is useful for creating animations by nonagon or side of nonagon since it shows how they can be addressed in relation to their physical position.<br>
