@@ -121,7 +121,7 @@ One of the final steps of assembling the board itself was gluing in the plastic 
 The wooden cutouts from the board can be easily turned into coasters. I carved names into some of them for my girlfriend and her roommates as well as for Ken's 50th.<br>
 ![CNC Router Coaster](./readme-content/small/Coaster.jpg)<br>
 
-I stained the cutouts and then sprayed them with lacquer before cutting very thin cork to glue onto the back of the coasters. Before doing this I wish I had attached something heavy to the back of the coasters because the surface tension from water can easily pick them up due to being super light. The cork cutouts are definitely just forbidden pringles.<br>
+I stained the cutouts and then sprayed them with lacquer before cutting very thin cork to glue onto the back of the coasters. Before doing this I wish I had attached something heavy to the back of the coasters because the surface tension from water on a cup can easily pick them up. The cork cutouts are definitely just forbidden pringles.<br>
 ![Cork and Coasters](./readme-content/small/CorkForCoasters.jpg)
 ![Forbidden Pringles](./readme-content/small/CorkCutouts.jpg)
 <br><br>I broke at least one exacto knife blade because I accidentally glued a couple of these to some excess MDF. The coasters work pretty well!<br>
