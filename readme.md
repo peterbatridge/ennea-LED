@@ -48,7 +48,7 @@ At this point there was no plan for the board and after seeing that they managed
 ![Nonagons Upside Down](./readme-content/small/CoastersUpsidedown.jpg)
 
 ## CNC Routing
-The design for the CNC cut were created in the Inventables Easel program, it's super easy to use. There are little tails on each nonagon so that there is room for wires sticking out of each nonagon</br> 
+The design for the CNC cut was created in the Inventables Easel program, it's super easy to use. There are little tails on each nonagon so that there is room for wires sticking out of each nonagon</br> 
 ![CNC Design](./readme-content/small/CNCRouterDesigns.jpg)<br>
 
 Test cuts were made in an MDF board to get the size right holes for the plastic nonagons. I had to pause the cut and turn off the drill as soon as each nonagon was cut completely out in order to remove the cut out piece of wood. Without removing the wood the drill bit could potentially fling it across the work surface.<br>
@@ -75,7 +75,7 @@ Next the rough edges of the board needed to be sanded and then the board was sta
 ![Unsanded Edges](./readme-content/small/unsandedEdges.jpg)
 ![Staining](./readme-content/small/Staining.jpg)
 ### Gluing
-Throughout the gluing process I was using small clamps to hold the pieces in place and also random heavy objects to hold the board flat and in place. 
+Throughout the gluing process I was using small clamps to hold the pieces in place and random heavy objects to hold the board flat and in place. 
 Next the wooden quarter round was cut to size and glued onto the wood so that there was a larger surface area on the sides of the project board which the aluminum frame could be glued to.<br>
 ![Clamping on quarter round](./readme-content/small/ClampingWood.jpg)<br>
 
@@ -83,7 +83,7 @@ Next the aluminum strips were cut to size. 2 of them were 2ft exactly and the ot
 ![Cut Aluminum Strips](./readme-content/small/cutAluminum.jpg)
 ![Unsanded vs Sanded Aluminum](./readme-content/small/sandedVsUnsandedAluminum.jpg)<br>
 
-Next two rectangles of wood were glued onto the back of the main board and screw eyes were installed so that picture hanging wire could hang the whole project on the wall. The extra layer of wood was added so that the screw eyes would not piece or warp the main board in any way.<br>
+Next two rectangles of wood were glued onto the back of the main board and screw eyes were installed so that picture hanging wire could hang the whole project on the wall. The extra layer of wood was added so that the screw eyes would not pierce or warp the main board in any way.<br>
 ![Installing screw eyes](./readme-content/small/screwEyes.jpg)<br>
 
 Next the aluminum edges were glued onto the board<br>
@@ -124,12 +124,12 @@ I stained the cutouts and then sprayed them with lacquer before cutting very thi
 - firebase_admin for reading and writing the firestore database which contains the state of the nonagons
 
 ### Architecture
-- The main application for running animations is written in python.
+- The main application for running animations is written in python and running on the raspberry pi.
 - That connects to a firestore database for determining the state of the nonagons and to store animation modes
-- The frontend is an angular app that can be found [here](https://github.com/peterbatridge/peterbatridge.github.io/tree/master/lights)
+- The frontend is an angular app that can be found [here](https://github.com/peterbatridge/peterbatridge.github.io/tree/master/lights) and can switch modes on the nonagons from any browser.
 
 ### Setup
-Adding to your crontab to start the program in the background 30 seconds after startup. This could be modified to start immediately and then the python could check for a network connection.
+Here is the crontab setup to start the program in the background 30 seconds after startup. This could be modified to start immediately and then the python could check for a network connection.
 ```
 sudo crontab -e
 >
