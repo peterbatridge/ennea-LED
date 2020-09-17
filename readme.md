@@ -25,14 +25,14 @@ The Nonagons are an art project I started back in December of 2019 to fill the s
 ## Parts
 - Raspberry Pi 2b+
 - 4 144 LED/m Dotstar Strips (only 434 LEDs total used and I bought mine from adafruit but you can find them cheaper as APA102 led strips)
-- Mini USB Microphone
+- [Mini USB Microphone](https://www.adafruit.com/product/3367)
 - Female DC Power adapter - 2.1mm jack to screw terminal block
 - 74AHCT125 - Quad Level-Shifter (3V to 5V)
 - 10a / 5V power supply
 - 40 4pin strip-to-strip LED connectors 10mm wide (these were actually not wide enough but ended up working)
 - A large assortment of jumpper wires of all types
 - 4700uF 10v Capacitor
-- 2 feet x 2 feet x 1/4 inch project board (https://www.homedepot.com/p/Columbia-Forest-Products-3-4-in-x-2-ft-x-2-ft-PureBond-Walnut-Plywood-Project-Panel-Free-Custom-Cut-Available-2731/204771202)
+- [2 feet x 2 feet x 1/4 inch project board](https://www.homedepot.com/p/Columbia-Forest-Products-3-4-in-x-2-ft-x-2-ft-PureBond-Walnut-Plywood-Project-Panel-Free-Custom-Cut-Available-2731/204771202)
 - A test board with the same dimensions as above made of something cheap like MDF
 - Excess wood, preferably also 1/4in thick (used for gluing to the main project board, screwing the screw eyes into and hanging from)
 - 2 Screw Eyes
@@ -41,7 +41,7 @@ The Nonagons are an art project I started back in December of 2019 to fill the s
 - Spray on Lacquer
 - Gorilla Glue
 - 8ft of Quarter Round (size doesn't matter a ton, it's just to increase the surface area the aluminum can be glued to)
-- Slightly more than 8ft of Aluminum that is 2 inches wide (one of these and maybe another that is at least 4 ft https://www.lowes.com/pd/Steelworks-0-125-ft-x-2-in-Aluminum-Solid/3058163)
+- Slightly more than [8ft of Aluminum](https://www.lowes.com/pd/Steelworks-0-125-ft-x-2-in-Aluminum-Solid/3058163) that is 2 inches wide (you'll probably need about 2ft so you can get two 2ft pieces and two 2ft quarter inch pieces)
 - A thin sheet of cork (optional for coasters)
 
 ## Tools
@@ -138,11 +138,13 @@ The LED Strips are being powered separately by a 5V/10A power supply
   - There is a capacitor also in parallel with the strips to prevent any current spikes from damaging the LEDs
   - Adafruit has great guides on [powering LEDs](https://learn.adafruit.com/adafruit-neopixel-uberguide/powering-neopixels) and [managing power draw](https://learn.adafruit.com/sipping-power-with-neopixels/insights)
 #### LEDs and Raspberry Pi
-I followed [this](https://learn.adafruit.com/adafruit-dotstar-leds/power-and-connections) guide on adafruit's website to wire up the LEDs. ![Adafruit Wiring Guide](https://cdn-learn.adafruit.com/assets/assets/000/063/125/medium640/led_strips_image-1.png)
+I followed [this](https://learn.adafruit.com/adafruit-dotstar-leds/power-and-connections) guide on adafruit's website to wire up the LEDs. ![Adafruit Wiring Guide](https://cdn-learn.adafruit.com/assets/assets/000/063/125/medium640/led_strips_image-1.png)<br>
+All of the 14 strips of 31 LEDs are connected end to end as if they are one large 434 LED long strip. The plastic connectors and lack of soldering, while a huge pain at times, should hopefully make it so if an LED burns out I can easily swap out one 31 LED strip instead of replacing the whole thing.
 
 
 ## Software
 ### Development Environment
+Mostly using SSH to write code in vim on the raspberry pi mostly and then testing the code by swiveling my chair and looking in a conveniently placed mirror. Sometimes using VSCode on my desktop and using this repository as a middleman between my desktop and the raspberry pi. There is a pygame version of the nonagon I can test some animations in as well so I don't have to do the elaborate system of mirrors.<br>
 ![My Development Setup](./readme-content/gifs/myDevSetup.gif)
 ![Gif Conversion](./readme-content/gifs/gifTesting.gif)
 
@@ -151,13 +153,26 @@ I followed [this](https://learn.adafruit.com/adafruit-dotstar-leds/power-and-con
 - numpy for more audio processing
 - adafruit_dotstar for using the LEDs
 - firebase_admin for reading and writing the firestore database which contains the state of the nonagons
+- PIL for converting gifs to nonagon animations
+- pygame for modeling the LED mapping to physical space and testing gif animations
 
 ### Architecture
 - The main application for running animations is written in python and running on the raspberry pi.
+  - [main.py](./main.py) is responsible for setting up database connection, and then running the current mode
+  - [animation.py](./animation.py) is responsible for creating and parsing animations on the lights
+    - There are a couple core animation functions animateNonagonGroups, animateSideGroups and gifAnimation that run the bulk of the modes
+    - There is also the drawShapes function used for more complex animations, note that this can be slow
+  - [shapes.py](./shapes.py) contains the different shape classes that define simple shapes for animation
+  - [constants.py](./constants.py) contains shared values that are constant like gifs converted to nonagon-readable format
+  - [shared.py](./shared.py) holds shared values that may change like the modeChanged flag for interrupting looping animations
+  - [physical_mapping.py](./physical_mapping.py) contains snippets that can be used to convert gifs to animations displayed on the nonagons. It also contains the code for drawing the expected physical mapping of the LEDs with pygame and running the converted animations. This can be useful for testing if a gif animation will look good.
+  - [trains.py](./trains.py) contains snippets for using the Chicago CTA API
+  - [weather.py](./weather.py) contains snippets for using the Open Weather Map API
 - That connects to a firestore database for determining the state of the nonagons and to store animation modes
 - The frontend is an angular app that can be found [here](https://github.com/peterbatridge/peterbatridge.github.io/tree/master/lights) and can switch modes on the nonagons from any browser.
 
 ### Setup
+I'm running raspbian headless and accessing it via SSH which takes some easily googlable setup<br>
 Here is the crontab setup to start the program in the background 30 seconds after startup. This could be modified to start immediately and then the python could check for a network connection.
 ```
 sudo crontab -e
@@ -176,6 +191,7 @@ cta_api_key = "API_KEY_HERE"
 firestore.py contains your firestore credentials
 
 ### Making Patterns
+This sheet is useful for creating animations by nonagon or side of nonagon since it shows how they can be addressed in relation to their physical position.<br>
 ![Nonagon Edge Reference Sheet](./readme-content/small/NonagonEdgeReference.jpg)
 
 ### TODO
