@@ -65,7 +65,9 @@ Unfortunately one of the wood boards ended up not laying as flat as the MDF and 
 The wooden cutouts are a good size for coasters so I saved them<br>
 ![CNC Router Coaster](./readme-content/small/Coaster.jpg)<br>
 ## Assembly
-Somewhere along the way I realized I could only fit 31 LEDs on a strip inside the nonagons if I had plastic connectors and wires on both ends of the strip. Originally I hadn't planned to do all the LEDs in series but it was the path of least resistance. In order to have the wires sit comfortably in the nonagon I needed to cut a rectangle out of the plastic nonagon walls. This seemed very difficult to do at first but a simple method I discovered was heating up my exacto knife blade and then quickly cutting/melting through the portion of the nonagon I wanted to remove.<br>
+Somewhere along the way I realized I could only fit 31 LEDs on a strip inside the nonagons if I had plastic connectors and wires on both ends of the strip. Originally I hadn't planned to do all the LEDs in series but it was the path of least resistance. 
+- In order to have the wires sit comfortably in the nonagon I needed to cut a rectangle out of the plastic nonagon walls. This seemed very difficult to do at first but a simple method I discovered was heating up my exacto knife blade and then quickly cutting/melting through the portion of the nonagon I wanted to remove.
+- I removed the cover on one side of each plastic connector so that the LED strip could fit in it. I had to shave off a very small amount of the strip's sides in order to fit them into the plastic connectors.<br>
 ![Melted Nonagon Edge And Strips](./readme-content/small/meltedNonagonEdgeAndStrips.jpg)<br>
 
 Next the rough edges of the board needed to be sanded and then the board was stained. After the stain dried the board was coated several times in spray on lacquer (make sure to do this in a well ventilated area and wear a respirator)<br>
@@ -80,7 +82,7 @@ Next the aluminum strips were cut to size. 2 of them were 2ft exactly and the ot
 ![Cut Aluminum Strips](./readme-content/small/cutAluminum.jpg)
 ![Unsanded vs Sanded Aluminum](./readme-content/small/sandedVsUnsandedAluminum.jpg)<br>
 
-Next two rectanlges of wood were glued onto the back of the main board and screw eyes were installed so that picture hanging wire could hang the whole project on the wall. The extra layer of wood was added so that the screw eyes would not piece or warp the main board in any way.<br>
+Next two rectangles of wood were glued onto the back of the main board and screw eyes were installed so that picture hanging wire could hang the whole project on the wall. The extra layer of wood was added so that the screw eyes would not piece or warp the main board in any way.<br>
 ![Installing screw eyes](./readme-content/small/screwEyes.jpg)<br>
 
 Next the aluminum edges were glued onto the board<br>
@@ -111,13 +113,18 @@ I stained the cutouts and then sprayed them with lacquer before cutting very thi
 
 ## Software
 ### Libraries
-Python libraries
+- pyaudio and audioop for audio processing 
+- numpy for more audio processing
+- adafruit_dotstar for using the LEDs
+- firebase_admin for reading and writing the firestore database which contains the state of the nonagons
 
 ### Architecture
+- The main application for running animations is written in python.
+- That connects to a firestore database for determining the state of the nonagons and to store animation modes
+- The frontend is an angular app that can be found [here](https://github.com/peterbatridge/peterbatridge.github.io/tree/master/lights)
 
 ### Setup
 Adding to your crontab to start the program in the background 30 seconds after startup. This could be modified to start immediately and then the python could check for a network connection.
-
 ```
 sudo crontab -e
 >
@@ -125,6 +132,14 @@ sudo crontab -e
 >
 ctrl+x > y
 ```
+
+credentials.py contains something like this for the Chicago CTA API and a weather API:
+```
+owm_api_key = "API_KEY_HERE"
+cta_api_key = "API_KEY_HERE"
+```
+
+firestore.py contains your firestore credentials
 
 ### Making Patterns
 ![Nonagon Edge Reference Sheet](./readme-content/small/NonagonEdgeReference.jpg)
