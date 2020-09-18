@@ -16,6 +16,7 @@
   * [UI](#ui)
   * [Setup](#setup)
   * [Making Patterns](#making-patterns)
+  * [TODO](#todo)
 - [Similar Patterns](#similar-patterns)
 - [Finished Product](#finished-product)
   * [Images](#images)
@@ -29,7 +30,7 @@ The Nonagons are an art project I started back in December of 2019 to fill the s
 - [Mini USB Microphone](https://www.adafruit.com/product/3367)
 - Female DC Power adapter - 2.1mm jack to screw terminal block
 - 74AHCT125 - Quad Level-Shifter (3V to 5V)
-- 10a / 5V power supply
+- 5V / 10a power supply
 - 40 4pin strip-to-strip LED connectors 10mm wide (these were actually not wide enough but ended up working)
 - A large assortment of jumpper wires of all types
 - 4700uF 10v Capacitor
@@ -42,7 +43,7 @@ The Nonagons are an art project I started back in December of 2019 to fill the s
 - Spray on Lacquer
 - Gorilla Glue
 - 8ft of Quarter Round (size doesn't matter a ton, it's just to increase the surface area the aluminum can be glued to)
-- Slightly more than [8ft of Aluminum](https://www.lowes.com/pd/Steelworks-0-125-ft-x-2-in-Aluminum-Solid/3058163) that is 2 inches wide (you'll probably need about 2ft so you can get two 2ft pieces and two 2ft quarter inch pieces)
+- [9+ft of Aluminum](https://www.lowes.com/pd/Steelworks-0-125-ft-x-2-in-Aluminum-Solid/3058163) that is 2 inches wide (you'll need 9ft so you can get two 2ft pieces and two 2ft quarter inch pieces)
 - A thin sheet of cork (optional for coasters)
 
 ## Tools
